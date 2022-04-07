@@ -1,0 +1,123 @@
+﻿*{border:0;margin:0;padding:0;}
+body{margin:0 auto;min-width:980px; overflow: hidden;}
+header, footer, nav, section{display: block;}
+p, ul{margin-bottom: 20px;line-height: 1.6em;}
+a,a:focus {text-decoration: none;color: #000;outline: none;blr: expression(this.onFocus=this.blur());}
+a:link{color: #000;text-decoration: none;}
+a:visited{color: #000;text-decoration: none;}
+a:hover{color: #00a4ac;text-decoration: none;}
+a:active{color: #000;text-decoration: none;}
+ul {display: block;margin: 0;padding: 0;padding-top: 0px;padding-right: 0px;list-style: none;}
+li {display: block;margin: 0;padding: 0;padding-right: 0px;padding-left: 0px;list-style: none;}
+img {vertical-align: middle;border-style: none;border:0;}
+
+table{border-collapse:collapse;border-spacing: 0;}
+cite{font-style:normal;}
+
+/* divHeader */
+#divHeader {position: absolute;margin-bottom: 0px; height: 88px; width: 100%; color: #000;padding: 0; background: url(/img/frame/topbg.gif) repeat-x;}
+.topleft {height: 88px;background: url(../img/frame/topleft.jpg) no-repeat;float: left;}
+.topleft a {float: left;display: inline;}
+.topleft img {height: 52px; margin-left: 5px;margin-top:5px;}
+.topleft .title{float: left;display: inline; margin-top: 1px; margin-left: 3px;}
+.topleft .title h1{color:#fff; font-size: 18px; font-weight: bold;letter-spacing:0px; margin-top:8px;}
+.topleft .title h3{color:#fff; font-size: 12px; padding-left: 0px;letter-spacing:0px; margin-top:3px;}
+
+.topnav {position: absolute;top: 0;right: 290px;}
+.topnav li.top {float:left;width:auto;height:62px; text-align:center; margin-right:4px;}
+.topnav li.top img{margin-top:4px; width: 32px; height: 32px;}
+.topnav li.top a.top{display:block;width:auto;height:58px;min-width: 56px; -moz-transition: none; transition: background-color 0.3s linear; -moz-transition: background-color 0.3s linear; -webkit-transition: background-color 0.3s linear; -o-transition: background-color 0.3s linear; }
+.topnav li.top a.top cite{font-size:14px;color:#d6e8f1; padding: 0; margin: 0; display: block; }
+.topnav li.top a.top:hover{display:block;background:#000;color:#fff;background:url(/img/frame/navbg.png) no-repeat scroll bottom;text-decoration: none;}
+.topnav li.top a.top:hover cite{color:#fff;}
+
+.topright {height: 88px;background: url(../img/frame/topright.jpg) no-repeat right;float: right;width: 290px; padding-right: 2px;}
+.topright .msg { height: 24px;background-color: #fff; color: #056CAE; clear: both;float: right;border-radius: 8px;white-space: nowrap;position: relative;padding: 1px 5px 0 5px;margin: 3px 7px 0 0;}
+.topright .msg a{margin-right:5px;}
+.topright .msg a:last-child{margin-right:0;}
+.topright .msg a i {display: inline-block;margin:0 2px;font-style: normal;line-height: 25px;font-size: 14px;color: #056CAE;}
+.topright .msg a b {display: inline-block;height: 18px;text-align: center;font-weight: normal;color: #000;font-size: 14px;margin-right: 0;margin-top: 0;line-height: 20px; padding: 0 3px;border-radius: 5px; min-width:25px;}/*background: url(../img/frame/msg.png) repeat;*/
+.topright .msg a img {width: 16px; height: 16px; margin-top: -3px;}
+.topright .shortcut {float: right;height: 26px; margin: 4px 8px 0 0;}
+.topright .shortcut label{line-height: 26px;font-weight: bold;float: left;margin-left: 12px;}
+.topright .shortcut ul {float: right;}
+.topright .shortcut li {float: left;line-height: 26px;padding-left: 8px;padding-right: 10px;background: url(/img/frame/line.gif) no-repeat right;}
+.topright .shortcut li:last-child {background: none;}
+.topright .shortcut li a img { width: 20px; height: 20px; border: 0;}
+.topright .shortcut li a:hover img {}
+
+#divMenuBox{position:absolute;left:136px; top: 52px; display: block; border: 1px solid #e6e6e6;z-index: 1000;width: 32px;height: 32px;line-height: 32px;background-color: #DC143C;border-radius: 16px;text-align: center;color: #fff;}
+#divMenuBox a {color:#fff;}
+
+/* divMenuTree */
+#divMenuTree {width: 179px;position:absolute; left: 0px;top: 58px;display: block; bottom: 25px; right:0; } /*background-color: #046DA6;*/
+#divMenuTree ul {margin-left:12px;}
+#divMenuTree .layui-collapse { border-right:0px;}
+#divMenuTree .layui-colla-title {height: 32px;line-height: 32px;}
+#divMenuTreeBox {display: block; overflow: hidden; width: 100%; height: 29px;line-height: 29px; padding-left: 10px;border-top: 1px solid rgb(230, 230, 230);color: white;}
+#divMenuTreeBox a{position: absolute;right: 10px;top: 0;}
+#divMenuTreeBox #lblMenuTitle {margin-left:5px; font-size: 16px; font-weight: bold;}
+#divMenuTreeContent{border-right: 1px solid #046DA6;width: 179px;position:absolute; left: 0px;top: 30px;bottom: 0;overflow:auto; overflow-x: hidden; } #e6e6e6
+
+/* divMenuWrap */
+#frmMenu { display: none; position: fixed; top: 58px; z-index: 9900; padding: 0 5px; border:none;background: #ffffff;}
+.menuWrap {display: none; position: fixed; top: 58px; z-index: 9999; padding: 0 5px; border:none;box-shadow:2px 2px 15px 0px #aaaaaa;background:#ffffff; }
+.menuWrap .menuList:last-child {margin-right: 0px;}
+.menuWrap .menuList { float: left; margin: 10px 0 10px 10px;}
+.menuWrap .menuList li {}
+.menuTitle { height: 22px; line-height: 22px; font-weight: bold; color: #000;text-align: left;}
+.menuTitle a{cursor:default;}
+.menuTitle a:hover{color:#000;}
+.menuAction {height: 22px; line-height: 22px; min-width: 80px; padding-right: 10px; background: url(/img/frame/bullets.gif) no-repeat 0px 7px;margin-top: 3px;padding-left: 12px;font-family: Arial, sans-serif;color: #555;text-align: left;}
+.menuActive {}
+.menuActive a{color: Orange;}
+.menuSeparator {height: 1px; padding: 3px 20px 3px 0px;}
+.menuSeparator hr {height:1px;border:none;border-top:2px ridge green;}
+
+/* divPage */
+#divPage {position:absolute; left: 180px;top: 58px;display: block; bottom: 25px; right:0; overflow: hidden; background:url("/img/frame/loading.gif") no-repeat center;}
+#divPage iframe {position:absolute; left: 0;top: 30px; bottom: 0; right:0; overflow: hidden;display: block; width:100%;}
+#divPageBox {position:absolute; left: 0;top: 0px;display: block; right:0; overflow: hidden; height: 29px;border-bottom: 0px solid #e6e6e6; padding-left: 45px;border-top: 1px solid rgb(230, 230, 230);color: white;}
+#divPageBox i{float: left;height: 28px;line-height: 28px;margin-right: 0px;}
+#divPageBox ul{float: left;}
+#divPageBox ul li {float: left; margin-left: 5px;margin-right: 5px; height: 28px;line-height: 28px;}
+
+/* divFooter */
+#divFooter{height:25px; line-height:25px; background: url(/img/frame/topbg.gif) repeat-x; text-align:center; position: fixed; bottom:0; width:100%; color:#fff; font-size: 12px; }
+#divFooter a{color:#fff;}
+#divFooter a:hover{color:#fff;}
+.footerleft {height:25px; line-height:25px;background: url(/img/frame/topleft.jpg) no-repeat;float: left; min-width: 120px; position: fixed; left: 0px;bottom:0; padding-left: 10px;}
+.footerleft img {width: 13px; height: 13px;margin-top: -2px; margin-right: 5px;}
+.footerright {height:25px; line-height:25px;background: url(/img/frame/topright.jpg) no-repeat right;float: right;min-width: 200px;position: fixed; right: 0px;bottom:0; padding-right: 10px;}
+.footerright ul {float: right;height:25px;}
+.footerright ul li {float: left;height:25px; line-height:25px;padding-left: 9px;padding-right: 9px;background: url(/img/frame/line.gif) no-repeat right;}
+.footerright ul li:last-child {background: none;}
+.footerright ul li span {margin-top: 0px;float: left;padding-right: 4px;}
+.footerright ul li img {width: 13px; height: 13px;margin-top: -2px;}
+.footerright ul li a {font-size: 13px;color: #e9f2f7;}
+
+/* divTips */
+.tips {padding:15px 5px 10px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;}
+.tipsAlarm {}
+.tipsAlarm li{font-size: 12px; height:16px; line-height: 16px;white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.tipsAlarmBtns {text-align: right; padding-right:5px; margin:5px 0 0 0;}
+.tipsAlarmBtns a{font-size: 16px; height:18px; line-height: 18px; margin: 0 5px; cursor: pointer; color: #00a4ac;}
+.tipsMessage {}
+.tipsMessage li{font-size: 12px; height:16px; line-height: 16px;white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.tipsMessageBtns {text-align: right; padding-right:5px; margin:5px 0 0 0;}
+.tipsMessageBtns a{font-size: 16px; height:18px; line-height: 18px; margin: 0 5px; cursor: pointer; color: #00a4ac;}
+
+/* Switch */
+/* 容器 <div> - 需要定位下拉内容 */
+.dropdown{ position:relative;  display:inline-block;   }
+/* 下拉菜单内容，设置为隐藏 */
+.dropdown-content{min-width:110%; background-color:#fff; position:absolute; display:none; box-shadow:0px 12px 15px 0px rgba(0,0,0,0.2);z-index:999999;border-radius:5px 5px 5px 5px; top:35px; left:0; padding: 5px;}   
+/* 下拉菜单链接的样式 */
+.dropdown-content a{box-sizing: border-box; color:black; text-decoration:none;padding:10px 5px 10px 5px; display:block;text-align:left;border-radius:5px 5px 5px 5px;min-width:100%;cursor:pointer;}
+.dropdown-content a img {height: 20px;margin: 0; padding: 0;margin-right: 5px;}
+/* 鼠标移入后显示下拉菜单 */
+.dropdown:hover .dropdown-content{   display:block;   }   
+/* 鼠标移入后修改链接的背景色 */
+.dropdown-content a:hover{background-color: #5fb878;color: #fff; }   
+/* 下拉菜单显示后修改下拉按钮的背景色 */
+.dropdown:hover .dropbtn{background-color:#008B00;   }   

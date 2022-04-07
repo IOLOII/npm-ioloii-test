@@ -1,0 +1,110 @@
+﻿body{background-color: #fff;overflow-x: hidden;}
+div {-moz-user-select:none;-webkit-user-select:none;user-select:none;}/* 禁止选中文本方法 */
+div .layui-table-cell{-moz-user-select: text;-webkit-user-select:text;user-select:text;}/* .layui-table-cell 单元格允许选中文本方法 */
+hr {margin: 5px 0;}
+
+.need { padding:0 2px; color:#ff0000; }
+.pda05 { padding: 5px;}
+.pda20 { padding: 20px;}
+.pdh10 { padding-left: 10px;padding-right: 10px;}
+.pdh20 { padding-left: 20px;padding-right: 20px;}
+.pdv10 { padding-top: 10px; padding-bottom: 10px;}
+.pdt10 { padding-top: 10px;}
+.pdb00 { padding-bottom: 0px;}
+.pdb05 { padding-bottom: 5px;}
+.pdb10 { padding-bottom: 10px;}
+.pdl05 { padding-left: 5px;}
+.pdl10 { padding-left: 10px;}
+.pdl20 { padding-left: 20px;}
+.pdr05 { padding-right: 5px;}
+.pdr10 { padding-right: 10px;}
+.pdr20 { padding-right: 20px;}
+.mr05  {margin-right:5px;}
+
+.vehicleAcc {margin:0 3px; /*position: absolute !important;right: 6px !important;top: 7px;*/}
+
+#divAttach {padding-top:5px;}
+.attach {max-width:1000px; max-height: 600px;min-width:64px; min-height: 64px; vertical-align:middle; text-align: center; margin: 5px;}
+.attachIcon {max-width:20px; max-height: 20px; vertical-align:middle; cursor: pointer; margin-right: 5px; margin-top:0;}
+.gridTitle{ padding: 5px 5px 5px 6px; height: 30px;}
+.gridTitle .layui-btn { margin-top: -1px;  }
+.gridTitle .layui-form-label { width: auto;}
+.gridTitle .layui-form-checkbox[lay-skin="primary"] {padding-left: 23px !important;}
+.gridTitle .layui-form-checkbox[lay-skin="primary"] span { line-height: 20px; padding: 0 0px;}
+.gridWrap {padding: 0 5px 5px 5px;clear:both;}
+#divGrid{height: 0px !important; border-top: none; border-left: none; border-right: none; display: none;} 
+#divGridHistory{height: 0px !important; border-top: none; border-left: none; border-right: none; display: none;} 
+#divAuditsDialog .layui-row .layui-col-md1 span{float: right; margin-right: 5px; line-height: 20px;}
+#divAuditsDialog .layui-row .layui-col-md2,
+#divAuditsDialog .layui-row .layui-col-md5,
+#divAuditsDialog .layui-row .layui-col-md11 label{line-height: 20px; color: #056DAF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+#divEditDialog .layui-row .layui-col-md1 span{float: right; margin-right: 5px; line-height: 20px;}
+#divEditDialog .layui-row .layui-col-md2,
+#divEditDialog .layui-row .layui-col-md5,
+#divEditDialog .layui-row .layui-col-md11 label{line-height: 20px; color: #056DAF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+/* 下拉树 */
+.selectingTreeWrap {position: absolute;display: block;z-index: 66666666; overflow: hidden;border: 1px solid #d2d2d2;box-shadow: 0 2px 4px rgba(0,0,0,.12);background-color: #fff;color: #666;}
+.selectingTreeWrap ul.ztree {box-sizing: border-box;overflow-y: auto;overflow-x: auto;}
+.selectingTreeWrap div.footer {border-top: 1px solid #e2e2e2;position: relative;height: 26px;line-height: 26px;padding: 5px 20px;}
+.selectingTreeWrap div.footer .btns {position: absolute;right: 10px;top: 5px;}
+.selectingTreeWrap div.footer .btns span {height: 26px;line-height: 26px;padding: 0 10px;border: 1px solid #C9C9C9;background-color: #fff;white-space: nowrap;vertical-align: top;border-radius: 2px;display: inline-block;cursor: pointer;font-size: 12px;}
+.selectingTreeWrap div.footer .btns span:hover {color: #5FB878;}
+
+/* 智慧看板 */
+#divMapRefresh { position: absolute; top: 5px; left: 10px; height: 30px; vertical-align: middle; color: gray; line-height: 30px;z-index: 99999; }
+#divNoticeList li{white-space: nowrap; overflow: hidden;text-overflow: ellipsis;display: block;}
+.notices{margin:10px;}
+.notices h3{white-space: nowrap; overflow: hidden;text-overflow: ellipsis;display: block;}
+.notices p{display: block;}
+
+/* layui样式改写 */
+.layui-body{overflow-y: scroll;}
+.layui-elem-quote {margin-bottom: 0px; padding: 5px 15px;}
+.layui-layer-wrap { padding: 5px 20px 0 20px;}
+.layui-layer-btn {border-top: 1px solid #f2f2f2; padding-top: 5px !important; padding-bottom: 7px !important;}
+.layui-table-view {margin: 0 !important; min-height: 0;}
+.layui-table-view .layui-table td, .layui-table-view .layui-table th {padding: 3px 0;}
+.layui-table-cell {padding: 0 5px;}
+.layui-table-cell .layui-btn-group .layui-btn-sm {height: 26px;line-height: 23px;padding: 0 7px;font-weight: bold;color: blue;}
+.layui-form-button { text-align: right;margin-bottom: 5px !important; margin-top: 5px;}
+.layui-form-label {padding: 3px 5px 0; line-height: 25px;width: 90px;}
+.layui-form-item {margin-bottom: 2px;}
+.layui-form-item .layui-form-checkbox {margin-top: 0px;}
+.layui-form-switch {margin-top: 3px;}
+.layui-form-radio {margin-top: 0px;}
+.layui-form-select dl{top: 32px;z-index: 66666666;}
+.layui-form-select dl dd{line-height: 28px;z-index: 66666666;}
+.layui-form-mid {padding: 4px 0!important;}
+.layui-input-block {min-height: 28px;}
+.layui-textarea {min-height: 53px;}
+.layui-input, .layui-select, .layui-textarea {height: 30px;}
+.layui-btn {height: 30px; line-height: 30px;}
+.layui-btn .layui-nav-child dd:hover{background-color: darkcyan; color: White;}
+.layui-btn .layui-nav-child dd:hover a{color: White;}
+.layui-anim-upbit{min-height:66px;}
+.layui-laypage{margin:5px 0 0;}
+
+.layui-input-inline .layui-edge {position: absolute;right: 10px;top: 50%;margin-top: -3px;cursor: pointer;border-width: 6px;border-top-color: #c2c2c2;border-top-style: solid;transition: all .3s;-webkit-transition: all .3s;}
+
+.layui-table thead tr, 
+.layui-table-header, 
+.layui-table-mend, 
+.layui-table-patch, 
+.layui-table-tool {background-color: #009688 !important; color: #fff !important; text-align:center !important;}
+.layui-table tbody tr:hover, 
+.layui-table-click, 
+.layui-table-hover{background-color: #e0efe0 !important; }
+.layui-table-init{display:none;}
+
+.layui-layer-title{height:30px !important; line-height: 30px !important;}
+.layui-layer-setwin {right: 10px !important;top: 8px !important;}
+
+.layui-nav-child {z-index: 9999;} 
+.layui-nav-child dd a {width: 100%;height: 36px;display: block; padding-left: 0px; padding-right:10px;}                     
+
+/* ztree样式改写 */
+.ztree {overflow: auto; }
+.ztree *{font-size: 14px !important;}
+.ztree .node_name{margin-left: 3px;}
+.ztree li a{height: 18px !important;}

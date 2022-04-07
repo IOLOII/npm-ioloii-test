@@ -1,0 +1,134 @@
+﻿<div id="@ViewContext.HttpContext.Request.Query["id"]" style="width:@(ViewContext.HttpContext.Request.Query["wt"])px;height:@(ViewContext.HttpContext.Request.Query["ht"])px;" class="video-js vjs-waiting" data-setup="{}">
+    <video id="@ViewContext.HttpContext.Request.Query["id"]_video" autoplay="autoplay" style="width:100%; height:100%; object-fit: fill"></video>
+    <canvas id="@ViewContext.HttpContext.Request.Query["id"]_canvas"></canvas>
+
+    <div></div>
+    <div class="vjs-loading-spinner" dir="ltr"></div>
+    <div class="vjs-poster vjs-hidden"></div>
+    <button class="vjs-big-play-button" title="Play Video" type="button"><span class="vjs-control-text">Play Video</span></button>
+    <div class="vjs-throughput-display"></div>
+    <div class="vjs-control-bar" role="group" dir="ltr">
+        <button class="vjs-control vjs-control-playing" type="button" title="暂停"><span class="vjs-control-text">暂停</span></button>
+        <div class="vjs-control vjs-button-volume-menu vjs-control-menu vjs-volume-menu-vertical" title="静音" role="button">
+            <div class="vjs-menu">
+                <div class="vjs-menu-content">
+                    <div class="vjs-volume-bar" role="slider" aria-valuenow="100.00" aria-valuemin="0" aria-valuemax="100" aria-label="volume level" aria-valuetext="100.00%">
+                        <div class="vjs-volume-level"><span class="vjs-control-text"></span></div>
+                    </div>
+                </div>
+            </div>
+            <span class="vjs-control-text">静音</span>
+        </div>
+        @*<button class="vjs-control vjs-control-right vjs-icon-pinterest" type="button" title="设置"><span class="vjs-control-text">设置</span></button>*@
+        <button class="vjs-control vjs-control-right vjs-control-fullscreen" type="button" title="全屏"><span class="vjs-control-text">全屏</span></button>
+        <button class="vjs-control vjs-control-right vjs-control-screenshot" type="button" title="截屏"><span class="vjs-control-text-value">截屏</span></button>
+        <div class="vjs-control vjs-control-right vjs-control-menu vjs-control-size" title="播放尺寸">
+            <div class="vjs-menu">
+                <ul class="vjs-menu-content">
+                    <li class="vjs-menu-item vjs-selected">全屏</li>
+                    <li class="vjs-menu-item">4:3</li>
+                    <li class="vjs-menu-item">16:9</li>
+                </ul>
+            </div>
+            <span class="vjs-control-text">尺寸</span>
+            <div class="vjs-control-text-value">全屏</div>
+        </div>
+        <div class="vjs-control vjs-control-right vjs-control-menu vjs-control-bitstream" title="播放码率">
+            <div class="vjs-menu">
+                <ul class="vjs-menu-content">
+                    <li class="vjs-menu-item @(ViewContext.HttpContext.Request.Query["bst"] == "0" ? "vjs-selected" : "")">主码流</li>
+                    <li class="vjs-menu-item @(ViewContext.HttpContext.Request.Query["bst"] == "0" ? "" : "vjs-selected")">子码流</li>
+                </ul>
+            </div>
+            <span class="vjs-control-text">码率</span>
+            <div class="vjs-control-text-value"> @(ViewContext.HttpContext.Request.Query["bst"] == "0" ? "主码流" : "子码流")</div>
+        </div>
+        <div class="vjs-control vjs-control-right vjs-control-menu vjs-control-subtitle" title="字幕显示">
+            <div class="vjs-menu">
+                <ul class="vjs-menu-content">
+                    <li class="vjs-menu-item @(ViewContext.HttpContext.Request.Query["sdp"] == "1" ? "vjs-selected" : "")">字幕开</li>
+                    <li class="vjs-menu-item @(ViewContext.HttpContext.Request.Query["sdp"] == "1" ? "" : "vjs-selected")">字幕关</li>
+                </ul>
+            </div>
+            <span class="vjs-control-text">字幕</span>
+            <div class="vjs-control-text-value">@(ViewContext.HttpContext.Request.Query["sdp"] == "1" ? "字幕开" : "字幕关")</div>
+        </div>
+        <div class="vjs-control vjs-control-right vjs-control-menu vjs-control-playback" title="回放控制">
+            <div class="vjs-menu">
+                <ul class="vjs-menu-content">
+                    <li class="vjs-menu-item">正常</li>
+                    <li class="vjs-menu-item">暂停</li>
+                    <li class="vjs-menu-item">结束</li>
+                    <li class="vjs-menu-item">关键帧</li>
+                    <li class="vjs-menu-item">快进X1</li>
+                    <li class="vjs-menu-item">快进X2</li>
+                    <li class="vjs-menu-item">快进X4</li>
+                    <li class="vjs-menu-item">快进X8</li>
+                    <li class="vjs-menu-item">快进X16</li>
+                    <li class="vjs-menu-item">关键帧快退X1</li>
+                    <li class="vjs-menu-item">关键帧快退X2</li>
+                    <li class="vjs-menu-item">关键帧快退X4</li>
+                    <li class="vjs-menu-item">关键帧快退X8</li>
+                    <li class="vjs-menu-item">关键帧快退X16</li>
+                </ul>
+            </div>
+            <span class="vjs-control-text">回放控制</span>
+            <div class="vjs-control-text-value">正常</div>
+        </div>
+    </div>
+</div>
+
+@*<div id="divEditDialog" style="display:none;">
+        <div class="layui-form" lay-filter="divEditDialog">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:60px">亮度</label>
+                <div class="layui-input-block"  style="width:70px;"><div id="txtBrightness" style="margin:0; display: inline-block;width:200px;"></div></div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:60px">对比度</label>
+                <div class="layui-input-block"  style="width:70px;"><div id="txtContrast" style="margin:0; display: inline-block;width:200px;"></div></div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:60px">饱和度</label>
+                <div class="layui-input-block"  style="width:70px;"><div id="txtSaturation" style="margin:0; display: inline-block;width:200px;"></div></div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:60px">色度</label>
+                <div class="layui-input-block"  style="width:70px;"><div id="txtChroma" style="margin:0; display: inline-block;width:200px;"></div></div>
+            </div>
+            <div class="layui-form-item layui-form-button">
+                <button class="layui-btn" lay-submit="" lay-filter="btnEditSubmit">设置</button>
+                <button class="layui-btn layui-btn-primary" id="btnEditCancel">放弃</button>
+            </div>
+        </div>
+    </div>*@
+
+@section css{
+    <link rel="stylesheet" type="text/css" href="/Scripts/player1078/player.css" media="all" />
+}
+@section js{
+    <script type="text/javascript">
+        var id = '@ViewContext.HttpContext.Request.Query["id"]';
+        var vehicleId = '@ViewContext.HttpContext.Request.Query["vid"]';
+        var vehicleNumber = '@Html.Raw(ViewContext.HttpContext.Request.Query["vnumber"])';
+        var channelId = '@ViewContext.HttpContext.Request.Query["cid"]';
+        var w = '@ViewContext.HttpContext.Request.Query["wt"]';
+        var h = '@ViewContext.HttpContext.Request.Query["ht"]';
+        var bgColor = '@ViewContext.HttpContext.Request.Query["bgColor"]';
+        var videoUrl = '@ViewContext.HttpContext.Request.Query["url"]';
+        var avStartTime = '@ViewContext.HttpContext.Request.Query["startTime"]';
+        var bitStreamType = '@ViewContext.HttpContext.Request.Query["bst"]';
+        var avFlag = '@ViewContext.HttpContext.Request.Query["avFlag"]';
+        var muted = '@ViewContext.HttpContext.Request.Query["muted"]' == "true";
+        var subtitleDisplay = '@ViewContext.HttpContext.Request.Query["sdp"]';
+        var beforeVolume = muted ? 0 : 1.0;
+        var playback = '@ViewContext.HttpContext.Request.Query["playback"]' == "true";
+        var usingMicrophone = '@ViewContext.HttpContext.Request.Query["ump"]' == "true";
+        var usingControlBar = '@ViewContext.HttpContext.Request.Query["vcb"]' != "false";
+        var bufferTime = '@(ViewContext.HttpContext.Request.Query["bufferTime"].FirstOrDefault() ?? "3")';
+        var liveAppName = '@GPSChina.Platform.Business.Utility.ConfigurationUtility.VideoAppName';
+        var videoId = id + '_video';
+    </script>
+    <script type="text/javascript" src="@HtmlUtility.Content(Url, "~/Scripts/player1078/jvp.js")"></script>>
+    <script type="text/javascript" src="@HtmlUtility.Content(Url,"~/Scripts/player1078/player.js")"></script>
+}

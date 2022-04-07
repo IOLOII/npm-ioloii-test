@@ -1,0 +1,494 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="Shortcut Icon" href="img/frame/logo.ico" />
+    <link rel="stylesheet" type="text/css" href="js/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="css/zTreeStyle.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="css/page.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="css/monitor.css" media="all" />
+</head>
+<body>
+    <div id="divVideoToolbar">
+        <div class="layui-btn-group">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" title="1画面" onclick="javascript:currVehicle = null;refreshVideoArray(1, 1);"><img id="btnImg1" src="img/view_1.jpg" /></button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" title="2画面" onclick="javascript:currVehicle = null;refreshVideoArray(1, 2);"><img id="btnImg2" src="img/view_2.jpg" /></button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" title="4画面" onclick="javascript:currVehicle = null;refreshVideoArray(1, 4);"><img id="btnImg4" src="img/view_4.jpg" /></button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" title="6画面" onclick="javascript:currVehicle = null;refreshVideoArray(1, 6);"><img id="btnImg6" src="img/view_6.jpg" /></button>
+        </div>
+        <div class="layui-btn-group">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="javascript:startAllVideo();" title="全部播放"><i class="layui-icon">&#xe652;</i></button>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="javascript:pauseAllVideo();" title="全部暂停"><i class="layui-icon">&#xe651;</i></button>
+        </div>
+    </div>
+    <div id="divVideoBody"></div>
+
+    <script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="js/layui/layui.js"></script>
+    <script type="text/javascript" src="js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="js/base.js?t=4.4.6.0"></script>
+    <script type="text/javascript">
+debugger
+	var baseUrl="http://47.113.119.131:19180/";
+
+        var urlLogin = '/Home/Login';
+        var urlGetVehicle = baseUrl+'WebAPI/XVideo/GetVehicleVideoInfo';
+        var urlVideoPlay = baseUrl+'WebAPI/XVideo/VideoPlay';
+        var urlVideoStop = baseUrl+'WebAPI/XVideo/VideoStop';
+        var urlVideoCloseAudio = baseUrl+'WebAPI/XVideo/VideoCloseAudio';
+        var urlVideoQueryStatus = baseUrl+'WebAPI/XVideo/VideoQueryVideoStatus';
+        var urlVideoSwitchBitstream = baseUrl+'WebAPI/XVideo/VideoSwitchBitstream';
+        var urlVideoPlayerCloudControl = baseUrl+'WebAPI/XVideo/VideoPlayerCloudControl';
+        var autoPlayVehicle = undefined;
+        var playerMonitorArray = [];
+        var playerDictionry = {};
+        var playingCount = 0;
+        var autoPlayVehicleChannelDict = {};
+
+
+
+        $(function () {
+            // 自动登录
+            var userName = getQueryString('username');
+            var password = getQueryString('password');
+            if ((userName == null || userName == '') && (password == null || password == '')) {
+                userName = 'gzdd';
+                password = 'f44ac8af472e2159d868362fb8ab7489';
+            }
+
+            /*
+            $.ajax({
+                url: urlLogin,
+                data: { userName: userName, password: password },
+                beforeSend: function () { },
+                success: function (result, textStatus) {
+                    if (!ajaxSuccessPreprocessing(result)) return false;
+                    initLayout();
+                }
+            });
+			*/
+
+             initLayout();
+
+            // 窗体关闭前，调用dispose方法，以保证rtmp客户端流关闭
+            $(window).bind('beforeunload', function (e) { pauseAllVideo(); });
+
+            // 窗体关闭时，关闭所有的播放器
+            $(window).unload(function () { pauseAllVideo(); });
+        });
+
+        function initLayout() {
+            var width = $(window).width();
+            var height = $(window).height();
+
+            $("#divVideoBody").height(height - 32 - 5);
+            $("#divVideoBody").width(width - 5);
+
+            // 自动播放参数带的车辆
+            var vehicleNumber = getQueryString('plateNumber');
+            vehicleNumber = vehicleNumber == null || vehicleNumber == "" ? getQueryString('licenseId') : vehicleNumber;
+            var event = getQueryString('event');
+            var stream = getQueryString('stream');
+            var channel = getQueryString('channel');
+            if (stream == null) stream = 2;
+            if (channel == null) channel = 6;
+
+			var plateNumber=getQueryString('plateNumber')?getQueryString('plateNumber'):getQueryString('v');
+
+            $.ajax({
+                type: 'GET',
+                url: urlGetVehicle,
+                data: { "plateNumber": plateNumber },
+                beforeSend: function () { },
+                success: function (result, textStatus) {
+                    if (!ajaxSuccessPreprocessing(result)) return false;
+
+                    autoPlayVehicle = result.Data;
+                    if (autoPlayVehicle == null) {
+                        $('#divVideoBody').html('<h1>未识别车辆' + vehicleNumber + '，请配置后重试！</h1>');
+                        return;
+                    }
+
+                    var installParams = autoPlayVehicle.ExtInstalledParamters;
+                    var videoChannelArray = installParams && installParams.VideoChannelArray ? installParams.VideoChannelArray.sort() : [];
+                    if (!autoPlayVehicle || videoChannelArray.length == 0 || channel <= 0) {
+                        $('#divVideoBody').html('<h1>车辆' + vehicleNumber + '未配置音视频通道，请配置后重试！</h1>');
+                        return;
+                    }
+
+                    var size = 1;
+                    var array = [];
+                    for (var i = 0; i < videoChannelArray.length; i++) {
+                        if (i >= channel) break;
+
+                        var d = {
+                            UserId: 0,
+                            MontorType: 2,
+                            VehicleId: autoPlayVehicle.VehicleId,
+                            ChannelId: videoChannelArray[i],
+                            PhoneNumber: '',
+                            AVDataType: '',
+                            BitStreamType: stream == 1 ? 0 : 1,
+                            AutoPlay: true,
+                            ExtVehicleNumber: autoPlayVehicle.VehicleNumber
+                        };
+                        array.push(d);
+                        autoPlayVehicleChannelDict["divPlayer_" + autoPlayVehicle.VehicleId + "_" + videoChannelArray[i]] = 1;
+                        size = i + 1;
+                    }
+
+                    // 绘制窗体
+                    if (size == 3) size = 4;
+                    if (size == 5) size = 6;
+                    renderVideoArrayAverage(array, size, true);
+                }
+            });
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        function renderVideoArrayAverage(array, size, autoplay) {
+
+            // 图片高亮
+            $('#btnImg1').attr('src', 'img/view_1.jpg');
+            $('#btnImg2').attr('src', 'img/view_2.jpg');
+            $('#btnImg4').attr('src', 'img/view_4.jpg');
+            $('#btnImg6').attr('src', 'img/view_6.jpg');
+            $('#btnImg' + size).attr('src', 'img/view_over_' + size + '.jpg');
+            currPageSize = size;
+
+            // 销毁已存在的播放器
+            for (var key in playerDictionry) {
+                var player = playerDictionry[key];
+                if (player == null || player == undefined) continue;
+                if (player.contentWindow && player.contentWindow.videoDispose) player.contentWindow.videoDispose();
+                delete player;
+            }
+            delete playerDictionry;
+            delete playerMonitorArray;
+            playerDictionry = {};
+            playerMonitorArray = array;
+
+            // 渲染
+            var w = $('#divVideoBody').width();
+            var h = $('#divVideoBody').height();
+
+            var html = '';
+            if (size == 1 || size == 2 || size == 4 || size == 9 || size == 16 || size == 36 || size == 64 || size == 100) {
+                var row = 1;
+                var col = 1;
+                if (size == 2) { row = 1; col = 2; }
+                if (size == 4) { row = 2; col = 2; }
+                if (size == 9) { row = 3; col = 3; }
+                if (size == 16) { row = 4; col = 4; }
+                if (size == 36) { row = 6; col = 6; }
+                if (size == 64) { row = 8; col = 8; }
+                if (size == 100) { row = 10; col = 10; }
+                var wt = w / col - 5 - 0 - 6 - 1;
+                var ht = h / row - 5 - 16 - 6 - 1;
+
+                // 显示
+                for (var i = 0; i < size; i++) {
+                    var d = i < array.length ? array[i] : null;
+                    html += renderVideoItem(d, wt, ht, 1); //(size == 1 || size == 2 || size == 4) ? 0 : 1); // 0: 主码流；1：子码流（强制为子码流）
+                }
+                $('#divVideoBody').empty().append(html);
+            }
+            else if (size == 6 || size == 8 || size == 10) {
+                var row = 3;
+                var col = 3;
+                if (size == 8) { row = 4; col = 4; }
+                if (size == 10) { row = 5; col = 5; }
+                var wt = Math.floor(w / col) - 5 - 0 - 7;
+                var ht = Math.floor(h / row) - 5 - 16 - 7;
+                var wf = (wt + 5 + 0 + 7) * (col - 1) - 5 - 0 - 7 - 2;
+                var hf = (ht + 5 + 16 + 7) * (row - 1) - 5 - 16 - 7 - 3;
+
+                // 显示
+                for (var i = 0; i < size; i++) {
+                    var d = i < array.length ? array[i] : null;
+                    if (i == 0) html += renderVideoItem(d, wf, hf - 1, 1);  // 0: 主码流；1：子码流（强制为子码流）
+                    else html += renderVideoItem(d, wt, ht, 1);             // 0: 主码流；1：子码流（强制为子码流）
+                }
+                $('#divVideoBody').empty().append(html);
+            }
+
+            // 自动播放
+            if (autoplay) {
+                for (var i = 0; i < size; i++) {
+                    var d = i < array.length ? array[i] : null;
+                    //if (d != null && d.id && autoPlayVehicleId == '')          { playVideoFirst(d, 10 * (i + 1)); }
+                    //if (d != null && d.id && d.VehicleId == autoPlayVehicleId) { playVideoFirst(d, 10 * (i + 1)); }
+                    if (d != null && autoPlayVehicleChannelDict[d.id] != undefined) { playVideoFirst(d, 10 * (i + 1)); }
+                }
+            }
+        }
+
+        function renderVideoItem(d, wt, ht, bitStreamType) {
+            var id = d == null ? '' : 'divPlayer_' + d.VehicleId + '_' + d.ChannelId;
+            var title = (d == null ? '' : d.ExtVehicleNumber) + " " + (d == null ? '' : 'CH' + d.ChannelId);
+            if (d != null) {
+                d.id = id;
+                d.wt = wt;
+                d.ht = ht;
+                d.bitStreamType = bitStreamType;
+                playerDictionry[id] = d;
+            }
+
+            var html = '';
+            html += '<div class="videoWrap">';
+            html += '<div class="videoHeader">';
+            html += '   <div class="videoTitle" style="width:' + (wt - 80) + 'px;" title="' + title + '"><b>' + (d == null ? '' : d.ExtVehicleNumber) + '</b><span>' + (d == null ? '' : 'CH' + d.ChannelId) + '</span></div>';
+            html += '   <div class="videoButton">';
+            html += '       <i class="layui-icon" title="云台" onclick="javascript:settingVideo(\'' + id + '\');">&#xe620;</i>';
+            html += '       <i class="layui-icon" title="删除" onclick="javascript:removeVideo(\'' + id + '\');">&#x1007;</i>';
+            html += '   </div>';
+            html += '</div>';
+            html += '<div class="videoContent" id="' + id + '" style="width: ' + wt + 'px; height: ' + ht + 'px;">';
+            html += buildVideoButtonHtml(d);
+            html += '</div>';
+            html += '</div>';
+            return html;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        function playVideo(id, downPlayCommand, callback) {
+
+
+            var d = playerDictionry[id];
+            if (d == null || d == undefined) return;
+            if (!downPlayCommand) downPlayCommand = true;
+
+            // 停止连接
+            if ($('#' + id).find('span').is(':visible')) {
+                stopVideo(id);
+                return;
+            }
+
+            // 不要重复打开连接
+            if ($('#' + id).find('iframe').is(':visible')) {
+                return;
+            }
+
+            // 开始连接
+            $('#' + id).find('i').html('&#xe651;');
+            $('#' + id).find('span').show();
+
+            $.ajax({
+                url: urlVideoPlay,
+                data: { vehicleId: d.VehicleId, channelId: d.ChannelId, bitStreamType: d.bitStreamType, downPlayCommand: downPlayCommand },
+                beforeSend: function () { },
+                success: function (result, textStatus) {
+                    debugger
+                    if (!result || result.State == undefined) { $('#' + d.id).find('span').html('数据格式异常！'); if (callback) callback(); return false; }
+                    if (result.State == 2) { $('#' + d.id).find('span').html('未登录或登录已失效！'); if (callback) callback(); return false; }
+                    if (result.State != 1) { $('#' + d.id).find('span').html(result.Message); if (callback) callback(); return false; }
+
+                    if (d.timeout) { window.clearTimeout(d.timeout); delete d.timeout; }
+                    d.timeout = window.setTimeout(function () { d.queryTotal = 0; videoQueryStatus(d); }, 500);   // 未开启查询状态，则开启
+                    if (callback) callback();
+                },
+                beforeSend: function () { },
+                complete: function () { }
+            });
+        }
+
+        function videoQueryStatus(d) {
+            d.queryStatus = true;
+            $.ajax({
+			 type: 'GET',
+                url: urlVideoQueryStatus,
+                data: { vehicleId: d.VehicleId, channelId: d.ChannelId, bitStreamType: d.bitStreamType, monitorType: 1 },
+                beforeSend: function () { },
+                success: function (result, textStatus) {
+                    if (d.timeout) { window.clearTimeout(d.timeout); delete d.timeout; }
+                    if (!ajaxSuccessPreprocessingWithoutMsg(result, true)) return;
+
+                    if (result.Data == null || parseInt(result.Data.Status) != 1) {
+                        if (d.queryStatus && d.queryTotal < 10) {
+                            d.queryTotal++;
+                            d.timeout = window.setTimeout(function () { videoQueryStatus(d); }, 1000);   // 重新查询播放连接是否成功
+                        }
+                        else if (d.queryStatus && d.queryTotalTimes < 0) {
+                            $('#' + d.id).find('span').hide();
+                            d.queryStatus = false;
+                            d.queryTotalTimes++;
+                            d.timeout = window.setTimeout(function () { playVideo(d.id); }, 1000);    // 重新下发播放指令
+                        }
+                        else {
+                            $('#' + d.id).find('span').html('下发指令失败！');                         // 错误提示
+                            d.queryStatus = false;
+                        }
+                    }
+                    else {
+                        d.queryStatus = false;
+                        d.AVDataType = result.Data.AVDataType;
+                        d.ExtVehicleVideoUrl = result.Data.ExtVehicleVideoUrl;
+                        $('#' + d.id).empty().html(buildVideoPlayerHtml(d));
+                        playingCount++;
+                    }
+                },
+                beforeSend: function () { },
+                complete: function () { }
+            });
+        }
+
+        function stopVideo(id) {
+            var d = playerDictionry[id];
+            if (d == null || d == undefined) return;
+
+            var frmArray = $("#" + d.id).find('iframe');
+            if (frmArray.length > 0) {
+                var frm = frmArray.get(0);
+                if (frm.contentWindow && frm.contentWindow.videoDispose) frm.contentWindow.videoDispose();
+                delete frm;
+            }
+
+            if (d.timeout) { window.clearTimeout(d.timeout); delete d.timeout; }
+            d.queryStatus = false;
+            $('#' + id).empty().html(buildVideoButtonHtml(d));
+            d.queryStatus = false;
+            playingCount--;
+            //$.ajax({
+            //    url: urlVideoStop,
+            //    data: { vehicleId: d.VehicleId, channelId: d.ChannelId },
+            //    beforeSend: function () { },
+            //    success: function (result, textStatus) {
+            //        if (!ajaxSuccessPreprocessingWithoutMsg(result)) return;
+            //        $('#' + id).empty().html(buildVideoButtonHtml(d));
+            //    },
+            //    beforeSend: function () { },
+            //    complete: function () { }
+            //});
+        }
+
+        function openAudio(id) {
+            var d = playerDictionry[id];
+            if (d == null || d == undefined) return;
+
+            $.ajax({
+                url: urlVideoStop,
+                data: { vehicleId: d.VehicleId, channelId: d.ChannelId },
+                beforeSend: function () { },
+                success: function (result, textStatus) {
+                    if (!ajaxSuccessPreprocessingWithoutMsg(result)) return;
+                    $('#' + id).empty().html(buildVideoButtonHtml(d));
+                    window.setTimeout(function () { d.queryTotalTimes = 0; playVideo(id); }, 1000);
+                },
+                beforeSend: function () { },
+                complete: function () { }
+            });
+        }
+
+        function closeAudio(id) {
+            var d = playerDictionry[id];
+            if (d == null || d == undefined) return;
+
+            $.ajax({
+                url: urlVideoCloseAudio,
+                data: { vehicleId: d.VehicleId, channelId: d.ChannelId },
+                beforeSend: function () { },
+                success: function (result, textStatus) {
+                    if (!ajaxSuccessPreprocessingWithoutMsg(result)) return;
+                },
+                beforeSend: function () { },
+                complete: function () { }
+            });
+        }
+
+        function videoSwitchBitstream(id, bitStreamType) {
+            var d = playerDictionry[id];
+            if (d == null || d == undefined) return;
+            $.ajax({
+                url: urlVideoSwitchBitstream,
+                data: { vehicleId: d.VehicleId, channelId: d.ChannelId, bitStreamType: bitStreamType },
+                beforeSend: function () { },
+                success: function (result, textStatus) { },
+                beforeSend: function () { },
+                complete: function () { }
+            });
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        function buildVideoPlayerHtml(d) {
+            if (d == null || d == undefined) return '';
+
+            var muted = true; //d.AVDataType == 1 || d.AVDataType == 5;
+
+		 // var url = baseUrl+"/MonitorMgr/MonitorByVideo/VideoPlayer?id=" + d.id + "&vid=" + d.VehicleId + "&vnumber=" + encodeURI(d.ExtVehicleNumber) + "&cid=" + d.ChannelId + "&wt=" + d.wt + "&ht=" + d.ht + '&bst=' + d.bitStreamType + '&avFlag=' + d.AVDataType + '&muted=' + muted + "&url=" + encodeURI(d.ExtVehicleVideoUrl);
+
+		 var url ="VideoPlayer1078.html?id=" + d.id + "&vid=" + d.VehicleId + "&vnumber=" + encodeURI(d.ExtVehicleNumber) + "&cid=" + d.ChannelId + "&wt=" + d.wt + "&ht=" + d.ht + '&bst=' + d.bitStreamType + '&avFlag=' + d.AVDataType + '&muted=' + muted + "&url=" + encodeURI(d.ExtVehicleVideoUrl);
+
+			console.dir(url);
+
+			var html = "<iframe src='" + url + "' style='width: " + d.wt + "px; height: " + d.ht + "px; border: 0; margin: 0; padding: 0;margin-top: 0px; overflow:hidden;background-color:#000;' allowfullscreen='true' webkitallowfullscreen='true' mozallowfullscreen='true' />";
+            return html;
+        }
+
+        function buildVideoButtonHtml(d) {
+            if (d == null || d == undefined) return '';
+            return '<button class="videoPlayButton" type="button" aria-live="polite" onclick="javascript:playVideoByButton(\'' + d.id + '\');" style="top:' + ((d.ht - 63) / 2) + 'px;"><i class="layui-icon videoPlayButtonText">&#xe652;</i><span style="display:none;">连接中...</span></button>';
+        }
+
+        function playVideoByButton(id) {
+            var d = playerDictionry[id];
+            if (d == null || d == undefined) return;
+            playVideoFirst(d);
+        }
+
+        function playVideoFirst(d, intervale) {
+            if (d == null || d == undefined) return;
+            if (!intervale) interval = 10;
+            if (d.playTimeout) { clearTimeout(d.playTimeout); delete d.playTimeout; }
+            d.playTimeout = window.setTimeout(function () { d.queryTotalTimes = 0; playVideo(d.id, true); }, intervale);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        function startAllVideo() {
+            autoPlayVehicleId = '';
+
+            var i = 0;
+            for (var key in playerDictionry) {
+                i++;
+                var d = playerDictionry[key];
+                playVideoFirst(d, 10 * i);
+            }
+        }
+
+        function pauseAllVideo() {
+            autoPlayVehicleId = '';
+            for (var key in playerDictionry) {
+                stopVideo(key);
+            }
+            playingCount = 0;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        var settingDlgIdx = null;
+        function settingVideo(id) {
+            if (settingDlgIdx != null) layui.layer.close(settingDlgIdx);
+
+            var d = playerDictionry[id];
+            if (d == null || d == undefined) return;
+
+            var url = urlVideoPlayerCloudControl + '?vehicleId=' + d.VehicleId + '&channelId=' + d.ChannelId;
+            var title = '视频控制：' + d.ExtVehicleNumber + " " + 'CH' + d.ChannelId;
+            settingDlgIdx = layui.layer.open({ type: 2, title: title, content: url, maxmin: false, area: ['420px', '180px'] });
+        }
+
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return decodeURI(r[2]); // unescape(r[2]);
+            return null;
+        }
+
+    </script>
+</body>
+</html>
