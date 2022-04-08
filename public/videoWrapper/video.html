@@ -29,7 +29,7 @@
     <script type="text/javascript" src="js/jquery.ztree.all.min.js"></script>
     <script type="text/javascript" src="js/base.js?t=4.4.6.0"></script>
     <script type="text/javascript">
-debugger
+
 	var baseUrl="http://47.113.119.131:19180/";
 
         var urlLogin = '/Home/Login';
@@ -150,6 +150,7 @@ debugger
         ///////////////////////////////////////////////////////////////////////////////////////////////////
 
         function renderVideoArrayAverage(array, size, autoplay) {
+            debugger
 
             // 图片高亮
             $('#btnImg1').attr('src', 'img/view_1.jpg');
@@ -282,7 +283,6 @@ debugger
                 data: { vehicleId: d.VehicleId, channelId: d.ChannelId, bitStreamType: d.bitStreamType, downPlayCommand: downPlayCommand },
                 beforeSend: function () { },
                 success: function (result, textStatus) {
-                    debugger
                     if (!result || result.State == undefined) { $('#' + d.id).find('span').html('数据格式异常！'); if (callback) callback(); return false; }
                     if (result.State == 2) { $('#' + d.id).find('span').html('未登录或登录已失效！'); if (callback) callback(); return false; }
                     if (result.State != 1) { $('#' + d.id).find('span').html(result.Message); if (callback) callback(); return false; }

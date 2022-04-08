@@ -20,7 +20,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lib": "vue-cli-service build --target lib --name mapmmm --dest lib packages/index.js"
+    "lib": "vue-cli-service build --target lib --name Dado --dest lib packages/index.js"
   },
   "dependencies": {
     "core-js": "^3.6.5",
