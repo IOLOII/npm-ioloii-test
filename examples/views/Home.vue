@@ -9,12 +9,14 @@
 <script>
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
+import toast from "~@/toast";
 
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    HelloWorld,
+    toast
   }
 }
 </script>

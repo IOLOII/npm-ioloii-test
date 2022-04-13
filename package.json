@@ -1,11 +1,9 @@
 {
-  "name": "@ioloii/test",
-  "version": "0.1.1",
-  "description": "测试使用vue-cli发布npm包",
-  "main": "lib/mapmmm.umd.min.js",
+  "name": "@ioloii/dado",
+  "version": "0.1.2",
+  "description": "私库",
+  "main": "lib/@ioloii/dado.umd.min.js",
   "keywords": [
-    "ioloii",
-    "npm-test"
   ],
   "author": {
     "name": "IOLOII",
@@ -15,15 +13,19 @@
   "private": false,
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "http://127.0.0.1:4873/"
   },
+  "files": [
+    "lib/*",
+    "README.md",
+    "package.json"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lib": "vue-cli-service build --target lib --name mapmmm --dest lib packages/index.js"
+    "lib": "cross-env NODE_ENV=npmproduction vue-cli-service build --target lib --name Dado --dest lib packages/index.js"
   },
   "dependencies": {
-    "@ioloii/test": "^0.1.0",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
     "vue": "^2.6.11",
@@ -35,6 +37,7 @@
     "@vue/cli-plugin-router": "~4.5.15",
     "@vue/cli-plugin-vuex": "~4.5.15",
     "@vue/cli-service": "~4.5.15",
+    "cross-env": "^7.0.3",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"
