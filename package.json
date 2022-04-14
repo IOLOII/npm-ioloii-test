@@ -1,8 +1,8 @@
 {
-  "name": "@ioloii/dado",
-  "version": "0.1.2",
+  "name": "dado",
+  "version": "1.0.2",
   "description": "私库",
-  "main": "lib/@ioloii/dado.umd.min.js",
+  "main": "lib/dado.umd.min.js",
   "keywords": [
   ],
   "author": {
@@ -23,7 +23,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lib": "cross-env NODE_ENV=npmproduction vue-cli-service build --target lib --name Dado --dest lib packages/index.js"
+    "lib": "cross-env NODE_ENV=npmproduction vue-cli-service build --target lib --name dado --dest lib packages/index.js"
   },
   "dependencies": {
     "core-js": "^3.6.5",
