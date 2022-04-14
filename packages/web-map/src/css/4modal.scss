@@ -1,0 +1,11 @@
+.webmap-wrapper {
+  &-modal-container {
+    // 模态层
+    z-index: $modalLayerIndex;
+    cursor: pointer;
+    width: $webMapWidth;
+    height: $webMapHeight;
+    // transform: translateZ(($modalLayerIndex/10) + px) $rotate3d;
+    // opacity: $modalLayerIndex/1500;
+  }
+}

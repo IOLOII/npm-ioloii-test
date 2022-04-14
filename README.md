@@ -17,3 +17,9 @@ Vue.sue(test)
 npm adduser --registry http://127.0.0.1:4873/
 
 npm publish --registry http://127.0.0.1:4873/
+
+
+组件开发命名规范
+![](image/README/1649922936185.png)
+![](image/README/1649922942871.png)
+![](image/README/1649922947512.png)

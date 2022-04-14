@@ -1,0 +1,11 @@
+.webmap-wrapper {
+  &-anime-container {
+    // 动画层
+    z-index: $animeLayerIndex;
+    cursor: pointer;
+    width: $webMapWidth;
+    height: $webMapHeight;
+    // transform: translateZ(($animeLayerIndex/10) + px) $rotate3d;
+    // opacity: $animeLayerIndex/1500;
+  }
+}

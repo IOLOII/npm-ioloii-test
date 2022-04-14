@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Hom213213e</router-link> |
-      <router-link to="/about">Ab12321out</router-link>
+      <router-link to="/">Home</router-link> |
+      <!-- <router-link to="/about">About</router-link> -->
+      <router-link to="/componentsView">componentsView</router-link>
     </div>
     <router-view/>
   </div>

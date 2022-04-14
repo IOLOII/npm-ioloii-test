@@ -1,10 +1,9 @@
 {
   "name": "dado",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "私库",
   "main": "lib/dado.umd.min.js",
-  "keywords": [
-  ],
+  "keywords": [],
   "author": {
     "name": "IOLOII",
     "email": "yuey@coinioc.cc",
@@ -26,8 +25,10 @@
     "lib": "cross-env NODE_ENV=npmproduction vue-cli-service build --target lib --name dado --dest lib packages/index.js"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
+    "tiny-emitter": "^2.1.0",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"

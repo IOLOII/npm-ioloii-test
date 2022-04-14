@@ -1,0 +1,11 @@
+.webmap-wrapper {
+  &-toast-container {
+    // 系统提示
+    z-index: $toastLayerIndex;
+    cursor: pointer;
+    width: $webMapWidth;
+    height: $webMapHeight;
+    // transform: translateZ(($toastLayerIndex/10) + px) $rotate3d;
+    // opacity: $toastLayerIndex/1500;
+  }
+}

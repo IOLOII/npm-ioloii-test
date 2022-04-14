@@ -4,6 +4,10 @@ import router from "./router";
 import store from "./store";
 
 Vue.config.productionTip = false;
+Vue.prototype.$amapKey = "d3fcaebb2ce850826758ed089c9a8132";
+// Vue.prototype.$amapCenter = [113.267021, 23.113628]// gz
+Vue.prototype.$amapCenter = [119.930906,30.869838]// hz
+
 
 new Vue({
   router,

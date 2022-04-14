@@ -1,0 +1,43 @@
+// 高度
+$mapLayerIndex: 0; // 地图层
+$suspendedLayerIndex: 1000; // 悬浮层
+$interactionLayerIndex: 1100; // 交互层
+$animeLayerIndex: 1200; // 动画层
+$modalLayerIndex: 1300; // 模态层
+$toastLayerIndex: 1400; // 系统提示
+$rotate3d: rotate3d(1, 1, 1, 354deg);
+
+// 长宽
+$webMapWidth: 100%;
+$webMapHeight: 100%;
+
+$mapWidth: 100%;
+$mapHeight: 100%;
+$background: red;
+
+div {
+  box-sizing: border-box;
+  // transform: rotate3d(18, 12, 51, 354deg);
+  transform-style: preserve-3d;
+  border: 1px solid gray;
+  perspective: 3000px;
+}
+.webmap-wrapper {
+  // 组件 容器
+  position: relative;
+  width: $webMapWidth;
+  height: $webMapHeight;
+  &-layer {
+    width: inherit;
+    height: inherit;
+    // background: $background;
+    position: absolute;
+  }
+}
+
+@import "./0map.scss";
+@import "./1suspended.scss";
+@import "./2interaction.scss";
+@import "./3anime.scss";
+@import "./4modal.scss";
+@import "./5toast.scss";

@@ -1,0 +1,10 @@
+.webmap-wrapper {
+  &-map-container {
+    z-index: $mapLayerIndex;
+    cursor: pointer;
+    width: $mapWidth;
+    height: $mapHeight;
+    // transform: translateZ(($suspendedLayerIndex/10) + px);
+    // opacity: $mapLayerIndex/1500;
+  }
+}

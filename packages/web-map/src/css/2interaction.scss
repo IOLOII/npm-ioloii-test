@@ -1,0 +1,43 @@
+$background: salmon;
+.webmap-wrapper {
+  &-interaction-container {
+    // 交互层
+    z-index: $interactionLayerIndex;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // transform: translateZ(($suspendedLayerIndex/10) + px) $rotate3d;
+    // opacity: $interactionLayerIndex/1500;
+  }
+  &-suspended-container {
+    &-top {
+      .webmap-wrapper-interaction-container {
+        width: 80%;
+        height: 80%;
+        background: $background;
+      }
+    }
+    &-left {
+      .webmap-wrapper-interaction-container {
+        width: 80%;
+        height: 80%;
+        background: $background;
+      }
+    }
+    &-right {
+      .webmap-wrapper-interaction-container {
+        width: 80%;
+        height: 80%;
+        background: $background;
+      }
+    }
+    &-bottom {
+      .webmap-wrapper-interaction-container {
+        width: 80%;
+        height: 80%;
+        background: $background;
+      }
+    }
+  }
+}
