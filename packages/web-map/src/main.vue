@@ -1,13 +1,25 @@
 <template>
   <div class="webmap-wrapper">
     <div style="position: absolute; top: -100px"></div>
-    <div
+    <!-- <div
       class="webmap-wrapper-layer webmap-wrapper-map-container"
       ref="webmap"
       @click.stop="g_click('webmap-layer')"
-    ></div>
-    <Supended v-if="false" />
-
+    ></div> -->
+    <Supended v-if="true" ref="Supended">
+      <template #top>
+        <div style="width: 200px; height: 30px" @click.stop="">123123</div>
+      </template>
+    </Supended>
+    <!-- <Teleport to=".webmap-wrapper">
+      <span>123123</span>
+      <span>123123</span>
+    </Teleport> -->
+    <Teleport to=".webmap-wrapper">
+      <div style="" class="modal">
+        <span>asdasdad</span>
+      </div>
+    </Teleport>
     <!-- <div
       class="webmap-wrapper-layer webmap-wrapper-anime-container"
       @click="g_click('anime-layer')"
@@ -38,15 +50,21 @@
    * @desc [WebMap]
    */
   // import
-  import AMapLoader from '@amap/amap-jsapi-loader'
-
+  // 事件
   import eventBus from './eventBus'
-
+  // 图层
+  import AMapLoader from '@amap/amap-jsapi-loader'
   import Supended from './1suspended/container.vue'
+  import Teleport from '../components/teleport.vue'
+
+  // 配置
+  import metaConfig from './metaConfig'
+
   export default {
     name: 'WebMap',
     components: {
-      Supended
+      Supended,
+      Teleport
     },
     props: {
       version: {
@@ -89,6 +107,9 @@
           },
           this.options
         )
+      },
+      metaConfig() {
+        return metaConfig
       }
     },
     created() {
@@ -102,6 +123,10 @@
     mounted() {},
     methods: {
       alert(v) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(v)
+          return
+        }
         if (typeof v === 'object') {
           alert(JSON.stringify(v))
         } else {
@@ -173,7 +198,6 @@
                 //  exceptions: 'application/vnd.ogc.se_inimage'
               }
             })
-            console.log(wms2)
             wms2.setMap(map)
             // setTimeout(() => {
             //   wms2.hide()

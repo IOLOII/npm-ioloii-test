@@ -3,7 +3,7 @@
     class="webmap-wrapper-layer webmap-wrapper-interaction-container"
     @click.stop="g_click('wrapper-layer')"
   >
-    交互层
+    <slot></slot>
   </div>
 </template>
 

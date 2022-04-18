@@ -8,7 +8,6 @@
 <script>
   // import
   import { Button } from 'element-ui'
-  console.log(Button)
   export default {
     name: 'toast',
     props: {

@@ -7,26 +7,38 @@
     <div
       class="webmap-wrapper-suspended-container-block webmap-wrapper-suspended-container-top"
       @click.stop="suspendedClick('top')"
+      v-if="$slots.top"
     >
-      <Interaction />
+      <Interaction>
+        <slot name="top"></slot>
+      </Interaction>
     </div>
     <div
       class="webmap-wrapper-suspended-container-block webmap-wrapper-suspended-container-left"
       @click.stop="suspendedClick('left')"
+      v-if="$slots.left"
     >
-      <Interaction />
+      <Interaction>
+        <slot name="left"></slot>
+      </Interaction>
     </div>
     <div
       class="webmap-wrapper-suspended-container-block webmap-wrapper-suspended-container-right"
       @click.stop="suspendedClick('right')"
+      v-if="$slots.right"
     >
-      <Interaction />
+      <Interaction>
+        <slot name="right"></slot>
+      </Interaction>
     </div>
     <div
       class="webmap-wrapper-suspended-container-block webmap-wrapper-suspended-container-bottom"
       @click.stop="suspendedClick('bottom')"
+      v-if="$slots.bottom"
     >
-      <Interaction />
+      <Interaction>
+        <slot name="bottom"></slot>
+      </Interaction>
     </div>
   </div>
 </template>
@@ -38,11 +50,12 @@
   export default {
     name: 'Supended',
     components: { Interaction },
-    methods:{
-      g_click(v){
+    mounted() {},
+    methods: {
+      g_click(v) {
         eventBus.$emit('g_click', v)
       },
-      suspendedClick(v){
+      suspendedClick(v) {
         eventBus.$emit('suspendedClick', v)
       }
     }
