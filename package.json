@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
+    "axios": "^0.26.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
     "tiny-emitter": "^2.1.0",

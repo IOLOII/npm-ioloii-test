@@ -1,16 +1,22 @@
 <template>
   <div class="component-warpper">
-    <WebMap/>
+    <WebMap :metaConfig="metaConfig" />
   </div>
 </template>
 
 <script>
   // import
   import WebMap from '~@/web-map'
+  import { metaConfig } from '~@/web-map/src/metaConfig'
   export default {
     name: 'componentsView',
     components: {
       WebMap
+    },
+    computed: {
+      metaConfig() {
+        return metaConfig
+      }
     }
   }
 </script>
