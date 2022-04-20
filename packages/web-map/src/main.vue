@@ -31,7 +31,7 @@
           <button @click="test_loadLine">测试道路查询加载</button>
           <button @click="test_setMetaConfig">顶部赋值操作</button>
           <button @click="test_getActived">获取选中项</button>
-          <button @click="test_rubOffLine ">清除查询的线路数据</button>
+          <button @click="test_rubOffLine()">清除查询的线路数据</button>
         </div>
       </template>
     </Supended>
