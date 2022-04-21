@@ -14,7 +14,7 @@
           <span>路线名称</span>
           <Icon type="icon-close" @click.native="closeModal('default')" />
         </div>
-        <img :src="require('./road.webp')" />
+        <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da" />
         <div class="tips">基础信息</div>
         <el-row>
           <el-col :span="24" :offset="0">

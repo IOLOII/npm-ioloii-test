@@ -1,11 +1,11 @@
 import axios from "axios";
-import eventBus from './eventBus'
+import eventBus from "./eventBus";
 export default {
   methods: {
     test_loadLayer({ layerName = "map:LX_X", version = "1.1.1" }) {
       if (this.geoLayersManage[layerName]) return;
       let wms = new this.$AMap.TileLayer.WMS({
-        url: "http://localhost:8080/geoserver/map/wms",
+        url: this.geoServerUrl,
         blend: false,
         visible: false,
         params: {
@@ -56,7 +56,7 @@ export default {
       const delta = 0.03467559814453125;
       axios({
         method: "get",
-        url: "http://localhost:8080/geoserver/map/wms",
+        url: this.geoServerUrl,
         params: {
           SERVICE: "WMS",
           VERSION: "1.1.1",
@@ -83,7 +83,7 @@ export default {
           // 隐藏主图层 因为目前颜色未区分
           this.geoLayersManage[activedLayerName].hide();
           res.data.features.forEach((item) => {
-            const label = "LXMC"; // TODO: 定义查询参数 后续再调整
+            const label = this.geoQueryProp; // TODO: 定义查询参数 后续再调整
             this.test_query({
               layerName: activedLayerName,
               query: `${label}='${item.properties[label]}'`,
@@ -101,7 +101,7 @@ export default {
       version = "1.1.1",
     }) {
       let wms = new this.$AMap.TileLayer.WMS({
-        url: "http://localhost:8080/geoserver/map/wms",
+        url: this.geoServerUrl,
         blend: false,
         // visible: true,
         params: {
@@ -109,9 +109,9 @@ export default {
           VERSION: version,
           CQL_FILTER: query,
         },
-      })
-      wms.setMap(this.map)
-      this.geoLayersManage[layerName].$children.push(wms)
+      });
+      wms.setMap(this.map);
+      this.geoLayersManage[layerName].$children.push(wms);
       // 查询到线路信息后 展开弹窗 传入当前wms信息 当关闭弹窗是
       // 触发弹窗事件
       eventBus.$emit("openModal", {
@@ -120,12 +120,12 @@ export default {
         callback: {
           success: (res) => {
             // 关闭弹窗 回显默认layer
-            this.test_rubOffLine()
+            this.test_rubOffLine();
           },
           fail: (err) => {
-            console.log(err)
-          }
-        }
+            console.log(err);
+          },
+        },
       });
     },
     /**
@@ -165,7 +165,7 @@ export default {
     },
     test_getActived() {},
     // 擦除线路图层- 非路网图层
-    test_rubOffLine(LayerName='') {
+    test_rubOffLine(LayerName = "") {
       // TODO: 直接查询第一个layer 后续再调整
       let activedLayerName =
         LayerName || this.$refs.HeadPickGroup[0].getActivatedItemLayerName(); // 获取当前激活的layer
@@ -201,8 +201,7 @@ export default {
         method: "post",
         url: "https://yx.91jt.net/testroad/api/pc/pcHome/highwayProperty",
         headers: {
-          token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA1OTQxNDgsInVzZXJuYW1lIjoiYWRtaW4ifQ.KGaBeU3qirWFyy8NqUtzijYgTG9lHt_fcSv_6yctweM",
+          token: this.tempToken,
           "Content-Type": "application/json",
         },
         data: data,

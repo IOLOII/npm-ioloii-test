@@ -1,6 +1,6 @@
 {
   "name": "dado",
-  "version": "1.0.3",
+  "version": "1.0.7",
   "description": "私库",
   "main": "lib/dado.umd.min.js",
   "keywords": [],

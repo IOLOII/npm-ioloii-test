@@ -22,7 +22,7 @@
           />
         </div>
       </template>
-      <template #right>
+      <template #rightss>
         <!-- style="display: flex; width: 80%; justify-content: space-around" -->
         <div @click.stop="">
           <button @click="test_loadLayer">测试图层加载</button>
@@ -73,7 +73,7 @@
    */
   // import
   // 图标
-  import "./font_3347926_3guahro8h8q.js";
+  import './font_3347926_3guahro8h8q.js'
   // 事件
   import eventBus from './eventBus'
   // 图层
@@ -113,7 +113,23 @@
       },
       metaConfig: {
         type: Map,
-        required: true
+        required: false
+      },
+      geoServerUrl: {
+        type: String,
+        required: false,
+        default: 'http://localhost:8080/geoserver/map/wms'
+      },
+      geoQueryProp: {
+        type: String,
+        required: false,
+        default: 'LXMC'
+      },
+      tempToken: {
+        type: String,
+        required: false,
+        default:
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA1OTQxNDgsInVzZXJuYW1lIjoiYWRtaW4ifQ.KGaBeU3qirWFyy8NqUtzijYgTG9lHt_fcSv_6yctweM'
       }
     },
     data() {
@@ -233,8 +249,8 @@
           this.console(v)
           return
         }
-        if (typeof v === 'object') {
-          alert(JSON.stringify(v))
+        if (typeof v !== 'string') {
+          this.console(JSON.stringify(v))
         } else {
           alert(v)
         }
