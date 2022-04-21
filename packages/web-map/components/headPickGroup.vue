@@ -30,7 +30,7 @@
                   v-model="item.value"
                   @change="componentValueChange(componentObj, item)"
                 >
-                  <span>{{ item.name }}</span>
+                  <span :data-item="JSON.stringify(item)">{{ item.name }}</span>
                 </el-checkbox>
               </div>
             </el-tooltip>
@@ -77,7 +77,7 @@
   } from 'element-ui'
 
   export default {
-    name: 'headPickGroup',
+    name: 'HeadPickGroup',
     components: {
       [Button.name]: Button,
       [ButtonGroup.name]: ButtonGroup,

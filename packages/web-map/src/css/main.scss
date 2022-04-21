@@ -22,6 +22,19 @@ div {
   // border: 1px solid gray;
   perspective: 3000px;
 }
+img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 5px;
+}
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+  cursor: pointer;
+}
 .webmap-wrapper {
   // 组件 容器
   position: relative;

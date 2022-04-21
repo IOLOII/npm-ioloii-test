@@ -16,35 +16,35 @@ let metaConfig = new Map([
         children: [
           {
             name: "国道",
-            layerName:'map:LX_G',
+            layerName: "map:LX_G",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "省道",
-            layerName:'map:LX_S',
+            layerName: "map:LX_S",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "县道",
-            layerName:'map:LX_X',
+            layerName: "map:LX_X",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "乡道",
-            layerName:'map:LX_Y',
+            layerName: "map:LX_Y",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "村道",
-            layerName:'map:LX_C',
+            layerName: "map:LX_C",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
@@ -163,7 +163,7 @@ let metaConfig = new Map([
     [
       // 服务设施，服务设施，管理设施
       {
-        name: "服务设施",
+        name: "服务设施1",
         icon: "iconfont XXX",
         headLine: true,
         headLineCheckBox: true,
@@ -171,16 +171,16 @@ let metaConfig = new Map([
         childrenMultiple: true,
         // 交通标志，标线，护栏，防护设施，照明设施，排水设施
         children: [
-          { name: "交通标志", icon: "iconfont XXX", value: false },
-          { name: "标线", icon: "iconfont XXX", value: false },
-          { name: "护栏", icon: "iconfont XXX", value: false },
-          { name: "防护设施", icon: "iconfont XXX", value: false },
-          { name: "照明设施", icon: "iconfont XXX", value: false },
-          { name: "排水设施", icon: "iconfont XXX", value: false },
+          { prop:'tpLabel', name: "交通标志", icon: "iconfont XXX", value: false },
+          { prop:'tpMarking', name: "标线", icon: "iconfont XXX", value: false },
+          { prop:'tpGuardrail', name: "护栏", icon: "iconfont XXX", value: false },
+          { prop:'tpSavefacilities', name: "防护设施", icon: "iconfont XXX", value: false },
+          { prop:'tpLighting', name: "照明设施", icon: "iconfont XXX", value: false },
+          { prop:'tpDrainage', name: "排水设施", icon: "iconfont XXX", value: false },
         ],
       },
       {
-        name: "服务设施",
+        name: "服务设施2",
         icon: "iconfont XXX",
         headLine: true,
         headLineCheckBox: true,
@@ -188,10 +188,10 @@ let metaConfig = new Map([
         childrenMultiple: true,
         // 收费站，服务站，加油站，停车区
         children: [
-          { name: "收费站", icon: "iconfont XXX", value: false },
-          { name: "服务站", icon: "iconfont XXX", value: false },
-          { name: "加油站", icon: "iconfont XXX", value: false },
-          { name: "停车区", icon: "iconfont XXX", value: false },
+          { prop:'tpTollStation', name: "收费站", icon: "iconfont XXX", value: false },
+          { prop:'tpSst', name: "服务站", icon: "iconfont XXX", value: false },
+          { prop:'tpPetrolStation', name: "加油站", icon: "iconfont XXX", value: false },
+          { prop:'tpParkingLot', name: "停车区", icon: "iconfont XXX", value: false },
         ],
       },
       {
@@ -203,10 +203,10 @@ let metaConfig = new Map([
         childrenMultiple: true,
         // 治超站点，公路管理站，桥梁养护牌，监控设备
         children: [
-          { name: "治超站点", icon: "iconfont XXX", value: false },
-          { name: "公路管理站", icon: "iconfont XXX", value: false },
-          { name: "桥梁养护牌", icon: "iconfont XXX", value: false },
-          { name: "监控设备", icon: "iconfont XXX", value: false },
+          { prop:'tpSuper', name: "治超站点", icon: "iconfont XXX", value: false },
+          { prop:'tpStation', name: "公路管理站", icon: "iconfont XXX", value: false },
+          { prop:'tpPlate', name: "桥梁养护牌", icon: "iconfont XXX", value: false },
+          { prop:'tpCamera', name: "监控设备", icon: "iconfont XXX", value: false },
         ],
       },
     ],
@@ -217,6 +217,61 @@ let metaConfig = new Map([
 // console.log(metaConfig.get("路产"));
 // console.log(metaConfig.get("路产") === metaConfig.get("路产"))
 // console.log(metaConfig.get("路网")["国"])
+
+// 根据map metaConfig中的桥梁,隧道,涵洞,路产 key,获取每一项，并遍历每一项的children,取出children中每子级中的name属性，生成映射关系的对象
+function generateAmapMakersManage() {
+  // 桥梁,隧道,涵洞,路产
+  let metaConfigMap = {};
+  Array.from(metaConfig.keys()).forEach((key) => {
+    if (key === "路网") {
+      return;
+    } else {
+      metaConfigMap[key] = {};
+      metaConfig.get(key).forEach((item) => {
+        metaConfigMap[key][item.name] = {};
+        item.children &&
+          item.children.forEach((child) => {
+            if(child.prop){
+              metaConfigMap[key][item.name][child.prop] = [];
+            } else {
+              metaConfigMap[key][item.name][child.name] = [];
+            }
+          });
+      });
+    }
+  });
+  // console.log(metaConfigMap)
+  return metaConfigMap;
+
+  // { '桥梁':
+  //  { '桥梁评定等级': { '一类': [], '二类': [], '三类': [], '四类': [], '五类': [] },
+  //    '桥梁分类（长度）': { '特大桥': [], '大桥': [], '中桥': [], '小桥': [] } },
+  // '隧道':
+  //  { '隧道评定等级': { '一类': [], '二类': [], '三类': [], '四类': [], '五类': [] },
+  //    '隧道分类（长度）': { '特大隧道': [], '大隧道': [], '中隧道': [], '小隧道': [] } },
+  // '涵洞':
+  //  { '涵洞位置': { '主线涵洞': [], '匝道涵洞': [] },
+  //    '行政等级': { '县道': [], '乡道': [], '村道': [], '专用公路': [] } },
+  // '路产':
+  //  { '服务设施1':
+  //     { tpLabel: [],
+  //       tpMarking: [],
+  //       tpGuardrail: [],
+  //       tpSavefacilities: [],
+  //       tpLighting: [],
+  //       tpDrainage: [] },
+  //    '服务设施2':
+  //     { tpTollStation: [],
+  //       tpSst: [],
+  //       tpPetrolStation: [],
+  //       tpParkingLot: [] },
+  //     '管理设施': { tpSuper: [], tpStation: [], tpPlate: [], tpCamera: [] }
+  //   }
+  // }
+
+}
+// generateAmapMakersManage()
+
 export { metaConfig };
 
 export default { metaConfig };

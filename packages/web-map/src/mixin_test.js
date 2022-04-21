@@ -1,4 +1,5 @@
 import axios from "axios";
+import eventBus from './eventBus'
 export default {
   methods: {
     test_loadLayer({ layerName = "map:LX_X", version = "1.1.1" }) {
@@ -15,7 +16,6 @@ export default {
       wms.setMap(this.map);
       this.geoLayersManage[layerName] = wms;
       this.geoLayersManage[layerName].$children = [];
-      console.log(this.geoLayersManage);
     },
     // 显示和隐藏的Layer 针对 国道线乡村 非线路 隐藏Layer 会隐藏道路的layer
     test_hideLayer({ wms, layerName }) {
@@ -77,8 +77,9 @@ export default {
           BBOX: `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`,
         },
       }).then((res) => {
-        this.console(res, "log");
         if (res.data.numberReturned > 0) {
+          this.map.setCenter([lng, lat]);
+
           // 隐藏主图层 因为目前颜色未区分
           this.geoLayersManage[activedLayerName].hide();
           res.data.features.forEach((item) => {
@@ -108,10 +109,24 @@ export default {
           VERSION: version,
           CQL_FILTER: query,
         },
-      });
-      wms.setMap(this.map);
-      this.geoLayersManage[layerName].$children.push(wms);
+      })
+      wms.setMap(this.map)
+      this.geoLayersManage[layerName].$children.push(wms)
       // 查询到线路信息后 展开弹窗 传入当前wms信息 当关闭弹窗是
+      // 触发弹窗事件
+      eventBus.$emit("openModal", {
+        type: "default",
+        html: `<span>1231</span>`,
+        callback: {
+          success: (res) => {
+            // 关闭弹窗 回显默认layer
+            this.test_rubOffLine()
+          },
+          fail: (err) => {
+            console.log(err)
+          }
+        }
+      });
     },
     /**
      * @description 清除图层上的子图层
@@ -148,10 +163,9 @@ export default {
         !this.metaConfig.get("路网")[0].children[0].value;
       this.$refs.HeadPickGroup[0].$forceUpdate();
     },
-    test_getActived() {
-    },
+    test_getActived() {},
     // 擦除线路图层- 非路网图层
-    test_rubOffLine(LayerName) {
+    test_rubOffLine(LayerName='') {
       // TODO: 直接查询第一个layer 后续再调整
       let activedLayerName =
         LayerName || this.$refs.HeadPickGroup[0].getActivatedItemLayerName(); // 获取当前激活的layer
@@ -160,6 +174,139 @@ export default {
         return;
       }
       this.test_clearLayerChildren(activedLayerName, "show");
+      // 设置地图中心
+      this.map.setCenter(this.$amapCenter);
+    },
+
+    // 请求获取高德点位数据 路产数据
+    test_getGdPoint() {
+      // 路产数据
+      const axios = require("axios");
+      let data = JSON.stringify({
+        administrativeGrade: [],
+        areaIds: [],
+        culvertLocation: [],
+        id: "",
+        no: "",
+        officeId: "",
+        roadNo: "",
+        spanType: [],
+        stake: "",
+        technicalRating: [],
+        tunnelTypeCode: [],
+        type: [],
+      });
+
+      let config = {
+        method: "post",
+        url: "https://yx.91jt.net/testroad/api/pc/pcHome/highwayProperty",
+        headers: {
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA1OTQxNDgsInVzZXJuYW1lIjoiYWRtaW4ifQ.KGaBeU3qirWFyy8NqUtzijYgTG9lHt_fcSv_6yctweM",
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+
+      axios(config)
+        .then((response) => {
+          let arr = [
+            "tpLabel",
+            "tpMarking",
+            "tpGuardrail",
+            "tpSavefacilities",
+            "tpLighting",
+            "tpDrainage",
+            "tpTollStation",
+            "tpSst",
+            "tpPetrolStation",
+            "tpParkingLot",
+            "tpSuper",
+            "tpStation",
+            "tpPlate",
+            "tpCamera",
+          ];
+          let obj = {};
+          let markerCluster = []; // 存放转换后 生成的每一个marker
+          let toTransItem = []; // 存放有效点的经纬度数据
+          let toTransItemObj = []; // 存放有效点的引用对象
+          Object.keys(this.amapMakersManage["路产"]).forEach((key) => {
+            Object.assign(obj, this.amapMakersManage["路产"][key]);
+          });
+          arr.forEach((item) => {
+            try {
+              if (response.data[item]) {
+                response.data[item] = JSON.parse(
+                  decodeURIComponent(response.data[item])
+                );
+                obj[item] = response.data[item].features;
+                response.data[item].features.forEach((point, index) => {
+                  // {"type":"Feature","geometry":{"type":"Point","coordinates":[1,1]},"properties":{"name":"12312"},"id":"fid--5165cb05_1804a317c59_-7bd1"}
+                  // 高德转经纬度
+
+                  if (
+                    point.geometry.coordinates[1] &&
+                    point.geometry.coordinates[0]
+                  ) {
+                    toTransItem.push([
+                      point.geometry.coordinates[1],
+                      point.geometry.coordinates[0],
+                    ]);
+                    toTransItemObj.push(point);
+                  }
+                });
+              } else {
+                response.data[item] = {};
+              }
+            } catch (error) {}
+          });
+
+          // 批量转换经纬度
+          this.$AMap.convertFrom(toTransItem, "gps", (status, result) => {
+            if (result.info === "ok") {
+              result.locations.forEach((item, index) => {
+                let point = toTransItemObj[index];
+                let marker = new this.$AMap.Marker({
+                  position: item,
+                  visible: false,
+                  // icon: new this.$AMap.Icon({
+                  //   size: new this.$AMap.Size(24, 24),
+                  //   image: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                  // }),
+                });
+                marker.setMap(this.map); // 开启点聚合 则隐藏
+                marker.setExtData(point);
+                markerCluster.push(marker);
+                point.marker = marker;
+                marker.lnglat = [item.lng, item.lat];
+              });
+
+              // TODO: 加载点聚合插件 如果点击全选 加载聚合，否则默认不聚合 仅加载点 可以通过maker控制 点聚合后无法控制
+              // this.map.plugin(["AMap.MarkerCluster"], () => {
+              //   let cluster = new this.$AMap.MarkerCluster(
+              //     this.map,
+              //     markerCluster,
+              //     {
+              //       gridSize: 80, // 聚合网格像素大小
+              //     }
+              //   );
+              //   console.log(cluster)
+              // });
+            }
+          });
+
+          // k=服务设施2 服务设施1 管理设施
+          Object.keys(this.amapMakersManage["路产"]).forEach((k) => {
+            Object.keys(this.amapMakersManage["路产"][k]).forEach((key) => {
+              this.amapMakersManage["路产"][k][key] = obj[key];
+            });
+          });
+
+          console.log("this.amapMakersManage", this.amapMakersManage);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };

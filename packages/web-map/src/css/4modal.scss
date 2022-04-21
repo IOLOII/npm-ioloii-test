@@ -2,10 +2,88 @@
   &-modal-container {
     // 模态层
     z-index: $modalLayerIndex;
-    cursor: pointer;
+    // cursor: pointer;
     width: $webMapWidth;
     height: $webMapHeight;
+    pointer-events: none;
     // transform: translateZ(($modalLayerIndex/10) + px) $rotate3d;
     // opacity: $modalLayerIndex/1500;
+
+    &-default {
+      position: absolute;
+      width: 300px;
+      height: 400px;
+      background: rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(10px);
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      border-radius: 10px;
+      padding: 5px;
+      overflow: hidden;
+      overflow-y: auto;
+      text-align: left;
+
+      // 暂时先固定,后续优化获取指针位置
+      top: 60px;
+      left: 20px;
+      .content {
+        color: white;
+        background: #1714118c;
+        backdrop-filter: blur(10px);
+        height: 100%;
+        padding: 5px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+      .title {
+        width: 100%;
+        background: #0579ff;
+        color: white;
+        font-size: 1em;
+        padding: 5px;
+        border-radius: 5px;
+        margin-bottom: 5px;
+
+            display: flex;
+    justify-content: space-between;
+    align-items: center;
+      }
+      .tips {
+        border-left: 7px solid #0579ff;
+        padding-left: 5px;
+      }
+      .col {
+        padding: 0 5px;
+      }
+      .prop{
+        color:#b4b1b1;
+            margin-right: 10px;
+      }
+    }
+  }
+  &-modal-lever1 {
+    z-index: $modalLayerIndex + 10;
+  }
+  &-modal-lever2 {
+    z-index: $modalLayerIndex + 20;
+  }
+  &-modal-lever3 {
+    z-index: $modalLayerIndex + 30;
+  }
+  &-modal-lever4 {
+    z-index: $modalLayerIndex + 40;
+  }
+  &-modal-lever5 {
+    z-index: $modalLayerIndex + 50;
+  }
+  &-modal-lever6 {
+    z-index: $modalLayerIndex + 60;
   }
 }
