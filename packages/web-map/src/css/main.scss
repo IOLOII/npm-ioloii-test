@@ -35,6 +35,11 @@ img {
   overflow: hidden;
   cursor: pointer;
 }
+.point {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
 .webmap-wrapper {
   // 组件 容器
   position: relative;

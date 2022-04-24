@@ -202,7 +202,6 @@ export default {
       let _this = this;
       if (layerName instanceof Array) {
         layerName.forEach((layername) => {
-          console.log(layername);
           fun(layername);
         });
       } else {

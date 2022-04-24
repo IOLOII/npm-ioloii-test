@@ -151,7 +151,7 @@
        * @param {Object} eventObj 如果是item  传入item
        */
       eventEmit({ type = 'all', eventObj, value }) {
-        this.$emit('eventHandle', { type, eventObj, value })
+        this.$emit('pickHandle', { type, eventObj, value })
       }
     }
   }

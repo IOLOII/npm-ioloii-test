@@ -1,6 +1,6 @@
 export default {
   methods: {
-    getRoadProperty({ amapMakersManage, $AMap, map,pointEvent }) {
+    getRoadProperty({ amapMakersManage, $AMap, map, pointEvent }) {
       // 路产数据
       const axios = require("axios");
       let data = JSON.stringify({
@@ -80,8 +80,10 @@ export default {
               }
             } catch (error) {}
           });
+          console.log(toTransItemObj);
 
           // 批量转换经纬度
+          console.log(map);
           $AMap.convertFrom(toTransItem, "gps", (status, result) => {
             if (result.info === "ok") {
               result.locations.forEach((item, index) => {
@@ -89,7 +91,7 @@ export default {
                 let marker = new $AMap.Marker({
                   position: item,
                   visible: false,
-                  map:map
+                  map: map,
                   // icon: new $AMap.Icon({
                   //   size: new $AMap.Size(24, 24),
                   //   image: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
@@ -97,9 +99,9 @@ export default {
                 });
                 // marker.setMap(map); // 开启点聚合 则隐藏
                 marker.setExtData(point);
-                pointEvent.type.forEach(eType => {
-                  marker.on(eType, pointEvent[eType]($AMap));
-                })
+                pointEvent.type.forEach((eType) => {
+                  marker.on(eType, pointEvent[eType]);
+                });
                 // markerCluster.push(marker);
                 point.marker = marker;
                 marker.lnglat = [item.lng, item.lat];

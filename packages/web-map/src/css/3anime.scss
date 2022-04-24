@@ -1,3 +1,4 @@
+$sideWidth: 150px;
 .webmap-wrapper {
   &-anime-container {
     // 动画层
@@ -5,7 +6,49 @@
     cursor: pointer;
     width: $webMapWidth;
     height: $webMapHeight;
+    pointer-events: none;
     // transform: translateZ(($animeLayerIndex/10) + px) $rotate3d;
     // opacity: $animeLayerIndex/1500;
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    .block {
+      margin: 80px 0;
+      min-width: $sideWidth;
+      height: auto;
+      // width: 26vw;
+      // height: 71vh;
+      backdrop-filter: blur(1rem);
+      background-color: #b9b9b9;
+      pointer-events: auto;
+      overflow: auto;
+      padding: 30px; // 预留滚动条和按钮的位置
+      .left {
+      }
+      .right {
+      }
+    }
+    .block-btn {
+      position: fixed;
+      top: 50%;
+      background: #1f3c71;
+      height: 150px;
+      width: 70px;
+      &.left {
+        left: 0;
+        border-top-right-radius: 100%;
+        border-bottom-right-radius: 100%;
+        transform: translateX(-40px) translateY(-50%);
+        visibility: visible;
+      }
+      &.right {
+        right: 0;
+        border-top-left-radius: 100%;
+        border-bottom-left-radius: 100%;
+        transform: translateX(40px) translateY(-50%);
+        visibility: visible;
+      }
+    }
   }
 }

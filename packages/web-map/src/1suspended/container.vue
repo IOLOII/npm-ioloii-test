@@ -13,6 +13,7 @@
         <slot name="top"></slot>
       </Interaction>
     </div>
+    <!-- <div style="display: flex; justify-content: space-between; margin: 0 auto"> -->
     <div
       class="webmap-wrapper-suspended-container-block webmap-wrapper-suspended-container-left"
       @click.stop="suspendedClick('left')"
@@ -22,6 +23,7 @@
         <slot name="left"></slot>
       </Interaction>
     </div>
+    <!-- <div v-else></div> -->
     <div
       class="webmap-wrapper-suspended-container-block webmap-wrapper-suspended-container-right"
       @click.stop="suspendedClick('right')"
@@ -31,6 +33,8 @@
         <slot name="right"></slot>
       </Interaction>
     </div>
+    <!-- <div v-else></div> -->
+    <!-- </div> -->
     <div
       class="webmap-wrapper-suspended-container-block webmap-wrapper-suspended-container-bottom"
       @click.stop="suspendedClick('bottom')"
@@ -62,6 +66,6 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped >
   @import '../css/main.scss';
 </style>

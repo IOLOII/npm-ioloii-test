@@ -4,7 +4,7 @@ $areaWidth_tb: 100%;
 $areaHeight_tb: 60px;
 
 // 中部左右区域
-$areaWidth_lr: 200px;
+$areaWidth_lr: 300px !default;
 $areaHeight_lr: calc(100% - $areaHeight_tb * 2);
 .webmap-wrapper {
   &-suspended-container {
@@ -18,8 +18,6 @@ $areaHeight_lr: calc(100% - $areaHeight_tb * 2);
     // opacity: $suspendedLayerIndex/1500;
     &-block {
       position: absolute;
-      height: 100px;
-      width: 200px;
       background: $background;
       backdrop-filter: blur(10px);
       position: absolute;
@@ -41,7 +39,7 @@ $areaHeight_lr: calc(100% - $areaHeight_tb * 2);
       height: $areaHeight_lr;
 
       top: 50%;
-      right: 0;
+      left: 0;
       transform: translateY(-50%);
     }
     &-right {
@@ -54,7 +52,7 @@ $areaHeight_lr: calc(100% - $areaHeight_tb * 2);
     }
     &-bottom {
       width: $areaWidth_tb;
-        min-height: $areaHeight_tb;
+      min-height: $areaHeight_tb;
 
       bottom: 0;
       left: 0;

@@ -20,6 +20,6 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped >
   @import '../css/main.scss';
 </style>

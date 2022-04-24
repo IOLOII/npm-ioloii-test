@@ -272,7 +272,7 @@
        * @param {Object} eventObj 如果是item  传入item
        */
       eventEmit({ type = 'all', eventObj, value, componentObj, item = null }) {
-        this.$emit('eventHandle', { type, eventObj, value, componentObj, item })
+        this.$emit('pickHandle', { type, eventObj, value, componentObj, item })
         this.$forceUpdate()
       },
       // 获取所有子元素中value为true的对象并放入activatedItems中

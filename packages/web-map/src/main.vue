@@ -2,9 +2,10 @@
   <div class="webmap-wrapper" :style="{ '--width': width, '--height': height }">
     <div style="position: absolute; top: -100px"></div>
     <div
+      v-if="true"
       class="webmap-wrapper-layer webmap-wrapper-map-container"
-      ref="webmap"
       @click.stop="g_click('webmap-layer')"
+      ref="webmap"
     ></div>
     <Supended v-if="true" ref="Supended">
       <template #top>
@@ -14,7 +15,7 @@
         >
           <HeadPickGroup
             ref="HeadPickGroup"
-            @eventHandle="topPickGroupEventHandle"
+            @pickHandle="pickGroupEventHandle"
             :baseDataTitle="key"
             :baseDataArr="metaConfig.get(key)"
             v-for="key in metaConfig.keys()"
@@ -22,8 +23,7 @@
           />
         </div>
       </template>
-      <template #rightss>
-        <!-- style="display: flex; width: 80%; justify-content: space-around" -->
+      <!-- <template #right>
         <div @click.stop="">
           <button @click="test_loadLayer">测试图层加载</button>
           <button @click="test_showLayer({ layerName: 'map:LX_Y' })">测试图层显示</button>
@@ -34,6 +34,23 @@
           <button @click="test_rubOffLine()">清除查询的线路数据</button>
           <button @click="test_getGdPoint">获取路网数据</button>
         </div>
+      </template> -->
+
+
+      <!-- <template #top v-if="$slots.supendedTop">
+        <slot name="supendedTop"> </slot>
+      </template> -->
+
+      <template #left v-if="$slots.supendedLeft">
+        <slot name="supendedLeft"> </slot>
+      </template>
+
+      <!-- <template #right v-if="$slots.supendedRight">
+        <slot name="supendedRight"> </slot>
+      </template> -->
+
+      <template #bottom v-if="$slots.supendedBottom">
+        <slot name="supendedBottom"> </slot>
       </template>
     </Supended>
     <!-- <Teleport to=".webmap-wrapper">
@@ -46,13 +63,15 @@
         <span>asdasdad</span>
       </div>
     </Teleport> -->
-    <!-- <div
-      class="webmap-wrapper-layer webmap-wrapper-anime-container"
-      @click="g_click('anime-layer')"
-    >
-      动画层
-    </div> -->
-    <Modal ref="Modal" />
+    <Anime v-if="true" ref="Anime">
+      <template #left v-if="$slots.animeLeft">
+        <slot name="animeLeft"> </slot>
+      </template>
+      <template #right v-if="$slots.animeRight">
+        <slot name="animeRight"> </slot>
+      </template>
+    </Anime>
+    <Modal ref="Modal" v-if="false" />
 
     <!-- <div
       class="webmap-wrapper-layer webmap-wrapper-toast-container"
@@ -79,6 +98,7 @@
   // 图层
   import AMapLoader from '@amap/amap-jsapi-loader'
   import Supended from './1suspended/container.vue'
+  import Anime from './3anime/container.vue'
   import Modal from './4modal/container.vue'
   import Teleport from '../components/teleport.vue'
   import HeadPickGroup from '../components/headPickGroup.vue'
@@ -92,6 +112,7 @@
     mixins: [mixin_test],
     components: {
       Supended,
+      Anime,
       Modal,
       Teleport,
       HeadPickGroup
@@ -323,117 +344,16 @@
       suspendedClick(direction) {
         this.console(direction)
       },
-      /**
-       * @description 顶部区域的事件回调 主要处理由顶部区域点击后的事务
-       * @param {String} type 事件类型 单个还是全部 item | all
-       * @param {Object} eventObj 事件对象 是item还是item的父级（全选操作）
-       * @param {Boolean} value 是否选中
-       * @param {Object} componentObj 父级
-       * @param {Object} item 子级 如果是父级出发,则会出现空的情况 headLineValueChange事件
-       */
-      topPickGroupEventHandle({ type, eventObj, value, componentObj, item = null }) {
-        // TODO: 调整这里case 规则
-        switch (componentObj.name) {
-          case '路网':
-            // 展现或隐藏 layer
-            this.console(eventObj.layerName, 'log')
-            switch (type) {
-              case 'item':
-                let reverses = []
-                let layerNames = Object.keys(this.geoLayersManage)
-                // 找出layerNames中不包含eventObj.layerName的值
-                layerNames.forEach(layerName => {
-                  if (layerName !== eventObj.layerName) {
-                    reverses.push(layerName)
-                  }
-                })
-                if (value) {
-                  this.geoLayersManage[eventObj.layerName].show()
-                  if(!componentObj.childrenMultiple){
-                    reverses.forEach(ln => {
-                      this.test_clearLayerChildren(ln, 'hide')
-                    })
-                  }
-                } else {
-                  // 隐藏的时候 当前线路关闭后 显示当前的 其他情况隐藏当前
-                  // this.geoLayersManage[eventObj.layerName].hide();
-                  this.test_clearLayerChildren(eventObj.layerName, 'hide')
-                }
-                break
-              // 路网暂不考虑显示多个layer,已互斥
-              case 'all':
-                console.log(type, eventObj, value, componentObj, item )
-                componentObj.children.forEach(({layerName})=>{
-                  console.log(this.geoLayersManage[layerName])
-                  if (value) {
-                    this.geoLayersManage[layerName].show()
-                  } else {
-                    this.test_clearLayerChildren(layerName, 'hide')
-                  }
-                })
-                break
-            }
-
-            break
-          case '桥梁':
-          case '桥梁评定等级':
-          case '桥梁分类（长度）':
-            break
-          case '隧道':
-            break
-          case '涵洞':
-            break
-          case '路产':
-          case '服务设施1':
-          case '服务设施2':
-          case '管理设施':
-            switch (type) {
-              case 'item':
-                if (value) {
-                  this.amapMakersManage['路产'][componentObj.name][item.prop].forEach(
-                    point => {
-                      point.marker && point.marker.show()
-                    }
-                  )
-                } else {
-                  this.amapMakersManage['路产'][componentObj.name][item.prop].forEach(
-                    point => {
-                      point.marker && point.marker.hide()
-                    }
-                  )
-                }
-                break
-              case 'all':
-                if (value) {
-                  Object.keys(this.amapMakersManage['路产'][componentObj.name]).forEach(
-                    prop => {
-                      this.amapMakersManage['路产'][componentObj.name][prop].forEach(
-                        point => {
-                          point.marker && point.marker.show()
-                        }
-                      )
-                    }
-                  )
-                } else {
-                  Object.keys(this.amapMakersManage['路产'][componentObj.name]).forEach(
-                    prop => {
-                      this.amapMakersManage['路产'][componentObj.name][prop].forEach(
-                        point => {
-                          point.marker && point.marker.hide()
-                        }
-                      )
-                    }
-                  )
-                }
-
-                break
-            }
-            break
-          default:
-            this.console('缺乏枚举状态')
-            this.console(componentObj.name)
-            break
-        }
+      pickGroupEventHandle({ type, eventObj, value, componentObj, item = null }) {
+        let _this = this
+        this.$emit('pickHandle', {
+          type,
+          eventObj,
+          value,
+          componentObj,
+          item,
+          _this
+        })
       },
       // TODO: 地图或外部事件发生后 诱发的顶部区域联动 见 test_setMetaConfig
       topPickGroupValueSet() {},
@@ -483,11 +403,18 @@
         })
         // console.log(metaConfigMap)
         return metaConfigMap
+      },
+      // 触发事件
+      triggerEvent(eventName, eventObj) {
+        eventBus.$emit(eventName, eventObj)
+        // 支持的事件有：
+        // openModal, {type = 'default',html = '',callback = {uccess,fail  },
+        // animeMove,{direction,isShow}
       }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" scoped >
   @import './css/main.scss';
 </style>
