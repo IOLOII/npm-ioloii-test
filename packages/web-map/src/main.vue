@@ -1,5 +1,5 @@
 <template>
-  <div class="webmap-wrapper">
+  <div class="webmap-wrapper" :style="{ '--width': width, '--height': height }">
     <div style="position: absolute; top: -100px"></div>
     <div
       class="webmap-wrapper-layer webmap-wrapper-map-container"
@@ -9,7 +9,7 @@
     <Supended v-if="true" ref="Supended">
       <template #top>
         <div
-          style="display: flex; width: 80%; justify-content: space-around"
+          style="display: flex; width: 80%; justify-content: flex-start; flex-wrap: wrap"
           @click.stop=""
         >
           <HeadPickGroup
@@ -129,7 +129,17 @@
         type: String,
         required: false,
         default:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA1OTQxNDgsInVzZXJuYW1lIjoiYWRtaW4ifQ.KGaBeU3qirWFyy8NqUtzijYgTG9lHt_fcSv_6yctweM'
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA2ODYwNjUsInVzZXJuYW1lIjoiYWRtaW4ifQ.6ZR5BxnPmOlL376LwkTiwEVZLI5GT88ODqLENPSP9UA'
+      },
+      width: {
+        type: String,
+        default: '100%',
+        require: false
+      },
+      height: {
+        type: String,
+        default: '100%',
+        require: false
       }
     },
     data() {
@@ -213,7 +223,7 @@
           {},
           {
             center: this.$amapCenter,
-            // zoom:this.$amapZoom,
+            zoom: this.$amapZoom || 9.5,
             // rotation:this.$amapRotation||0,
             rotateEnable: false,
             layers: [
@@ -265,17 +275,15 @@
         eventBus.$on('suspendedClick', this.suspendedClick)
       },
       initMapEvevt() {
-        this.map.on('click', ev => {
-          // 触发事件的对象
-          let target = ev.target
-          // 触发事件的地理坐标，AMap.LngLat 类型
-          let lnglat = ev.lnglat
-          // 触发事件的像素坐标，AMap.Pixel 类型
-          let pixel = ev.pixel
-          // 触发事件类型
-          let type = ev.type
-          // this.console({target,lnglat,pixel,type})
-          this.test_layerClicked(ev.lnglat)
+        this.map.on('click', ({ target, lnglat, pixel, type }) => {
+          this.test_layerClicked(lnglat)
+        })
+        this.map.on('mousewheel', ({ target, lnglat, pixel, type }) => {
+          console.log(this.map.getZoom())
+        })
+        this.map.on('mousemove', ({ target, lnglat, pixel, type }) => {
+          const { lat, lng } = lnglat
+          // console.log(lat, lng)
         })
       },
       initMap() {
@@ -290,15 +298,19 @@
               return
             }
             this.$AMap = AMap
-            let map = new AMap.Map(this.$refs.webmap, this.mapOptions)
-            this.map = map
+            this.map = new AMap.Map(this.$refs.webmap, this.mapOptions)
             this.initMapEvevt()
             // 加载路网
             if (this.metaConfig.get('路网')) {
               this.loadRoadNet(this.metaConfig.get('路网'))
             }
             // 加载路产
-            this.test_getGdPoint()
+            // this.test_getGdPoint()
+            this.$emit('loadMapData', {
+              amapMakersManage: this.amapMakersManage,
+              $AMap: AMap,
+              map: this.map
+            })
           })
           .catch(e => {
             this.alert(e)
@@ -337,9 +349,11 @@
                 })
                 if (value) {
                   this.geoLayersManage[eventObj.layerName].show()
-                  reverses.forEach(ln => {
-                    this.test_clearLayerChildren(ln, 'hide')
-                  })
+                  if(!componentObj.childrenMultiple){
+                    reverses.forEach(ln => {
+                      this.test_clearLayerChildren(ln, 'hide')
+                    })
+                  }
                 } else {
                   // 隐藏的时候 当前线路关闭后 显示当前的 其他情况隐藏当前
                   // this.geoLayersManage[eventObj.layerName].hide();
@@ -348,6 +362,15 @@
                 break
               // 路网暂不考虑显示多个layer,已互斥
               case 'all':
+                console.log(type, eventObj, value, componentObj, item )
+                componentObj.children.forEach(({layerName})=>{
+                  console.log(this.geoLayersManage[layerName])
+                  if (value) {
+                    this.geoLayersManage[layerName].show()
+                  } else {
+                    this.test_clearLayerChildren(layerName, 'hide')
+                  }
+                })
                 break
             }
 

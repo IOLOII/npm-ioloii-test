@@ -5,8 +5,8 @@
     z-index: $interactionLayerIndex;
     cursor: pointer;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    // align-items: center;
+    // justify-content: center;
     // transform: translateZ(($suspendedLayerIndex/10) + px) $rotate3d;
     // opacity: $interactionLayerIndex/1500;
   }

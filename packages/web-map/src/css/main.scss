@@ -8,8 +8,8 @@ $toastLayerIndex: 1400; // 系统提示
 $rotate3d: rotate3d(1, 1, 1, 354deg);
 
 // 长宽
-$webMapWidth: 100%;
-$webMapHeight: 100%;
+$webMapWidth: var(--width);
+$webMapHeight: var(--height);
 
 $mapWidth: 100%;
 $mapHeight: 100%;

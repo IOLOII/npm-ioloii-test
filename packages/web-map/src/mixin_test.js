@@ -63,9 +63,9 @@ export default {
           REQUEST: "GetFeatureInfo",
           FORMAT: "image/png",
           TRANSPARENT: "true",
-          QUERY_LAYERS: activedLayerName,
+          QUERY_LAYERS: activedLayerName.join(","),
           STYLES: "",
-          LAYERS: activedLayerName,
+          LAYERS: activedLayerName.join(","),
           exceptions: "application/vnd.ogc.se_inimage",
           INFO_FORMAT: "application/json",
           FEATURE_COUNT: "50",
@@ -78,27 +78,42 @@ export default {
         },
       }).then((res) => {
         if (res.data.numberReturned > 0) {
+          console.log(res);
+          const label = this.geoQueryProp; // TODO: 定义查询参数 后续再调整
           this.map.setCenter([lng, lat]);
 
           // 隐藏主图层 因为目前颜色未区分
-          this.geoLayersManage[activedLayerName].hide();
-          res.data.features.forEach((item) => {
-            const label = this.geoQueryProp; // TODO: 定义查询参数 后续再调整
-            this.test_query({
-              layerName: activedLayerName,
-              query: `${label}='${item.properties[label]}'`,
-            });
+
+          // res.data.features.forEach((item) => {
+          //   this.test_query({
+          //     layerName: activedLayerName,
+          //     query: `${label}='${item.properties[label]}'`,
+          //     pointInfo: item,
+          //   });
+          // });
+          // id: "nm_eeds_sd.81"
+          // 只显示一条记录
+          res.data.features[0].id.split(".")[0];
+          activedLayerName.forEach((item) => {
+            this.geoLayersManage[item].hide();
+            if (item.includes(res.data.features[0].id.split(".")[0])) {
+              activedLayerName = item;
+            }
+          });
+          this.test_query({
+            layerName: activedLayerName,
+            query: `${label}='${res.data.features[0].properties[label]}'`,
+            pointInfo: res.data.features[0],
           });
         }
       });
     },
-    // 通过点查线
-    test_request() {},
     // 通过查询条件查询线路数据并渲染到图层上
     test_query({
       layerName = "map:LX_X",
       query = "LXMC='晓墅-南林场叉口'",
       version = "1.1.1",
+      pointInfo = {},
     }) {
       let wms = new this.$AMap.TileLayer.WMS({
         url: this.geoServerUrl,
@@ -114,13 +129,62 @@ export default {
       this.geoLayersManage[layerName].$children.push(wms);
       // 查询到线路信息后 展开弹窗 传入当前wms信息 当关闭弹窗是
       // 触发弹窗事件
+      // pointInfo: {
+      //   geometry: { },
+      //   geometry_name:''
+      //   id: ''
+      //   properties: { },
+      //   type:[]
+      // }
       eventBus.$emit("openModal", {
         type: "default",
-        html: `<span>1231</span>`,
+        html: `
+          <div>
+            <div>
+              <span style="color: #b4b1b1;margin-right: 10px;">
+                路线编号
+              </span>
+              <span>SFW51155</span>
+            </div>
+            <div >
+              <span style="color: #b4b1b1;margin-right: 10px;">
+                行政等级
+              </span>
+              <span>国道</span>
+            </div>
+            <div>
+              <span style="color: #b4b1b1;margin-right: 10px;">
+                起点桩号
+              </span>
+              <span>K0+000</span>
+            </div>
+            <div>
+              <span style="color: #b4b1b1;margin-right: 10px;">
+                终点桩号
+              </span>
+              <span>K121+100</span>
+            </div>
+            <div>
+              <span style="color: #b4b1b1;margin-right: 10px;">
+                所属行政区域
+              </span>
+              <span>所属行政区域</span>
+            </div>
+            <div>
+              <span style="color: #b4b1b1;margin-right: 10px;">
+                技术等级
+              </span>
+              <span>技术等级</span>
+            </div>
+          </div>
+        `,
         callback: {
           success: (res) => {
             // 关闭弹窗 回显默认layer
             this.test_rubOffLine();
+            // 可传递事件
+            this.map.setCenter(this.mapOptions.center);
+            this.map.setZoom(this.mapOptions.zoom, false, 500);
           },
           fail: (err) => {
             console.log(err);
@@ -129,35 +193,50 @@ export default {
       });
     },
     /**
-     * @description 清除图层上的子图层
+     * @description 清除图层上的子图层 线路
      * @param {String} layerName 路网图层名称
      * @param {String} roadNetStatus 路网图层状态 show | hide
      * @param {Boolean} distoryLayer 路网是否销毁
      */
     test_clearLayerChildren(layerName, roadNetStatus, distoryLayer = false) {
-      this.geoLayersManage[layerName].$children.forEach((child) => {
-        child.hide();
-        child.setMap(null);
-      });
-      this.geoLayersManage[layerName].$children = [];
-
-      if (roadNetStatus) {
-        this.geoLayersManage[layerName][roadNetStatus]();
+      let _this = this;
+      if (layerName instanceof Array) {
+        layerName.forEach((layername) => {
+          console.log(layername);
+          fun(layername);
+        });
+      } else {
+        fun(layerName);
       }
-      // 不一定用
-      if (distoryLayer) {
-        this.geoLayersManage[layerName].setMap(null);
-        try {
-          delete this.geoLayersManage[layerName];
-        } catch (error) {
-          this.geoLayersManage[layerName] = null;
+
+      function fun(layername) {
+        _this.geoLayersManage[layername].$children.forEach((child) => {
+          child.hide();
+          child.setMap(null);
+        });
+        _this.geoLayersManage[layername].$children = [];
+
+        if (roadNetStatus) {
+          _this.geoLayersManage[layername][roadNetStatus]();
+        }
+        // 不一定用
+        if (distoryLayer) {
+          _this.geoLayersManage[layername].setMap(null);
+          try {
+            delete _this.geoLayersManage[layername];
+          } catch (error) {
+            _this.geoLayersManage[layername] = null;
+          }
         }
       }
     },
+    /**
+     * @description test
+     */
     test_loadLine() {
       this.test_query({});
     },
-    // TODO: 解决回显时 数据修改页面不刷新为题
+    // TODO:// SOLVED: 解决回显时 数据修改页面不刷新文题
     test_setMetaConfig() {
       this.metaConfig.get("路网")[0].children[0].value =
         !this.metaConfig.get("路网")[0].children[0].value;
@@ -169,16 +248,22 @@ export default {
       // TODO: 直接查询第一个layer 后续再调整
       let activedLayerName =
         LayerName || this.$refs.HeadPickGroup[0].getActivatedItemLayerName(); // 获取当前激活的layer
+      console.log("activedLayerName", activedLayerName);
       if (!activedLayerName) {
         this.console("当前没有选中的图层");
         return;
       }
       this.test_clearLayerChildren(activedLayerName, "show");
       // 设置地图中心
-      this.map.setCenter(this.$amapCenter);
+      // this.map.setCenter(this.$amapCenter);
     },
 
-    // 请求获取高德点位数据 路产数据
+    //
+    /**
+     * @deprecated
+     * @description 请求获取高德点位数据 路产数据
+     * 已移出 放在组件外事件中触发
+     */
     test_getGdPoint() {
       // 路产数据
       const axios = require("axios");
@@ -225,8 +310,8 @@ export default {
             "tpPlate",
             "tpCamera",
           ];
-          let obj = {};
-          let markerCluster = []; // 存放转换后 生成的每一个marker
+          let obj = {}; // 挂载数据对象
+          // let markerCluster = []; // 存放转换后 生成的每一个marker
           let toTransItem = []; // 存放有效点的经纬度数据
           let toTransItemObj = []; // 存放有效点的引用对象
           Object.keys(this.amapMakersManage["路产"]).forEach((key) => {
@@ -275,7 +360,7 @@ export default {
                 });
                 marker.setMap(this.map); // 开启点聚合 则隐藏
                 marker.setExtData(point);
-                markerCluster.push(marker);
+                // markerCluster.push(marker);
                 point.marker = marker;
                 marker.lnglat = [item.lng, item.lat];
               });
@@ -300,8 +385,6 @@ export default {
               this.amapMakersManage["路产"][k][key] = obj[key];
             });
           });
-
-          console.log("this.amapMakersManage", this.amapMakersManage);
         })
         .catch((error) => {
           console.log(error);

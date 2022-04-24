@@ -27,10 +27,11 @@ $areaHeight_lr: calc(100% - $areaHeight_tb * 2);
       align-items: center;
       justify-content: center;
       pointer-events: auto;
+      overflow: auto;
     }
     &-top {
       width: $areaWidth_tb;
-      height: $areaHeight_tb;
+      min-height: $areaHeight_tb;
 
       top: 0;
       left: 0;
@@ -53,7 +54,7 @@ $areaHeight_lr: calc(100% - $areaHeight_tb * 2);
     }
     &-bottom {
       width: $areaWidth_tb;
-      height: $areaHeight_tb;
+        min-height: $areaHeight_tb;
 
       bottom: 0;
       left: 0;

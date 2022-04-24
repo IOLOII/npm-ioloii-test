@@ -37,7 +37,7 @@
           </el-col>
         </el-row>
       </div>
-      <el-button slot="reference" size="small"
+      <el-button slot="reference" size="small" style="margin: 0 10px 5px"
         >{{ baseDataTitle }} <i class="el-icon-arrow-down el-icon--right"></i
       ></el-button>
     </el-popover>
@@ -291,14 +291,17 @@
       },
       // 获取路网中选中的元素
       getActivatedItemLayerName() {
-        let activedLayerName = ''
+        let activedLayerName = []
         this.baseDataArr.forEach((item, index) => {
           item.children.forEach(child => {
             if (child.value) {
-              activedLayerName = child.layerName
+              activedLayerName.push(child.layerName)
             }
           })
         })
+        if(activedLayerName.length === 0){
+          activedLayerName = null
+        }
         return activedLayerName
       }
     }

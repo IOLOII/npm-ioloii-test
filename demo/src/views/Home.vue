@@ -7,7 +7,7 @@
 <script>
   // @ is an alias to /src
   import HelloWorld from '@/components/HelloWorld.vue'
-  import { metaConfig } from './metaConfig'
+  import { metaConfig } from '/packages/web-map/src/metaConfig'
   export default {
     name: 'Home',
     components: {

@@ -9,42 +9,42 @@ let metaConfig = new Map([
         name: "路网",
         icon: "iconfont XXX",
         headLine: true,
-        headLineCheckBox: false, // 控制复选框是否显示
+        headLineCheckBox: true, // 控制复选框是否显示
         value: false, // 控制复选框的值
-        childrenMultiple: false, // 是否支持显示多个子级,定义子级勾选时是否互斥，默认和headLineCheckBox一致
+        childrenMultiple: true, // 是否支持显示多个子级,定义子级勾选时是否互斥，默认和headLineCheckBox一致
         // 国省县乡村
         children: [
           {
             name: "国道",
-            layerName: "map:LX_G",
+            layerName: "neimenggu:nm_eeds_gd",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "省道",
-            layerName: "map:LX_S",
+            layerName: "neimenggu:nm_eeds_sd",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "县道",
-            layerName: "map:LX_X",
+            layerName: "neimenggu:nm_eeds_xd",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "乡道",
-            layerName: "map:LX_Y",
+            layerName: "neimenggu:nm_eeds_yd",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
           },
           {
             name: "村道",
-            layerName: "map:LX_C",
+            layerName: "neimenggu:nm_eeds_cd",
             icon: "iconfont XXX",
             style: { color: "#191970", width: 2 },
             value: false,
