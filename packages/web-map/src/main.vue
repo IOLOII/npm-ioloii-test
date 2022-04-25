@@ -52,16 +52,7 @@
         <slot name="supendedBottom"></slot>
       </template>
     </Supended>
-    <!-- <Teleport to=".webmap-wrapper">
-      <span>123123</span>
-      <span>123123</span>
-    </Teleport> -->
-    <!-- 弹出层测试 -->
-    <!-- <Teleport to=".webmap-wrapper">
-      <div style="" class="modal">
-        <span>asdasdad</span>
-      </div>
-    </Teleport> -->
+
     <Anime v-if="true" ref="Anime">
       <template #left v-if="$slots.animeLeft">
         <slot name="animeLeft"> </slot>
@@ -70,7 +61,7 @@
         <slot name="animeRight"> </slot>
       </template>
     </Anime>
-    <Modal ref="Modal" v-if="false" />
+    <Modal ref="Modal" />
 
     <!-- <div
       class="webmap-wrapper-layer webmap-wrapper-toast-container"
@@ -78,6 +69,8 @@
     >
       系统提示
     </div> -->
+
+    <!-- 自定义层 -->
   </div>
 </template>
 
@@ -294,18 +287,7 @@
         eventBus.$on('g_click', this.g_click)
         eventBus.$on('suspendedClick', this.suspendedClick)
       },
-      initMapEvevt() {
-        this.map.on('click', ({ target, lnglat, pixel, type }) => {
-          this.test_layerClicked(lnglat)
-        })
-        this.map.on('mousewheel', ({ target, lnglat, pixel, type }) => {
-          console.log(this.map.getZoom())
-        })
-        this.map.on('mousemove', ({ target, lnglat, pixel, type }) => {
-          const { lat, lng } = lnglat
-          // console.log(lat, lng)
-        })
-      },
+
       initMap() {
         AMapLoader.load({
           key: this.$amapKey, // 申请好的Web端开发者Key，首次调用 load 时必填
@@ -317,9 +299,17 @@
               this.alert('map ref is null')
               return
             }
+
             this.$AMap = AMap
             this.map = new AMap.Map(this.$refs.webmap, this.mapOptions)
-            this.initMapEvevt()
+            // 先
+            this.$emit('initializedHandle', {
+              amapMakersManage: this.amapMakersManage,
+              $AMap: AMap,
+              map: this.map
+            })
+            // 后
+            this.$emit('initMapEvevt')
             // 加载路网
 
             if (this.metaConfig['路网']) {
@@ -327,11 +317,6 @@
             }
             // 加载路产
             // this.test_getGdPoint()
-            this.$emit('loadMapData', {
-              amapMakersManage: this.amapMakersManage,
-              $AMap: AMap,
-              map: this.map
-            })
           })
           .catch(e => {
             this.alert(e)
@@ -344,6 +329,10 @@
       suspendedClick(direction) {
         this.console(direction)
       },
+      /**
+       * @deprecated
+       * @description 点击复选框
+       */
       pickGroupEventHandle({ type, eventObj, value, componentObj, item = null }) {
         let _this = this
         this.$emit('pickHandle', {
@@ -380,36 +369,53 @@
       // 高德markers相关
 
       // 根据metaConfig中的桥梁,隧道,涵洞,路产,遍历每一项的children,取出children中每子级中的name属性，生成映射关系的对象
+      // TODO: 提出 放在组件外生成
       generateAmapMakersManage() {
         // 桥梁,隧道,涵洞,路产
         let metaConfigMap = {}
         Object.keys(this.metaConfig).forEach(key => {
-          if (key === '路网') {
-            return
-          } else {
-            metaConfigMap[key] = {}
-            this.metaConfig[key].forEach(item => {
-              metaConfigMap[key][item.name] = {}
-              item.children &&
-                item.children.forEach(child => {
-                  if (child.prop) {
-                    metaConfigMap[key][item.name][child.prop] = []
-                  } else {
-                    metaConfigMap[key][item.name][child.name] = []
-                  }
-                })
-            })
+          switch (key) {
+            case '路网':
+              break
+            case '桥梁':
+            case '隧道':
+            case '涵洞':
+              metaConfigMap[key] = []
+              break
+            case '路产':
+              metaConfigMap[key] = {}
+              this.metaConfig[key].forEach(item => {
+                metaConfigMap[key][item.name] = {}
+                item.children &&
+                  item.children.forEach(child => {
+                    if (child.prop) {
+                      metaConfigMap[key][item.name][child.prop] = []
+                    } else {
+                      metaConfigMap[key][item.name][child.name] = []
+                    }
+                  })
+              })
+              break
           }
         })
-        // console.log(metaConfigMap)
         return metaConfigMap
       },
       // 触发事件
       triggerEvent(eventName, eventObj) {
-        eventBus.$emit(eventName, eventObj)
-        // 支持的事件有：
-        // openModal, {type = 'default',html = '',callback = {uccess,fail  },
-        // animeMove,{direction,isShow}
+        // 这里拆开 为了看参数
+        switch (eventName) {
+          case 'openModal':
+            let { type, html, callback } = eventObj
+            eventBus.$emit(eventName, { type, html, callback })
+            break
+          case 'animeMove':
+            let { direction, isShow, sideConf } = eventObj
+            eventBus.$emit(eventName, {direction, isShow, sideConf})
+            break
+          default:
+            this.console(`事件未捕获： TriggerEvent_${eventName}`)
+            break
+        }
       }
     }
   }

@@ -26,6 +26,9 @@
       class="block left"
       ref="left"
       v-if="$slots.left"
+      :style="{
+        '--width_l': sideConf.left,
+      }"
     >
       <div class="block-wrapper">
         <slot name="left"></slot>
@@ -38,6 +41,9 @@
       class="block right"
       ref="right"
       v-if="$slots.right"
+      :style="{
+        '--width_r': sideConf.right,
+      }"
     >
       <div class="block-wrapper">
         <slot name="right"></slot>
@@ -65,13 +71,26 @@
     name: 'Anime',
     data: () => ({
       animesCtrl: {
-        left: true,
-        right: true
+        left: false,
+        right: false
+      },
+      sideConf:{
+        left: '300px',
+        right: '300px'
+        // leftHeight
+        // rightHeight
+        // margin:''
       }
     }),
     mounted() {
       // direction: 'left' 'right' ,'top' ,'bottom','all'-水平两个,'alls'-四个 isShow:boolean
-      eventBus.$on('animeMove', ({ direction, isShow }) => {
+      eventBus.$on('animeMove', ({ direction, isShow,sideConf = null }) => {
+        sideConf = {
+            right: '250px'
+        }
+        if(sideConf){
+          Object.assign(this.sideConf,sideConf)
+        }
         setTimeout(
           () => {
             switch (direction) {

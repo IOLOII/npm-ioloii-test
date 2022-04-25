@@ -1,4 +1,6 @@
-$sideWidth: 150px;
+// $sideWidth: 300px;
+$sideWidth_l: var(--width_l);
+$sideWidth_r: var(--width_r);
 .webmap-wrapper {
   &-anime-container {
     // 动画层
@@ -15,18 +17,28 @@ $sideWidth: 150px;
     margin: 0 auto;
     .block {
       margin: 80px 0;
-      min-width: $sideWidth;
+
       height: auto;
       // width: 26vw;
       // height: 71vh;
       backdrop-filter: blur(1rem);
-      background-color: #b9b9b9;
+      background-color: #97979745;
       pointer-events: auto;
       overflow: auto;
       padding: 30px; // 预留滚动条和按钮的位置
-      .left {
+      &.left {
+        transform: translateX(-100%); // TODO: 首次点击动画
+        width: $sideWidth_l;
+        // opacity: 0;
+        border-top-right-radius: 30px;
+        border-bottom-right-radius: 30px;
       }
-      .right {
+      &.right {
+        transform: translateX(100%);
+        width: $sideWidth_r;
+        // opacity: 0;
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 30px;
       }
     }
     .block-btn {

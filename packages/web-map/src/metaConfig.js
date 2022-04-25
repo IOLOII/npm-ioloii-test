@@ -1,7 +1,4 @@
 let metaConfig = {
-  // ['keys', [
-  //   '路网','桥梁','隧道','涵洞','路产'
-  // ]],
   路网: [
     {
       name: "路网",
@@ -59,13 +56,14 @@ let metaConfig = {
       headLineCheckBox: true,
       value: false,
       childrenMultiple: true,
+      prop:'technicalRating',
       // 一类，二类，三类，四类，五类
       children: [
-        { name: "一类", icon: "iconfont XXX", value: false },
-        { name: "二类", icon: "iconfont XXX", value: false },
-        { name: "三类", icon: "iconfont XXX", value: false },
-        { name: "四类", icon: "iconfont XXX", value: false },
-        { name: "五类", icon: "iconfont XXX", value: false },
+        { name: "一类", icon: "iconfont XXX", value: false ,technicalRatingValue:'01'},
+        { name: "二类", icon: "iconfont XXX", value: false ,technicalRatingValue:'02'},
+        { name: "三类", icon: "iconfont XXX", value: false ,technicalRatingValue:'03'},
+        { name: "四类", icon: "iconfont XXX", value: false ,technicalRatingValue:'04'},
+        { name: "五类", icon: "iconfont XXX", value: false ,technicalRatingValue:'05'},
       ],
     },
     {
@@ -75,12 +73,13 @@ let metaConfig = {
       headLineCheckBox: true,
       value: false,
       childrenMultiple: true,
+      prop:'spanType',
       children: [
         // 特大桥，大桥，中桥，小桥
-        { name: "特大桥", icon: "iconfont XXX", value: false },
-        { name: "大桥", icon: "iconfont XXX", value: false },
-        { name: "中桥", icon: "iconfont XXX", value: false },
-        { name: "小桥", icon: "iconfont XXX", value: false },
+        { name: "特大桥", icon: "iconfont XXX", value: false,spanTypeValue:'01' },
+        { name: "大桥", icon: "iconfont XXX", value: false,spanTypeValue:'02' },
+        { name: "中桥", icon: "iconfont XXX", value: false,spanTypeValue:'03' },
+        { name: "小桥", icon: "iconfont XXX", value: false,spanTypeValue:'04' },
       ],
     },
   ],
@@ -92,13 +91,14 @@ let metaConfig = {
       headLineCheckBox: true,
       value: false,
       childrenMultiple: true,
+      prop:'technicalRating',
       // 一类，二类，三类，四类，五类
       children: [
-        { name: "一类", icon: "iconfont XXX", value: false },
-        { name: "二类", icon: "iconfont XXX", value: false },
-        { name: "三类", icon: "iconfont XXX", value: false },
-        { name: "四类", icon: "iconfont XXX", value: false },
-        { name: "五类", icon: "iconfont XXX", value: false },
+        { name: "一类", icon: "iconfont XXX", value: false , technicalRatingValue:'01'},
+        { name: "二类", icon: "iconfont XXX", value: false , technicalRatingValue:'02'},
+        { name: "三类", icon: "iconfont XXX", value: false , technicalRatingValue:'03'},
+        { name: "四类", icon: "iconfont XXX", value: false , technicalRatingValue:'04'},
+        { name: "五类", icon: "iconfont XXX", value: false , technicalRatingValue:'05'},
       ],
     },
     {
@@ -108,12 +108,13 @@ let metaConfig = {
       headLineCheckBox: true,
       value: false,
       childrenMultiple: true,
+      prop:'tunnelTypeCode', // 隧道分类(01:特长隧道;02长隧道;03中隧道;04短隧道)
       children: [
         // 特大隧道，大隧道，中隧道，小隧道
-        { name: "特大隧道", icon: "iconfont XXX", value: false },
-        { name: "大隧道", icon: "iconfont XXX", value: false },
-        { name: "中隧道", icon: "iconfont XXX", value: false },
-        { name: "小隧道", icon: "iconfont XXX", value: false },
+        { name: "特大隧道", icon: "iconfont XXX", value: false,tunnelTypeCodeValue:'01' },
+        { name: "大隧道", icon: "iconfont XXX", value: false,tunnelTypeCodeValue:'02' },
+        { name: "中隧道", icon: "iconfont XXX", value: false,tunnelTypeCodeValue:'03' },
+        { name: "小隧道", icon: "iconfont XXX", value: false,tunnelTypeCodeValue:'04' },
       ],
     },
   ],
@@ -126,10 +127,21 @@ let metaConfig = {
       headLineCheckBox: true,
       value: false,
       childrenMultiple: true,
+      prop: "culvertLocation", // 查询条件 涵洞位置(01,主线涵洞,02匝道涵洞)
       // 主线涵洞，匝道涵洞
       children: [
-        { name: "主线涵洞", icon: "iconfont XXX", value: false },
-        { name: "匝道涵洞", icon: "iconfont XXX", value: false },
+        {
+          name: "主线涵洞",
+          icon: "iconfont XXX",
+          value: false,
+          culvertLocationValue: "01",
+        },
+        {
+          name: "匝道涵洞",
+          icon: "iconfont XXX",
+          value: false,
+          culvertLocationValue: "02",
+        },
       ],
     },
     {
@@ -139,12 +151,33 @@ let metaConfig = {
       headLineCheckBox: true,
       value: false,
       childrenMultiple: true,
+      prop: "administrativeGrade", // 查询条件 行政等级(国道G,省道S,县道X,乡道Y,村道C,专用公路Z)
       // 县道，乡道，村道，专用公路
       children: [
-        { name: "县道", icon: "iconfont XXX", value: false },
-        { name: "乡道", icon: "iconfont XXX", value: false },
-        { name: "村道", icon: "iconfont XXX", value: false },
-        { name: "专用公路", icon: "iconfont XXX", value: false },
+        {
+          name: "县道",
+          icon: "iconfont XXX",
+          value: false,
+          administrativeGradeValue: "X",
+        },
+        {
+          name: "乡道",
+          icon: "iconfont XXX",
+          value: false,
+          administrativeGradeValue: "Y",
+        },
+        {
+          name: "村道",
+          icon: "iconfont XXX",
+          value: false,
+          administrativeGradeValue: "C",
+        },
+        {
+          name: "专用公路",
+          icon: "iconfont XXX",
+          value: false,
+          administrativeGradeValue: "Z",
+        },
       ],
     },
   ],

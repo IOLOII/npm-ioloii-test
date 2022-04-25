@@ -1,5 +1,5 @@
 <template>
-  <div style="width: inherit; padding: 0 20px">
+  <div style="width: inherit; padding: 0 20px" class="supendedLeft">
     <el-input
       placeholder="所属行政区域"
       v-model="input3"
@@ -21,7 +21,16 @@
         <el-collapse v-model="activeNames" @change="handleChange" accordion>
           <el-collapse-item name="1">
             <template slot="title">
-              搜索工具<i class="header-icon el-icon-info"></i>
+              <span>搜索工具</span>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="搜索工具"
+                placement="right"
+                :enterable="false"
+              >
+                <i class="header-icon el-icon-info"></i>
+              </el-tooltip>
             </template>
             <el-form ref="form1" :model="form1">
               <el-form-item>
@@ -51,7 +60,16 @@
           </el-collapse-item>
           <el-collapse-item name="2">
             <template slot="title">
-              路线路况<i class="header-icon el-icon-info"></i>
+              <span>路线路况</span>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="路线路况"
+                placement="right"
+                :enterable="false"
+              >
+                <i class="header-icon el-icon-info"></i>
+              </el-tooltip>
             </template>
             <el-form ref="form2" :model="form2">
               <el-form-item>
@@ -126,5 +144,14 @@
   }
   .el-select {
     width: 100%;
+  }
+  .supendedLeft ::v-deep {
+    .el-tabs.el-tabs--top {
+      height: calc(100% - 40px);
+    }
+    .el-tabs__content {
+      height: calc(100% - 55px);
+      overflow-y: scroll;
+    }
   }
 </style>

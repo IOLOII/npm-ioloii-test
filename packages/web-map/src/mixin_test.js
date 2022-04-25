@@ -50,7 +50,10 @@ export default {
         activedLayerName: "",
       };
       try {
-        this.$emit("getActivatedLayerName", { emptyObj, key: "路网" }); // 获取当前激活的layer
+        this.$emit("handleEvent", {
+          eventName: "getActivatedLayerName",
+          eventObj: { emptyObj, key: "路网" },
+        }); // 获取当前激活的layer
       } catch (error) {
         this.console("getActivatedLayerName error");
       }
@@ -153,37 +156,13 @@ export default {
               <span style="color: #b4b1b1;margin-right: 10px;">
                 路线编号
               </span>
-              <span>SFW51155</span>
+              <span>${pointInfo.properties.ROADCODE}</span>
             </div>
             <div >
               <span style="color: #b4b1b1;margin-right: 10px;">
-                行政等级
+                路线名称
               </span>
-              <span>国道</span>
-            </div>
-            <div>
-              <span style="color: #b4b1b1;margin-right: 10px;">
-                起点桩号
-              </span>
-              <span>K0+000</span>
-            </div>
-            <div>
-              <span style="color: #b4b1b1;margin-right: 10px;">
-                终点桩号
-              </span>
-              <span>K121+100</span>
-            </div>
-            <div>
-              <span style="color: #b4b1b1;margin-right: 10px;">
-                所属行政区域
-              </span>
-              <span>所属行政区域</span>
-            </div>
-            <div>
-              <span style="color: #b4b1b1;margin-right: 10px;">
-                技术等级
-              </span>
-              <span>技术等级</span>
+              <span>${pointInfo.properties.ROADNAME}</span>
             </div>
           </div>
         `,
@@ -200,6 +179,14 @@ export default {
           },
         },
       });
+      // 抛出事件
+      this.$emit("handleEvent", {
+        eventName: "layerLineDetail",
+        eventObj: {
+          pointInfo
+        },
+      });
+
     },
     /**
      * @description 清除图层上的子图层 线路
@@ -262,9 +249,19 @@ export default {
     // 擦除图层中的线路- 非路网图层，并显示该图层
     test_rubOffLine(LayerName = "") {
       // TODO: 直接查询第一个layer 后续再调整
-      let activedLayerName =
-        LayerName || this.$refs.HeadPickGroup[0].getActivatedItemLayerName(); // 获取当前激活的layer
-      console.log("activedLayerName", activedLayerName);
+      let emptyObj = {
+        activedLayerName: "",
+      };
+      try {
+        this.$emit("handleEvent", {
+          eventName: "getActivatedLayerName",
+          eventObj: { emptyObj, key: "路网" },
+        });  // 获取当前激活的layer
+      } catch (error) {
+        this.console("getActivatedLayerName error");
+      }
+      let activedLayerName = emptyObj.activedLayerName;
+
       if (!activedLayerName) {
         this.console("当前没有选中的图层");
         return;

@@ -3,21 +3,20 @@
     <!-- v-for key metaConfig
     v-for groups metaConfig[key]
     v-for metaConfig[key][children] -->
-    <div v-for="key in Object.keys(metaConfig)" :key="key">
-      <h3>{{ key }}</h3>
-      <div v-for="(componentObj, index) in metaConfig[key]" :key="index">
+    <div v-for="key in Object.keys(metaConfig)" :key="key" style="padding-bottom: 10px">
+      <span style="font-size: 20px; font-weight: 700; ">{{ key }}</span>
+      <div v-for="(componentObj, index) in metaConfig[key]" :key="index" style="padding: 5px">
         <!-- <div v-if="metaConfig[key].length !== 1"> -->
-        <h4>
-          <el-checkbox
-            v-model="componentObj.value"
-            @change="headLineValueChange(componentObj)"
-            v-if="componentObj.headLineCheckBox"
-          >
-            <h4>{{ componentObj.name }}</h4>
-          </el-checkbox>
-        </h4>
+        <el-checkbox
+          v-model="componentObj.value"
+          @change="headLineValueChange({ componentObj, key })"
+          v-if="componentObj.headLineCheckBox"
+          style="padding: 5px"
+        >
+          <span style="font-size: 17px; font-weight: 600;">{{ componentObj.name }}</span>
+        </el-checkbox>
         <!-- </div> -->
-        <el-row>
+        <el-row style="padding-left: 1.2em">
           <el-col
             :span="24"
             :offset="0"
@@ -33,7 +32,7 @@
             >
               <el-checkbox
                 v-model="item.value"
-                @change="componentValueChange(componentObj, item)"
+                @change="componentValueChange({ componentObj, item, key })"
               >
                 <span :data-item="JSON.stringify(item)">{{ item.name }}</span>
               </el-checkbox>
@@ -58,7 +57,7 @@
         metaConfig: {}
       }
       eventBus.$emit('getMetaConfig', { emptyObj })
-      eventBus.$on('getActivatedLayerName', ({ emptyObj,key })=>{
+      eventBus.$on('getActivatedLayerName', ({ emptyObj, key }) => {
         emptyObj.activedLayerName = this.getActivatedLayerName(key)
       })
       this.metaConfig = emptyObj.metaConfig
@@ -69,7 +68,7 @@
           console[type](v)
         }
       },
-      headLineValueChange(componentObj) {
+      headLineValueChange({ componentObj, key }) {
         componentObj.children.forEach(item => {
           item.value = componentObj.value
         })
@@ -79,11 +78,12 @@
           type: 'all',
           eventObj: componentObj,
           value: componentObj.value,
-          componentObj
+          componentObj,
+          key
         })
         // TODO: 触发事件
       },
-      componentValueChange(componentObj, item) {
+      componentValueChange({ componentObj, item, key }) {
         // 如果所有children中的value都为true，则componentObj中的value都为true
         if (!componentObj.childrenMultiple && item.value) {
           let vitem = componentObj.children.find(vitem => {
@@ -99,7 +99,8 @@
             eventObj: item,
             value: item.value,
             componentObj,
-            item
+            item,
+            key
           })
         } else {
           let isAllTrue = true
@@ -116,7 +117,8 @@
               eventObj: componentObj,
               value: isAllTrue,
               componentObj,
-              item
+              item,
+              key
             })
           } else {
             this.console('单个item变化 触发单个item')
@@ -125,7 +127,8 @@
               eventObj: item,
               value: item.value,
               componentObj,
-              item
+              item,
+              key
             })
           }
         }
@@ -139,8 +142,8 @@
        * @param {Array} eventObj 如果是all，传入componentObj
        * @param {Object} eventObj 如果是item  传入item
        */
-      eventEmit({ type = 'all', eventObj, value, componentObj, item = null }) {
-        eventBus.$emit('pickHandle', { type, eventObj, value, componentObj, item })
+      eventEmit({ type = 'all', eventObj, value, componentObj, item = null, key }) {
+        eventBus.$emit('pickHandle', { type, eventObj, value, componentObj, item, key })
         this.$forceUpdate()
       },
       /**

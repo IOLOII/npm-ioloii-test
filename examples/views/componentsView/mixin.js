@@ -1,5 +1,6 @@
 export default {
   methods: {
+    // 加载路产roadRroperty 点位 roadRroperty
     getRoadProperty({ amapMakersManage, $AMap, map, pointEvent }) {
       // 路产数据
       const axios = require("axios");
@@ -31,20 +32,20 @@ export default {
       axios(config)
         .then((response) => {
           let arr = [
-            "tpLabel",
-            "tpMarking",
-            "tpGuardrail",
-            "tpSavefacilities",
-            "tpLighting",
-            "tpDrainage",
-            "tpTollStation",
-            "tpSst",
-            "tpPetrolStation",
-            "tpParkingLot",
-            "tpSuper",
-            "tpStation",
-            "tpPlate",
-            "tpCamera",
+            "tpCamera", // 监控设备
+            "tpDrainage", // 排水设施
+            "tpGuardrail", // 护栏
+            "tpLabel", // 交通标志
+            "tpLighting", // 照明设施
+            "tpMarking", // 标线
+            "tpParkingLot", // 停车区
+            "tpPetrolStation", // 加油站
+            "tpPlate", // 桥梁养护牌
+            "tpSavefacilities", // 防护措施
+            "tpSst", // 服务站
+            "tpStation", // 管理站
+            "tpSuper", // 治超站点
+            "tpTollStation", // 收费站
           ];
           let obj = {}; // 挂载数据对象
           // let markerCluster = []; // 存放转换后 生成的每一个marker
@@ -65,9 +66,14 @@ export default {
                   // 高德转经纬度
 
                   if (
+                    point.geometry &&
                     point.geometry.coordinates[1] &&
                     point.geometry.coordinates[0]
                   ) {
+                    // this.console(
+                    //   point.geometry.coordinates[1],
+                    //   point.geometry.coordinates[0]
+                    // );
                     toTransItem.push([
                       point.geometry.coordinates[1],
                       point.geometry.coordinates[0],
@@ -80,10 +86,8 @@ export default {
               }
             } catch (error) {}
           });
-          console.log(toTransItemObj);
 
           // 批量转换经纬度
-          console.log(map);
           $AMap.convertFrom(toTransItem, "gps", (status, result) => {
             if (result.info === "ok") {
               result.locations.forEach((item, index) => {
@@ -116,7 +120,7 @@ export default {
               //       gridSize: 80, // 聚合网格像素大小
               //     }
               //   );
-              //   console.log(cluster)
+              //   this.console(cluster)
               // });
             }
           });
@@ -129,8 +133,225 @@ export default {
           });
         })
         .catch((error) => {
-          console.log(error);
+          this.console(error);
         });
+    },
+    // 高德地图元素交互事件
+    bindRoadRropertyPointEvent($AMap) {
+      return {
+        type: ["click"], // default click
+        click: (e) => {
+          let target = e.target;
+          let map = e.target.getMap();
+          let ExtData = target.getExtData();
+          console.log(ExtData);
+          map.setCenter(target.lnglat);
+          map.setZoom(17, false, 500);
+          let infoWindow = new $AMap.InfoWindow({
+            anchor: "top-left",
+            autoMove: true,
+            content: ExtData.properties.name,
+          });
+          infoWindow.open(map, target.lnglat);
+          infoWindow.on("close", () => {
+            if (process.env.NODE_ENV === "production") {
+              map.setCenter(this.$refs.WebMap.mapOptions.center);
+            }
+            map.setZoom(this.$refs.WebMap.mapOptions.zoom, false, 500);
+          });
+
+          // TODO: 插入其他元素或页面的交互事件
+          // NOTE: 页面其他事件，点渲染，单独维护
+          this.$refs.WebMap.triggerEvent("animeMove", {
+            direction: "right",
+            isShow: true,
+            sideConf: {
+              right: "300px",
+            },
+          });
+          this.$nextTick(() => {
+            this.teleportStaticHTML = `<div>`;
+            Object.keys(ExtData.properties).forEach((key) => {
+              this.teleportStaticHTML += `
+                <div>
+                  <span style="color: #0048BA;margin-right: 10px;">
+                    ${key}
+                  </span>
+                  <span> :   ${ExtData.properties[key]}</span>
+                </div>
+              `;
+            });
+            this.teleportStaticHTML += `</div>`;
+          });
+        },
+      };
+    },
+    // 加载桥梁bridge 点位
+    // 加载隧道Tunnel 点位
+    // 加载涵洞culvert 点位
+    get_Culvert_Bridge_Tunnel({
+      amapMakersManage,
+      $AMap,
+      map,
+      pointEvent = null,
+      params = {},
+      key,
+    }) {
+      const axios = require("axios");
+      let data = JSON.stringify(
+        Object.assign(
+          {
+            administrativeGrade: [],
+            areaIds: [],
+            culvertLocation: [],
+            id: "",
+            no: "",
+            officeId: "",
+            roadNo: "",
+            spanType: [],
+            stake: "",
+            technicalRating: [],
+            tunnelTypeCode: [],
+            type: [key],
+          },
+          params
+        )
+      );
+
+      let config = {
+        method: "post",
+        url: "https://yx.91jt.net/testroad/api/pc/pcHome/queryHomePoint",
+        headers: {
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA5NTU2MzYsInVzZXJuYW1lIjoiYWRtaW4ifQ.Tqw5LZAKeMKiXn5llaphc1YWPcY1z85hFI5Mx7G19t8",
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+
+      axios(config)
+        .then((response) => {
+          let toTransItem = []; // 存放有效点的经纬度数据
+          let toTransItemObj = []; // 存放有效点的引用对象
+          response.data.forEach((item) => {
+            item = JSON.parse(decodeURIComponent(item));
+            item.features.forEach((point, index) => {
+              if (
+                point.geometry &&
+                point.geometry.coordinates[1] &&
+                point.geometry.coordinates[0]
+              ) {
+                toTransItem.push([
+                  point.geometry.coordinates[1],
+                  point.geometry.coordinates[0],
+                ]);
+                toTransItemObj.push(point);
+              }
+            });
+          });
+
+          let promiseArr = [];
+          // 生成一个按指定长度切片数组的方法
+          function chunk(arr, len) {
+            let chunks = [],
+              i = 0,
+              n = arr.length;
+            while (i < n) {
+              chunks.push(arr.slice(i, (i += len)));
+            }
+            return chunks;
+          }
+          let toTransItemArr = chunk(toTransItem, 1500);
+          toTransItemArr.forEach((arr) => {
+            let promise = new Promise((resolve, reject) => {
+              $AMap.convertFrom(arr, "gps", (status, result) => {
+                if (result.info === "ok") {
+                  resolve(result.locations);
+                } else {
+                  reject(result.info);
+                }
+              });
+            });
+            promiseArr.push(promise);
+          });
+          Promise.all(promiseArr)
+            .then((res) => {
+              let temparr = [];
+              res.map((item) => (temparr = temparr.concat(item)));
+              let locations = temparr;
+
+              locations.forEach((item, index) => {
+                let point = toTransItemObj[index];
+                let marker = new $AMap.Marker({
+                  position: item,
+                  // visible: false,
+                  map: map,
+                });
+                marker.setExtData(point);
+                pointEvent &&
+                  pointEvent.type.forEach((eType) => {
+                    marker.on(eType, pointEvent[eType]);
+                  });
+                point.marker = marker;
+                marker.lnglat = [item.lng, item.lat];
+              });
+
+              amapMakersManage[key] = toTransItemObj;
+            })
+            .catch((err) => this.console(err));
+        })
+        .catch((error) => {
+          this.console(error);
+        });
+    },
+    bind_Culvert_Bridge_Tunnel($AMap) {
+      return {
+        type: ["click"], // default click
+        click: (e) => {
+          let target = e.target;
+          let map = e.target.getMap();
+          let ExtData = target.getExtData();
+          console.log(ExtData);
+          map.setCenter(target.lnglat);
+          map.setZoom(17, false, 500);
+          let infoWindow = new $AMap.InfoWindow({
+            anchor: "top-left",
+            autoMove: true,
+            content: ExtData.properties.name,
+          });
+          infoWindow.open(map, target.lnglat);
+          infoWindow.on("close", () => {
+            if (process.env.NODE_ENV === "production") {
+              map.setCenter(this.$refs.WebMap.mapOptions.center);
+            }
+            map.setZoom(this.$refs.WebMap.mapOptions.zoom, false, 500);
+          });
+
+          // TODO: 插入其他元素或页面的交互事件
+          // NOTE: 页面其他事件，点渲染，单独维护
+          this.$refs.WebMap.triggerEvent("animeMove", {
+            direction: "right",
+            isShow: true,
+            sideConf: {
+              right: "300px",
+            },
+          });
+          this.$nextTick(() => {
+            this.teleportStaticHTML = `<div>`;
+            Object.keys(ExtData.properties).forEach((key) => {
+              this.teleportStaticHTML += `
+                <div>
+                  <span style="color: #0048BA;margin-right: 10px;">
+                    ${key}
+                  </span>
+                  <span> :   ${ExtData.properties[key]}</span>
+                </div>
+              `;
+            });
+            this.teleportStaticHTML += `</div>`;
+          });
+        },
+      };
     },
   },
 };

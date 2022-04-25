@@ -1,13 +1,13 @@
-cover
 <template>
   <div class="component-warpper">
     <WebMap
       :metaConfig="metaConfig"
       geoServerUrl="http://14.18.52.99:8000/geoserver/neimenggu/wms"
       geoQueryProp="ROADNAME"
-      @loadMapData="loadMapData"
+      @initializedHandle="initializedHandle"
+      @initMapEvevt="initMapEvevt"
+      @handleEvent="handleEvent"
       ref="WebMap"
-      @getActivatedLayerName="getActivatedLayerName"
     >
       <template #supendedLeft>
         <SupebdLeft ref="SupebdLeft" />
@@ -16,8 +16,14 @@ cover
       <!-- 动画层 -->
       <!-- <template #animeLeft> 12321</template>
        -->
-      <template #animeRight> 占位</template>
+      <template #animeRight>
+        <span style="display:none"></span>
+      </template>
     </WebMap>
+
+    <Teleport to=".webmap-wrapper-anime-container .block.right" v-if="teleportStaticHTML">
+      <div style="" class="asdklsmodal" v-html="teleportStaticHTML">></div>
+    </Teleport>
   </div>
 </template>
 
@@ -26,6 +32,7 @@ cover
   import eventBus from './eventBus'
 
   import WebMap from '~@/web-map'
+  import Teleport from '~@/teleport'
   import { metaConfig } from '~@/web-map/src/metaConfig'
   import mixin from './mixin.js'
   import './cover.scss'
@@ -36,8 +43,16 @@ cover
     mixins: [mixin],
     components: {
       WebMap,
-      SupebdLeft
+      SupebdLeft,
+      Teleport
     },
+    data: () => ({
+      amapMakersManage: null,
+      $AMap: null,
+      map: null,
+
+      teleportStaticHTML: ''
+    }),
     computed: {
       metaConfig() {
         return metaConfig
@@ -51,45 +66,42 @@ cover
       eventBus.$on('getMetaConfig', ({ emptyObj }) => {
         emptyObj.metaConfig = _this.metaConfig
       })
-      eventBus.$on('pickHandle', ({ type, eventObj, value, componentObj, item }) => {
-        this.pickGroupEventHandle({ type, eventObj, value, componentObj, item })
+      eventBus.$on('pickHandle', ({ type, eventObj, value, componentObj, item, key }) => {
+        this.pickGroupEventHandle({ type, eventObj, value, componentObj, item, key })
       })
     },
     methods: {
+      alert(v) {
+        if (process.env.NODE_ENV === 'development') {
+          this.console(v)
+          return
+        }
+        if (typeof v !== 'string') {
+          this.console(JSON.stringify(v))
+        } else {
+          alert(v)
+        }
+      },
+      console(v, type = 'error') {
+        if (process.env.NODE_ENV === 'development') {
+          console[type](v)
+        }
+      },
+      initializedHandle({ amapMakersManage, $AMap, map }) {
+        this.amapMakersManage = amapMakersManage
+        this.$AMap = $AMap
+        this.map = map
+
+        this.loadMapData({ amapMakersManage, $AMap, map })
+      },
       loadMapData({ amapMakersManage, $AMap, map }) {
-        // 加载路产 点位
+        // 路产
         this.getRoadProperty({
           amapMakersManage,
           $AMap,
           map,
-          pointEvent: this.bindPointEvent($AMap)
+          pointEvent: this.bindRoadRropertyPointEvent($AMap)
         })
-      },
-      // 高德地图元素交互事件
-      bindPointEvent($AMap) {
-        return {
-          type: ['click'], // default click
-          click: e => {
-            let target = e.target
-            let map = e.target.getMap()
-            map.setCenter(target.lnglat)
-            map.setZoom(17, false, 500)
-            let infoWindow = new $AMap.InfoWindow({
-              anchor: 'top-left',
-              autoMove: true,
-              content: target.getExtData().properties.name
-            })
-            infoWindow.open(map, target.lnglat)
-            infoWindow.on('close', () => {
-              map.setCenter(this.$refs.WebMap.mapOptions.center)
-              map.setZoom(this.$refs.WebMap.mapOptions.zoom, false, 500)
-            })
-
-            // TODO: 插入其他元素或页面的交互事件
-            // NOTE: 页面其他事件，点渲染，单独维护
-            // this.$refs.WebMap.triggerEvent(eventName, eventObj)
-          }
-        }
       },
       /**
        * @description 顶部区域的事件回调 主要处理由顶部区域点击后的事务
@@ -99,11 +111,23 @@ cover
        * @param {Object} componentObj 父级
        * @param {Object} item 子级 如果是父级出发,则会出现空的情况 headLineValueChange事件
        */
-      pickGroupEventHandle({ type, eventObj, value, componentObj, item = null, _this }) {
-        console.log('message')
+      /**
+       * @description 点击复选框事件
+       */
+      pickGroupEventHandle({
+        type,
+        eventObj,
+        value,
+        componentObj,
+        item = null,
+        _this,
+        key
+      }) {
+        // key 大类 路网 桥梁 隧道 涵洞 路产
         if (!_this) _this = this.$refs.WebMap
+        if (!_this) console.error('WebMap is empty, maybe dom timeout, please refresh')
         // TODO: 调整这里case 规则
-        switch (componentObj.name) {
+        switch (key) {
           case '路网':
             // 展现或隐藏 layer
             // this.console(eventObj.layerName, 'log')
@@ -146,17 +170,55 @@ cover
 
             break
           case '桥梁':
-          case '桥梁评定等级':
-          case '桥梁分类（长度）':
-            break
+          // case '桥梁评定等级':
+          // case '桥梁分类（长度）':
           case '隧道':
-            break
+          // case '隧道评定等级':
+          // case '隧道分类（长度）':
           case '涵洞':
+            // case '涵洞位置':
+            // case '行政等级':
+            console.log(type, eventObj, value, componentObj, item, _this)
+            // 生成查询条件
+            let { prop } = componentObj
+            // 获取同父下其他类目
+            let params = {}
+            let sendReq = false
+            this.metaConfig[key].forEach(component => {
+              params[component.prop] = []
+              component.children.forEach(child => {
+                if (child.value) {
+                  params[component.prop].push(child[component.prop + 'Value'])
+                  sendReq = true
+                }
+              })
+            })
+            if (this.amapMakersManage[key]) {
+              this.amapMakersManage[key].forEach(item => {
+                try {
+                  item.marker.remove()
+                } catch (e) {
+                  this.console(item)
+                }
+              })
+            }
+            if (sendReq) {
+              this.amapMakersManage[key] = []
+              this.get_Culvert_Bridge_Tunnel({
+                amapMakersManage: this.amapMakersManage,
+                $AMap: this.$AMap,
+                map: this.map,
+                params,
+                key,
+                pointEvent: this.bind_Culvert_Bridge_Tunnel(this.$AMap)
+              })
+            }
+
             break
           case '路产':
-          case '服务设施1':
-          case '服务设施2':
-          case '管理设施':
+            // case '服务设施1':
+            // case '服务设施2':
+            // case '管理设施':
             switch (type) {
               case 'item':
                 if (value) {
@@ -205,8 +267,57 @@ cover
             break
         }
       },
-      getActivatedLayerName({emptyObj,key}){
-        eventBus.$emit('getActivatedLayerName',{emptyObj,key})
+      initMapEvevt() {
+        this.map.on('click', ({ target, lnglat, pixel, type }) => {
+          this.$refs.WebMap.test_layerClicked(lnglat)
+        })
+        if (process.env.NODE_ENV === 'development') {
+          this.map.on('mousewheel', ({ target, lnglat, pixel, type }) => {
+            console.log(this.map.getZoom())
+          })
+          this.map.on('mousemove', ({ target, lnglat, pixel, type }) => {
+            const { lat, lng } = lnglat
+          })
+        }
+      },
+      // 与之相反是 triggerEvent
+      handleEvent({ eventName, eventObj }) {
+        console.log(eventName, eventObj)
+        switch (eventName) {
+          case 'getActivatedLayerName':
+            let { emptyObj, key } = eventObj
+            eventBus.$emit(eventName, { emptyObj, key })
+            break
+          case 'layerLineDetail':
+            let { pointInfo } = eventObj
+            console.log(pointInfo)
+            this.$refs.WebMap.triggerEvent('animeMove', {
+              direction: 'right',
+              isShow: true
+            })
+            this.$nextTick(() => {
+              this.teleportStaticHTML = `
+                <div>
+                  <div>
+                    <span style="color: #0048BA;margin-right: 10px;">
+                      路线编号
+                    </span>
+                    <span>${pointInfo.properties.ROADCODE}</span>
+                  </div>
+                  <div >
+                    <span style="color: #0048BA;margin-right: 10px;">
+                      路线名称
+                    </span>
+                    <span>${pointInfo.properties.ROADNAME}</span>
+                  </div>
+                </div>
+              `
+            })
+            break
+          default:
+            this.console(`事件未捕获： HandleEvent_${eventName}`)
+            break
+        }
       }
     }
   }
@@ -215,12 +326,22 @@ cover
 <style lang="scss" scoped>
   // @import './cover.scss';
   .component-warpper {
-    width: 800px;
+    width: 1200px;
     height: 600px;
     background: #fff;
     border: 1px;
     box-sizing: border-box;
     box-shadow: 0 0 7px 2px #ccc;
     margin: 0 auto;
+  }
+</style>
+
+<style lang="scss">
+  // ### for
+  .teleport {
+    text-align: left;
+    &.asdklsmodal {
+      // background: red;
+    }
   }
 </style>
