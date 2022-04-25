@@ -292,9 +292,14 @@
         AMapLoader.load({
           key: this.$amapKey, // 申请好的Web端开发者Key，首次调用 load 时必填
           version: this.version, // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-          plugins: this.plugins // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+          plugins: this.plugins, // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+          AMapUI: {
+            version: '1.1',
+            plugins: []
+          }
         })
           .then(AMap => {
+            let map = null
             if (!this.$refs.webmap) {
               this.alert('map ref is null')
               return
@@ -302,6 +307,8 @@
 
             this.$AMap = AMap
             this.map = new AMap.Map(this.$refs.webmap, this.mapOptions)
+            map = this.map
+
             // 先
             this.$emit('initializedHandle', {
               amapMakersManage: this.amapMakersManage,
@@ -315,6 +322,39 @@
             if (this.metaConfig['路网']) {
               this.loadRoadNet(this.metaConfig['路网'])
             }
+
+            AMapUI.loadUI(['control/BasicControl'], function (BasicControl) {
+              var layerCtrl = new BasicControl.LayerSwitcher({
+                //control-cus 见上方style
+                theme: 'control-cus',
+                position: 'tr'
+              })
+
+              map.addControl(layerCtrl)
+
+              //缩放控件
+              map.addControl(
+                new BasicControl.Zoom({
+                  //内置的dark主题
+                  theme: 'dark',
+
+                  //左下角
+                  position: 'br'
+                })
+              )
+
+              //动态加载css
+              // AMapUI.loadCss('./zoom-green.css', function () {
+              //   var zoomCtrl = new BasicControl.Zoom({
+              //     //见zoom-green.css
+              //     theme: 'my-green',
+              //     position: 'br',
+              //     showZoomNum: true
+              //   })
+
+              //   map.addControl(zoomCtrl)
+              // })
+            })
             // 加载路产
             // this.test_getGdPoint()
           })
@@ -410,7 +450,7 @@
             break
           case 'animeMove':
             let { direction, isShow, sideConf } = eventObj
-            eventBus.$emit(eventName, {direction, isShow, sideConf})
+            eventBus.$emit(eventName, { direction, isShow, sideConf })
             break
           default:
             this.console(`事件未捕获： TriggerEvent_${eventName}`)
@@ -423,4 +463,25 @@
 
 <style lang="scss" scoped>
   @import './css/main.scss';
+</style>
+<style lang="scss">
+  .amap-ui-control-theme-control-cus {
+    a,
+    span {
+      cursor: pointer;
+    }
+    .amap-ui-control-layer {
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+      background: white;
+    }
+
+    .amap-ui-control-layer-expanded {
+      color: #0071cb;
+      background: white;
+    }
+
+    .amap-ui-control-layer-toggle {
+      color: #0071cb;
+    }
+  }
 </style>
