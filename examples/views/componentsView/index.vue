@@ -7,16 +7,16 @@ cover
       geoQueryProp="ROADNAME"
       @loadMapData="loadMapData"
       ref="WebMap"
-      @pickHandle="pickGroupEventHandle"
+      @getActivatedLayerName="getActivatedLayerName"
     >
       <template #supendedLeft>
-        <SupebdLeft />
+        <SupebdLeft ref="SupebdLeft" />
       </template>
 
       <!-- 动画层 -->
       <!-- <template #animeLeft> 12321</template>
        -->
-      <template #animeRight> 12313</template>
+      <template #animeRight> 占位</template>
     </WebMap>
   </div>
 </template>
@@ -43,13 +43,16 @@ cover
         return metaConfig
       },
       tempToken() {
-        return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA4NTM2MzQsInVzZXJuYW1lIjoiYWRtaW4ifQ.7K3GYKjvL0AGlbk6zLT917VyeZjF-5TJDrbqDqHtGq0'
+        return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA5NDI4NTMsInVzZXJuYW1lIjoiYWRtaW4ifQ.EzIsPK_ewYWtqbsjWm0v72hcD0QmbnXyD52ds4V8_Y0'
       }
     },
     created() {
       let _this = this
       eventBus.$on('getMetaConfig', ({ emptyObj }) => {
         emptyObj.metaConfig = _this.metaConfig
+      })
+      eventBus.$on('pickHandle', ({ type, eventObj, value, componentObj, item }) => {
+        this.pickGroupEventHandle({ type, eventObj, value, componentObj, item })
       })
     },
     methods: {
@@ -97,7 +100,7 @@ cover
        * @param {Object} item 子级 如果是父级出发,则会出现空的情况 headLineValueChange事件
        */
       pickGroupEventHandle({ type, eventObj, value, componentObj, item = null, _this }) {
-        console.log("message")
+        console.log('message')
         if (!_this) _this = this.$refs.WebMap
         // TODO: 调整这里case 规则
         switch (componentObj.name) {
@@ -201,6 +204,9 @@ cover
             _this.console(componentObj.name)
             break
         }
+      },
+      getActivatedLayerName({emptyObj,key}){
+        eventBus.$emit('getActivatedLayerName',{emptyObj,key})
       }
     }
   }

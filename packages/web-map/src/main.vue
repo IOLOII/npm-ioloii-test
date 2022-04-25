@@ -8,7 +8,7 @@
       ref="webmap"
     ></div>
     <Supended v-if="true" ref="Supended">
-      <template #top>
+      <!-- <template #top>
         <div
           style="display: flex; width: 80%; justify-content: flex-start; flex-wrap: wrap"
           @click.stop=""
@@ -17,12 +17,12 @@
             ref="HeadPickGroup"
             @pickHandle="pickGroupEventHandle"
             :baseDataTitle="key"
-            :baseDataArr="metaConfig.get(key)"
-            v-for="key in metaConfig.keys()"
+            :baseDataArr="metaConfig[key]"
+            v-for="key in Object.keys(metaConfig)"
             :key="key"
           />
         </div>
-      </template>
+      </template> -->
       <!-- <template #right>
         <div @click.stop="">
           <button @click="test_loadLayer">测试图层加载</button>
@@ -36,13 +36,12 @@
         </div>
       </template> -->
 
-
-      <!-- <template #top v-if="$slots.supendedTop">
-        <slot name="supendedTop"> </slot>
-      </template> -->
+      <template #top v-if="$slots.supendedTop">
+        <slot name="supendedTop"></slot>
+      </template>
 
       <template #left v-if="$slots.supendedLeft">
-        <slot name="supendedLeft"> </slot>
+        <slot name="supendedLeft"></slot>
       </template>
 
       <!-- <template #right v-if="$slots.supendedRight">
@@ -50,7 +49,7 @@
       </template> -->
 
       <template #bottom v-if="$slots.supendedBottom">
-        <slot name="supendedBottom"> </slot>
+        <slot name="supendedBottom"></slot>
       </template>
     </Supended>
     <!-- <Teleport to=".webmap-wrapper">
@@ -133,7 +132,7 @@
         required: false
       },
       metaConfig: {
-        type: Map,
+        type: Object,
         required: false
       },
       geoServerUrl: {
@@ -272,7 +271,7 @@
       this.initGlobalEvent()
     },
     mounted() {
-      // console.log(this.metaConfig.get('路网'))
+      // console.log(this.metaConfig['路网'])
     },
     methods: {
       alert(v) {
@@ -322,8 +321,9 @@
             this.map = new AMap.Map(this.$refs.webmap, this.mapOptions)
             this.initMapEvevt()
             // 加载路网
-            if (this.metaConfig.get('路网')) {
-              this.loadRoadNet(this.metaConfig.get('路网'))
+
+            if (this.metaConfig['路网']) {
+              this.loadRoadNet(this.metaConfig['路网'])
             }
             // 加载路产
             // this.test_getGdPoint()
@@ -361,7 +361,7 @@
       //   if(this.metaConfigCache[key]) {
       //     return this.metaConfigCache[key]
       //   }else{
-      //     this.metaConfigCache[key] = this.metaConfig.get(key)
+      //     this.metaConfigCache[key] = this.metaConfig[key]
       //     return this.metaConfigCache[key]
       //   }
       // }
@@ -383,12 +383,12 @@
       generateAmapMakersManage() {
         // 桥梁,隧道,涵洞,路产
         let metaConfigMap = {}
-        Array.from(this.metaConfig.keys()).forEach(key => {
+        Object.keys(this.metaConfig).forEach(key => {
           if (key === '路网') {
             return
           } else {
             metaConfigMap[key] = {}
-            this.metaConfig.get(key).forEach(item => {
+            this.metaConfig[key].forEach(item => {
               metaConfigMap[key][item.name] = {}
               item.children &&
                 item.children.forEach(child => {
@@ -415,6 +415,6 @@
   }
 </script>
 
-<style lang="scss" scoped >
+<style lang="scss" scoped>
   @import './css/main.scss';
 </style>

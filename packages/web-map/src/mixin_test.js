@@ -46,8 +46,15 @@ export default {
     // 测试点击图层上的一点，获取坐标 请求路线数据
     test_layerClicked({ lng, lat }) {
       // TODO: 直接查询第一个layer 后续再调整
-      let activedLayerName =
-        this.$refs.HeadPickGroup[0].getActivatedItemLayerName(); // 获取当前激活的layer
+      let emptyObj = {
+        activedLayerName: "",
+      };
+      try {
+        this.$emit("getActivatedLayerName", { emptyObj, key: "路网" }); // 获取当前激活的layer
+      } catch (error) {
+        this.console("getActivatedLayerName error");
+      }
+      let activedLayerName = emptyObj.activedLayerName;
       if (!activedLayerName) {
         this.console("当前没有选中的图层");
         return;
@@ -100,6 +107,8 @@ export default {
               activedLayerName = item;
             }
           });
+          // set隐藏其他图层
+          this.test_setOtherLayerValue(activedLayerName);
           this.test_query({
             layerName: activedLayerName,
             query: `${label}='${res.data.features[0].properties[label]}'`,
@@ -235,14 +244,22 @@ export default {
     test_loadLine() {
       this.test_query({});
     },
-    // TODO:// SOLVED: 解决回显时 数据修改页面不刷新文题
-    test_setMetaConfig() {
-      this.metaConfig.get("路网")[0].children[0].value =
-        !this.metaConfig.get("路网")[0].children[0].value;
-      this.$refs.HeadPickGroup[0].$forceUpdate();
+    // 设置该图层隐藏 显示线路，隐藏其他图层
+    test_setOtherLayerValue(layerName) {
+      this.metaConfig["路网"][0].children.forEach((item) => {
+        if (item.layerName !== layerName) {
+          item.value = false;
+          this.metaConfig["路网"][0].value = false;
+        } else {
+          this.test_clearLayerChildren(item.layerName, "hide");
+        }
+      });
+      // this.metaConfig["路网"][0].children[0].value =
+      //   !this.metaConfig["路网"][0].children[0].value;
+      // this.$refs.HeadPickGroup[0].$forceUpdate();
     },
     test_getActived() {},
-    // 擦除线路图层- 非路网图层
+    // 擦除图层中的线路- 非路网图层，并显示该图层
     test_rubOffLine(LayerName = "") {
       // TODO: 直接查询第一个layer 后续再调整
       let activedLayerName =

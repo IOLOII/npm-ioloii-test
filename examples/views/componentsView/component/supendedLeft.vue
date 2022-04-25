@@ -15,7 +15,7 @@
     </el-input>
     <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 260px">
       <el-tab-pane label="图层" name="second">
-        <TreePick />
+        <TreePick ref="TreePick" />
       </el-tab-pane>
       <el-tab-pane label="搜索" name="third">
         <el-collapse v-model="activeNames" @change="handleChange" accordion>
@@ -88,7 +88,7 @@
     },
     props: {
       metaConfig: {
-        type: Map,
+        type: Object,
         required: false
       }
     },
