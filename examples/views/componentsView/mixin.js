@@ -1,6 +1,53 @@
+import eventBus from "./eventBus";
 export default {
+  data: () => ({
+    amapMakersManage: null,
+    $AMap: null,
+    map: null,
+  }),
+  created() {
+    eventBus.$on("getMetaConfig", ({ emptyObj }) => {
+      emptyObj.metaConfig = this.metaConfig;
+    });
+    eventBus.$on(
+      "pickHandle",
+      ({ type, eventObj, value, componentObj, item, key }) => {
+        this.pickGroupEventHandle({
+          type,
+          eventObj,
+          value,
+          componentObj,
+          item,
+          key,
+        });
+      }
+    );
+  },
   methods: {
-    // 加载路产roadRroperty 点位 roadRroperty
+    alert(v) {
+      if (process.env.NODE_ENV === "development") {
+        this.console(v);
+        return;
+      }
+      if (typeof v !== "string") {
+        this.console(JSON.stringify(v));
+      } else {
+        alert(v);
+      }
+    },
+    console(v, type = "error") {
+      if (process.env.NODE_ENV === "development") {
+        console[type](v);
+      }
+    },
+    /**
+     * @description 加载metaConfig中类别数据 初始化路产数据
+     * @param {Object} param
+     * @param {Object} param.amapMakersManage 地图标记管理器
+     * @param {Object} param.$AMap 地图构造函数
+     * @param {Object} param.map 地图实例
+     * @param {Object} param.pointEvent 注册交互事件
+     */
     getRoadProperty({ amapMakersManage, $AMap, map, pointEvent }) {
       // 路产数据
       const axios = require("axios");
@@ -84,7 +131,9 @@ export default {
               } else {
                 response.data[item] = {};
               }
-            } catch (error) {}
+            } catch (error) {
+              this.console("get road property error");
+            }
           });
 
           // 批量转换经纬度
@@ -136,10 +185,13 @@ export default {
           this.console(error);
         });
     },
-    // 高德地图元素交互事件
+    /**
+     * @description 路产 元素交互事件
+     * @param {Object} $AMap 地图构造函数
+     */
     bindRoadRropertyPointEvent($AMap) {
       return {
-        type: ["click"], // default click
+        type: ["click"], // default click https://lbs.amap.com/api/jsapi-v2/guide/events/map_overlay
         click: (e) => {
           let target = e.target;
           let map = e.target.getMap();
@@ -155,14 +207,14 @@ export default {
           infoWindow.open(map, target.lnglat);
           infoWindow.on("close", () => {
             if (process.env.NODE_ENV === "production") {
-              map.setCenter(this.$refs.WebMap.mapOptions.center);
+              map.setCenter(this.$WebMap.mapOptions.center);
             }
-            map.setZoom(this.$refs.WebMap.mapOptions.zoom, false, 500);
+            map.setZoom(this.$WebMap.mapOptions.zoom, false, 500);
           });
 
           // TODO: 插入其他元素或页面的交互事件
           // NOTE: 页面其他事件，点渲染，单独维护
-          this.$refs.WebMap.triggerEvent("animeMove", {
+          this.$WebMap.triggerEvent("animeMove", {
             direction: "right",
             isShow: true,
             sideConf: {
@@ -186,9 +238,9 @@ export default {
         },
       };
     },
-    // 加载桥梁bridge 点位
-    // 加载隧道Tunnel 点位
-    // 加载涵洞culvert 点位
+    /**
+     * @description 加载metaConfig中类别数据 桥梁bridge 隧道Tunnel 涵洞culvert
+     */
     get_Culvert_Bridge_Tunnel({
       amapMakersManage,
       $AMap,
@@ -301,9 +353,13 @@ export default {
             .catch((err) => this.console(err));
         })
         .catch((error) => {
-          this.console(error);
+          this.console("get Culvert_Bridge_Tunnel error");
         });
     },
+    /**
+     * @description 业务 元素交互事件
+     * @param {Object} $AMap 地图构造函数
+     */
     bind_Culvert_Bridge_Tunnel($AMap) {
       return {
         type: ["click"], // default click
@@ -322,14 +378,14 @@ export default {
           infoWindow.open(map, target.lnglat);
           infoWindow.on("close", () => {
             if (process.env.NODE_ENV === "production") {
-              map.setCenter(this.$refs.WebMap.mapOptions.center);
+              map.setCenter(this.$WebMap.mapOptions.center);
             }
-            map.setZoom(this.$refs.WebMap.mapOptions.zoom, false, 500);
+            map.setZoom(this.$WebMap.mapOptions.zoom, false, 500);
           });
 
           // TODO: 插入其他元素或页面的交互事件
           // NOTE: 页面其他事件，点渲染，单独维护
-          this.$refs.WebMap.triggerEvent("animeMove", {
+          this.$WebMap.triggerEvent("animeMove", {
             direction: "right",
             isShow: true,
             sideConf: {

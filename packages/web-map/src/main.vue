@@ -25,14 +25,14 @@
       </template> -->
       <!-- <template #right>
         <div @click.stop="">
-          <button @click="test_loadLayer">测试图层加载</button>
-          <button @click="test_showLayer({ layerName: 'map:LX_Y' })">测试图层显示</button>
-          <button @click="test_hideLayer">测试图层隐藏</button>
-          <button @click="test_loadLine">测试道路查询加载</button>
-          <button @click="test_setMetaConfig">顶部赋值操作</button>
-          <button @click="test_getActived">获取选中项</button>
-          <button @click="test_rubOffLine()">清除查询的线路数据</button>
-          <button @click="test_getGdPoint">获取路网数据</button>
+          <button @click="loadLayer">测试图层加载</button>
+          <button @click="showLayer({ layerName: 'map:LX_Y' })">测试图层显示</button>
+          <button @click="hideLayer">测试图层隐藏</button>
+          <button @click="loadLine">测试道路查询加载</button>
+          <button @click="setMetaConfig">顶部赋值操作</button>
+          <button @click="getActived">获取选中项</button>
+          <button @click="rubOffLine()">清除查询的线路数据</button>
+          <button @click="getGdPoint">获取路网数据</button>
         </div>
       </template> -->
 
@@ -97,11 +97,12 @@
 
   // 配置
   // import { metaConfig } from './metaConfig'
-  import mixin_test from './mixin_test.js'
+  import mixin from './mixin.js'
+  import devTest from './devTest.js'
 
   export default {
     name: 'WebMap',
-    mixins: [mixin_test],
+    mixins: [mixin, devTest],
     components: {
       Supended,
       Anime,
@@ -160,74 +161,8 @@
         map: null,
         $AMap: null,
         // geo图层管理对象
-        geoLayersManage: {},
-        // metaConfigCache:{}
-        amapMakersManage: {
-          // 桥梁: {
-          //   桥梁评定等级: {
-          //     一类: [],
-          //     二类: [],
-          //     三类: [],
-          //     四类: [],
-          //     五类: []
-          //   },
-          //   '桥梁分类（长度）': {
-          //     特大桥: [],
-          //     大桥: [],
-          //     中桥: [],
-          //     小桥: []
-          //   }
-          // },
-          // 隧道: {
-          //   隧道评定等级: {
-          //     一类: [],
-          //     二类: [],
-          //     三类: [],
-          //     四类: [],
-          //     五类: []
-          //   },
-          //   '隧道分类（长度）': {
-          //     特大隧道: [],
-          //     大隧道: [],
-          //     中隧道: [],
-          //     小隧道: []
-          //   }
-          // },
-          // 涵洞: {
-          //   涵洞位置: {
-          //     主线涵洞: [],
-          //     匝道涵洞: []
-          //   },
-          //   行政等级: {
-          //     县道: [],
-          //     乡道: [],
-          //     村道: [],
-          //     专用公路: []
-          //   }
-          // },
-          // 路产: {
-          //   服务设施1: {
-          //     交通标志: [],
-          //     标线: [],
-          //     护栏: [],
-          //     防护设施: [],
-          //     照明设施: [],
-          //     排水设施: []
-          //   },
-          //   服务设施2: {
-          //     收费站: [],
-          //     服务站: [],
-          //     加油站: [],
-          //     停车区: []
-          //   },
-          //   管理设施: {
-          //     治超站点: [],
-          //     公路管理站: [],
-          //     桥梁养护牌: [],
-          //     监控设备: []
-          //   }
-          // }
-        }
+        geoLayersManage: {}, // 路网这块暂时不抛出
+        amapMakersManage: {}
       }
     },
     computed: {
@@ -250,9 +185,6 @@
           this.options
         )
       }
-      // metaConfig() {
-      //   return metaConfig
-      // }
     },
     created() {
       if (!this.$amapKey) {
@@ -261,11 +193,8 @@
         this.initMap()
         this.amapMakersManage = this.generateAmapMakersManage()
       }
-      this.initGlobalEvent()
     },
-    mounted() {
-      // console.log(this.metaConfig['路网'])
-    },
+    mounted() {},
     methods: {
       alert(v) {
         if (process.env.NODE_ENV === 'development') {
@@ -282,10 +211,6 @@
         if (process.env.NODE_ENV === 'development') {
           console[type](v)
         }
-      },
-      initGlobalEvent() {
-        eventBus.$on('g_click', this.g_click)
-        eventBus.$on('suspendedClick', this.suspendedClick)
       },
 
       initMap() {
@@ -318,14 +243,12 @@
             // 后
             this.$emit('initMapEvevt')
             // 加载路网
-
             if (this.metaConfig['路网']) {
               this.loadRoadNet(this.metaConfig['路网'])
             }
-
             AMapUI.loadUI(['control/BasicControl'], function (BasicControl) {
               var layerCtrl = new BasicControl.LayerSwitcher({
-                //control-cus 见上方style
+                //control-cus 见全局style
                 theme: 'control-cus',
                 position: 'tr'
               })
@@ -355,45 +278,11 @@
               //   map.addControl(zoomCtrl)
               // })
             })
-            // 加载路产
-            // this.test_getGdPoint()
           })
           .catch(e => {
             this.alert(e)
           })
       },
-      g_click(t) {
-        this.console(t)
-      },
-      // suspended
-      suspendedClick(direction) {
-        this.console(direction)
-      },
-      /**
-       * @deprecated
-       * @description 点击复选框
-       */
-      pickGroupEventHandle({ type, eventObj, value, componentObj, item = null }) {
-        let _this = this
-        this.$emit('pickHandle', {
-          type,
-          eventObj,
-          value,
-          componentObj,
-          item,
-          _this
-        })
-      },
-      // TODO: 地图或外部事件发生后 诱发的顶部区域联动 见 test_setMetaConfig
-      topPickGroupValueSet() {},
-      // metaConfigCacheFun(key){
-      //   if(this.metaConfigCache[key]) {
-      //     return this.metaConfigCache[key]
-      //   }else{
-      //     this.metaConfigCache[key] = this.metaConfig[key]
-      //     return this.metaConfigCache[key]
-      //   }
-      // }
       loadRoadNet(arrs = [[]]) {
         // 遍历二维数组arrs的每项，继续遍历每项中的children,取出children中每子级中的layerName属性 并保存到数组中
         let layerNames = []
@@ -403,16 +292,15 @@
           })
         })
         layerNames.forEach(layerName => {
-          this.test_loadLayer({ layerName })
+          this.loadLayer({ layerName })
         })
       },
-      // 高德markers相关
-
       // 根据metaConfig中的桥梁,隧道,涵洞,路产,遍历每一项的children,取出children中每子级中的name属性，生成映射关系的对象
       // TODO: 提出 放在组件外生成
       generateAmapMakersManage() {
         // 桥梁,隧道,涵洞,路产
         let metaConfigMap = {}
+        metaConfigMap.overlays = {} // 预留 非metaConfig 配置中使用的地图功能
         Object.keys(this.metaConfig).forEach(key => {
           switch (key) {
             case '路网':
@@ -441,7 +329,7 @@
         return metaConfigMap
       },
       // 触发事件
-      triggerEvent(eventName, eventObj) {
+      triggerEvent(eventName, eventObj = {}) {
         // 这里拆开 为了看参数
         switch (eventName) {
           case 'openModal':
@@ -452,8 +340,22 @@
             let { direction, isShow, sideConf } = eventObj
             eventBus.$emit(eventName, { direction, isShow, sideConf })
             break
+          case 'setCenter':
+            let { center } = eventObj
+            this.map.setCenter(center || this.mapOptions.center)
+            break
+          case 'setZoom':
+            let { zoom, time = 500 } = eventObj
+            this.map.setZoom(zoom || this.mapOptions.zoom, false, time)
+            break
           default:
-            this.console(`事件未捕获： TriggerEvent_${eventName}`)
+            // rubOffLine
+            if (this[eventName]) {
+              this[eventName](eventObj)
+              this.console(`事件未捕获 但执行： TriggerEvent_${eventName}`)
+            } else {
+              this.console(`事件未捕获： TriggerEvent_${eventName}`)
+            }
             break
         }
       }

@@ -17,7 +17,7 @@
       <!-- <template #animeLeft> 12321</template>
        -->
       <template #animeRight>
-        <span style="display:none"></span>
+        <span style="display: none"></span>
       </template>
     </WebMap>
 
@@ -29,15 +29,14 @@
 
 <script>
   // import
-  import eventBus from './eventBus'
-
   import WebMap from '~@/web-map'
   import Teleport from '~@/teleport'
-  import { metaConfig } from '~@/web-map/src/metaConfig'
+  import eventBus from "./eventBus";
   import mixin from './mixin.js'
-  import './cover.scss'
 
   import SupebdLeft from './component/supendedLeft.vue'
+  import { metaConfig } from '~@/web-map/src/metaConfig'
+
   export default {
     name: 'componentsView',
     mixins: [mixin],
@@ -47,11 +46,8 @@
       Teleport
     },
     data: () => ({
-      amapMakersManage: null,
-      $AMap: null,
-      map: null,
-
-      teleportStaticHTML: ''
+      teleportStaticHTML: '',
+      $WebMap:{}
     }),
     computed: {
       metaConfig() {
@@ -61,39 +57,21 @@
         return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA5NDI4NTMsInVzZXJuYW1lIjoiYWRtaW4ifQ.EzIsPK_ewYWtqbsjWm0v72hcD0QmbnXyD52ds4V8_Y0'
       }
     },
-    created() {
-      let _this = this
-      eventBus.$on('getMetaConfig', ({ emptyObj }) => {
-        emptyObj.metaConfig = _this.metaConfig
-      })
-      eventBus.$on('pickHandle', ({ type, eventObj, value, componentObj, item, key }) => {
-        this.pickGroupEventHandle({ type, eventObj, value, componentObj, item, key })
-      })
-    },
     methods: {
-      alert(v) {
-        if (process.env.NODE_ENV === 'development') {
-          this.console(v)
-          return
-        }
-        if (typeof v !== 'string') {
-          this.console(JSON.stringify(v))
-        } else {
-          alert(v)
-        }
-      },
-      console(v, type = 'error') {
-        if (process.env.NODE_ENV === 'development') {
-          console[type](v)
-        }
-      },
       initializedHandle({ amapMakersManage, $AMap, map }) {
+        this.$WebMap = this.$refs.WebMap
         this.amapMakersManage = amapMakersManage
         this.$AMap = $AMap
         this.map = map
-
         this.loadMapData({ amapMakersManage, $AMap, map })
       },
+      /**
+       * @description 初始化地图数据
+       * @param {Object} param
+       * @param {Object} param.amapMakersManage 地图标记管理器 根据metaConfig 生成，其中overlays用于存放不同业务模块中的标记，业务模块中单独管理
+       * @param {Object} param.$AMap 地图构造函数
+       * @param {Object} param.map 地图实例
+       */
       loadMapData({ amapMakersManage, $AMap, map }) {
         // 路产
         this.getRoadProperty({
@@ -104,27 +82,25 @@
         })
       },
       /**
-       * @description 顶部区域的事件回调 主要处理由顶部区域点击后的事务
-       * @param {String} type 事件类型 单个还是全部 item | all
-       * @param {Object} eventObj 事件对象 是item还是item的父级（全选操作）
-       * @param {Boolean} value 是否选中
-       * @param {Object} componentObj 父级
-       * @param {Object} item 子级 如果是父级出发,则会出现空的情况 headLineValueChange事件
-       */
-      /**
-       * @description 点击复选框事件
+       * @description 点击复选框事件回调
+       * @param {Object} param
+       * @param {String} param.type 事件类型 单个还是全部 item | all
+       * @param {Object} param.eventObj 事件对象 是item还是item的父级（全选操作）
+       * @param {Boolean} param.value 是否选中
+       * @param {Object} param.componentObj 父级
+       * @param {Object} param.item 子级 如果是父级出发,则会出现空的情况 headLineValueChange事件
        */
       pickGroupEventHandle({
         type,
         eventObj,
         value,
-        componentObj,
-        item = null,
+        componentObj = {},
+        item = {},
         _this,
         key
       }) {
         // key 大类 路网 桥梁 隧道 涵洞 路产
-        if (!_this) _this = this.$refs.WebMap
+        if (!_this) _this = this.$WebMap
         if (!_this) console.error('WebMap is empty, maybe dom timeout, please refresh')
         // TODO: 调整这里case 规则
         switch (key) {
@@ -145,13 +121,13 @@
                   _this.geoLayersManage[eventObj.layerName].show()
                   if (!componentObj.childrenMultiple) {
                     reverses.forEach(ln => {
-                      _this.test_clearLayerChildren(ln, 'hide')
+                      _this.clearLayerChildren(ln, 'hide')
                     })
                   }
                 } else {
                   // 隐藏的时候 当前线路关闭后 显示当前的 其他情况隐藏当前
                   // _this.geoLayersManage[eventObj.layerName].hide();
-                  _this.test_clearLayerChildren(eventObj.layerName, 'hide')
+                  _this.clearLayerChildren(eventObj.layerName, 'hide')
                 }
                 break
               // 路网暂不考虑显示多个layer,已互斥
@@ -162,7 +138,7 @@
                   if (value) {
                     _this.geoLayersManage[layerName].show()
                   } else {
-                    _this.test_clearLayerChildren(layerName, 'hide')
+                    _this.clearLayerChildren(layerName, 'hide')
                   }
                 })
                 break
@@ -267,10 +243,16 @@
             break
         }
       },
+      /**
+       * @description 注册地图事件
+       */
       initMapEvevt() {
+        // 注册路网事件
         this.map.on('click', ({ target, lnglat, pixel, type }) => {
-          this.$refs.WebMap.test_layerClicked(lnglat)
+          this.$WebMap.layerClicked(lnglat)
+          // .. 其他
         })
+        // ... 其他事件
         if (process.env.NODE_ENV === 'development') {
           this.map.on('mousewheel', ({ target, lnglat, pixel, type }) => {
             console.log(this.map.getZoom())
@@ -280,21 +262,55 @@
           })
         }
       },
-      // 与之相反是 triggerEvent
-      handleEvent({ eventName, eventObj }) {
-        console.log(eventName, eventObj)
+
+      /**
+       * @description 组件事件回调，接收来自组件内的事件,triggerEvent 用于触发组件内的事件
+       */
+      handleEvent({ eventName, eventObj = {} }) {
         switch (eventName) {
-          case 'getActivatedLayerName':
+          case 'getActivatedLayerName': // 响应 返回当前激活的图层名称
             let { emptyObj, key } = eventObj
             eventBus.$emit(eventName, { emptyObj, key })
             break
           case 'layerLineDetail':
             let { pointInfo } = eventObj
-            console.log(pointInfo)
-            this.$refs.WebMap.triggerEvent('animeMove', {
+            this.$WebMap.triggerEvent('openModal', {
+              type: 'default',
+              html: `
+                <div>
+                  <div>
+                    <span style="color: #b4b1b1;margin-right: 10px;">
+                      路线编号
+                    </span>
+                    <span>${pointInfo.properties.ROADCODE}</span>
+                  </div>
+                  <div >
+                    <span style="color: #b4b1b1;margin-right: 10px;">
+                      路线名称
+                    </span>
+                    <span>${pointInfo.properties.ROADNAME}</span>
+                  </div>
+                </div>
+              `,
+              callback: {
+                success: res => {
+                  // 关闭弹窗 回显默认layer
+                  this.$WebMap.triggerEvent('rubOffLine')
+                  // 可传递事件
+                  this.$WebMap.triggerEvent('setCenter')
+                  this.$WebMap.triggerEvent('setZoom')
+                },
+                fail: err => {
+                  this.console(err)
+                }
+              }
+            })
+
+            this.$WebMap.triggerEvent('animeMove', {
               direction: 'right',
               isShow: true
             })
+
             this.$nextTick(() => {
               this.teleportStaticHTML = `
                 <div>

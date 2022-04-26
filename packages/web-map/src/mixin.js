@@ -2,7 +2,7 @@ import axios from "axios";
 import eventBus from "./eventBus";
 export default {
   methods: {
-    test_loadLayer({ layerName = "map:LX_X", version = "1.1.1" }) {
+    loadLayer({ layerName = "map:LX_X", version = "1.1.1" }) {
       if (this.geoLayersManage[layerName]) return;
       let wms = new this.$AMap.TileLayer.WMS({
         url: this.geoServerUrl,
@@ -18,7 +18,7 @@ export default {
       this.geoLayersManage[layerName].$children = [];
     },
     // 显示和隐藏的Layer 针对 国道线乡村 非线路 隐藏Layer 会隐藏道路的layer
-    test_hideLayer({ wms, layerName }) {
+    hideLayer({ wms, layerName }) {
       if (!wms || !layerName) return;
       if (!this.geoLayersManage[layerName]) {
         this.alert("图层尚未加载完成，请稍后操作");
@@ -27,10 +27,10 @@ export default {
       if (wms) {
         wms.hide();
       } else if (layerName) {
-        this.test_clearLayerChildren(layerName, "hide");
+        this.clearLayerChildren(layerName, "hide");
       }
     },
-    test_showLayer({ wms, layerName }) {
+    showLayer({ wms, layerName }) {
       if (!wms || !layerName) return;
       if (!this.geoLayersManage[layerName]) {
         this.alert("图层尚未加载完成，请稍后操作");
@@ -44,7 +44,7 @@ export default {
     },
 
     // 测试点击图层上的一点，获取坐标 请求路线数据
-    test_layerClicked({ lng, lat }) {
+    layerClicked({ lng, lat }) {
       // TODO: 直接查询第一个layer 后续再调整
       let emptyObj = {
         activedLayerName: "",
@@ -95,7 +95,7 @@ export default {
           // 隐藏主图层 因为目前颜色未区分
 
           // res.data.features.forEach((item) => {
-          //   this.test_query({
+          //   this.query({
           //     layerName: activedLayerName,
           //     query: `${label}='${item.properties[label]}'`,
           //     pointInfo: item,
@@ -111,8 +111,8 @@ export default {
             }
           });
           // set隐藏其他图层
-          this.test_setOtherLayerValue(activedLayerName);
-          this.test_query({
+          this.setOtherLayerValue(activedLayerName);
+          this.query({
             layerName: activedLayerName,
             query: `${label}='${res.data.features[0].properties[label]}'`,
             pointInfo: res.data.features[0],
@@ -121,7 +121,7 @@ export default {
       });
     },
     // 通过查询条件查询线路数据并渲染到图层上
-    test_query({
+    query({
       layerName = "map:LX_X",
       query = "LXMC='晓墅-南林场叉口'",
       version = "1.1.1",
@@ -148,37 +148,37 @@ export default {
       //   properties: { },
       //   type:[]
       // }
-      eventBus.$emit("openModal", {
-        type: "default",
-        html: `
-          <div>
-            <div>
-              <span style="color: #b4b1b1;margin-right: 10px;">
-                路线编号
-              </span>
-              <span>${pointInfo.properties.ROADCODE}</span>
-            </div>
-            <div >
-              <span style="color: #b4b1b1;margin-right: 10px;">
-                路线名称
-              </span>
-              <span>${pointInfo.properties.ROADNAME}</span>
-            </div>
-          </div>
-        `,
-        callback: {
-          success: (res) => {
-            // 关闭弹窗 回显默认layer
-            this.test_rubOffLine();
-            // 可传递事件
-            this.map.setCenter(this.mapOptions.center);
-            this.map.setZoom(this.mapOptions.zoom, false, 500);
-          },
-          fail: (err) => {
-            console.log(err);
-          },
-        },
-      });
+      // eventBus.$emit("openModal", {
+      //   type: "default",
+      //   html: `
+      //     <div>
+      //       <div>
+      //         <span style="color: #b4b1b1;margin-right: 10px;">
+      //           路线编号
+      //         </span>
+      //         <span>${pointInfo.properties.ROADCODE}</span>
+      //       </div>
+      //       <div >
+      //         <span style="color: #b4b1b1;margin-right: 10px;">
+      //           路线名称
+      //         </span>
+      //         <span>${pointInfo.properties.ROADNAME}</span>
+      //       </div>
+      //     </div>
+      //   `,
+      //   callback: {
+      //     success: (res) => {
+      //       // 关闭弹窗 回显默认layer
+      //       this.rubOffLine();
+      //       // 可传递事件
+      //       this.map.setCenter(this.mapOptions.center);
+      //       this.map.setZoom(this.mapOptions.zoom, false, 500);
+      //     },
+      //     fail: (err) => {
+      //       console.log(err);
+      //     },
+      //   },
+      // });
       // 抛出事件
       this.$emit("handleEvent", {
         eventName: "layerLineDetail",
@@ -194,7 +194,7 @@ export default {
      * @param {String} roadNetStatus 路网图层状态 show | hide
      * @param {Boolean} distoryLayer 路网是否销毁
      */
-    test_clearLayerChildren(layerName, roadNetStatus, distoryLayer = false) {
+    clearLayerChildren(layerName, roadNetStatus, distoryLayer = false) {
       let _this = this;
       if (layerName instanceof Array) {
         layerName.forEach((layername) => {
@@ -228,26 +228,26 @@ export default {
     /**
      * @description test
      */
-    test_loadLine() {
-      this.test_query({});
+    loadLine() {
+      this.query({});
     },
     // 设置该图层隐藏 显示线路，隐藏其他图层
-    test_setOtherLayerValue(layerName) {
+    setOtherLayerValue(layerName) {
       this.metaConfig["路网"][0].children.forEach((item) => {
         if (item.layerName !== layerName) {
           item.value = false;
           this.metaConfig["路网"][0].value = false;
         } else {
-          this.test_clearLayerChildren(item.layerName, "hide");
+          this.clearLayerChildren(item.layerName, "hide");
         }
       });
       // this.metaConfig["路网"][0].children[0].value =
       //   !this.metaConfig["路网"][0].children[0].value;
       // this.$refs.HeadPickGroup[0].$forceUpdate();
     },
-    test_getActived() {},
+    getActived() {},
     // 擦除图层中的线路- 非路网图层，并显示该图层
-    test_rubOffLine(LayerName = "") {
+    rubOffLine(LayerName = "") {
       // TODO: 直接查询第一个layer 后续再调整
       let emptyObj = {
         activedLayerName: "",
@@ -266,7 +266,7 @@ export default {
         this.console("当前没有选中的图层");
         return;
       }
-      this.test_clearLayerChildren(activedLayerName, "show");
+      this.clearLayerChildren(activedLayerName, "show");
       // 设置地图中心
       // this.map.setCenter(this.$amapCenter);
     },
@@ -277,7 +277,7 @@ export default {
      * @description 请求获取高德点位数据 路产数据
      * 已移出 放在组件外事件中触发
      */
-    test_getGdPoint() {
+    getGdPoint() {
       // 路产数据
       const axios = require("axios");
       let data = JSON.stringify({
