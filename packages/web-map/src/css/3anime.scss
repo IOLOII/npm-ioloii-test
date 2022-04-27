@@ -1,6 +1,4 @@
-// $sideWidth: 300px;
-$sideWidth_l: var(--width_l);
-$sideWidth_r: var(--width_r);
+@import './var.scss';
 .webmap-wrapper {
   &-anime-container {
     // 动画层
@@ -16,9 +14,8 @@ $sideWidth_r: var(--width_r);
     justify-content: space-between;
     margin: 0 auto;
     .block {
-      margin: 80px 0;
-
-      height: auto;
+      margin: auto 0;
+      height: calc($areaHeight_lr - 60px);
       // width: 26vw;
       // height: 71vh;
       backdrop-filter: blur(1rem);

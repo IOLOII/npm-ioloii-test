@@ -1,3 +1,4 @@
+@import "./var.scss";
 .webmap-wrapper {
   &-modal-container {
     // 模态层
@@ -8,7 +9,6 @@
     pointer-events: none;
     // transform: translateZ(($modalLayerIndex/10) + px) $rotate3d;
     // opacity: $modalLayerIndex/1500;
-
     &-default {
       position: absolute;
       width: 300px;
@@ -26,8 +26,9 @@
       justify-content: flex-start;
       border-radius: 10px;
       padding: 5px;
-      overflow: hidden;
-      overflow-y: auto;
+      // overflow: hidden;
+      // overflow-y: auto;
+      @include overflow;
       text-align: left;
 
       // 暂时先固定,后续优化获取指针位置

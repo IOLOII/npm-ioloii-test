@@ -13,8 +13,8 @@
         size="medium"
       ></el-button>
     </el-input>
-    <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 260px">
-      <el-tab-pane label="图层" name="second">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="图层图层图层" name="second">
         <TreePick ref="TreePick" />
       </el-tab-pane>
       <el-tab-pane label="搜索" name="third">
@@ -132,6 +132,10 @@
 </script>
 
 <style lang="scss" scoped>
+  @mixin overflow {
+    overflow: auto;
+    padding: 5px;
+  }
   .el-button {
     width: 100%;
   }
@@ -151,7 +155,8 @@
     }
     .el-tabs__content {
       height: calc(100% - 55px);
-      overflow-y: scroll;
+      overflow-y: auto;
+      @include overflow;
     }
   }
 </style>

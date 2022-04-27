@@ -31,9 +31,10 @@
   // import
   import WebMap from '~@/web-map'
   import Teleport from '~@/teleport'
+
+
   import eventBus from "./eventBus";
   import mixin from './mixin.js'
-
   import SupebdLeft from './component/supendedLeft.vue'
   import { metaConfig } from '~@/web-map/src/metaConfig'
 
@@ -80,6 +81,7 @@
           map,
           pointEvent: this.bindRoadRropertyPointEvent($AMap)
         })
+
       },
       /**
        * @description 点击复选框事件回调
@@ -342,8 +344,8 @@
 <style lang="scss" scoped>
   // @import './cover.scss';
   .component-warpper {
-    width: 1200px;
-    height: 600px;
+    width: 90%;
+    height: 80vh;
     background: #fff;
     border: 1px;
     box-sizing: border-box;
@@ -360,4 +362,8 @@
       // background: red;
     }
   }
+</style>
+<style lang="scss">
+@import './themPatch.scss'
+
 </style>

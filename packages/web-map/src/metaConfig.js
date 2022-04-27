@@ -2,7 +2,7 @@ let metaConfig = {
   路网: [
     {
       name: "路网",
-      icon: "iconfont XXX",
+      icon: "iconfont 路网",
       headLine: true,
       headLineCheckBox: true, // 控制复选框是否显示
       value: false, // 控制复选框的值
@@ -12,14 +12,14 @@ let metaConfig = {
         {
           name: "国道",
           layerName: "neimenggu:nm_eeds_gd",
-          icon: "iconfont XXX",
+          icon: "iconfont 国道",
           style: { color: "#191970", width: 2 },
           value: false,
         },
         {
           name: "省道",
           layerName: "neimenggu:nm_eeds_sd",
-          icon: "iconfont XXX",
+          icon: "iconfont 省道",
           style: { color: "#191970", width: 2 },
           value: false,
         },
@@ -51,7 +51,7 @@ let metaConfig = {
   桥梁: [
     {
       name: "桥梁评定等级",
-      icon: "iconfont XXX",
+      icon: "iconfont 桥梁评定等级",
       headLine: true,
       headLineCheckBox: true,
       value: false,
@@ -59,7 +59,7 @@ let metaConfig = {
       prop:'technicalRating',
       // 一类，二类，三类，四类，五类
       children: [
-        { name: "一类", icon: "iconfont XXX", value: false ,technicalRatingValue:'01'},
+        { name: "一类", icon: "iconfont 一类", value: false ,technicalRatingValue:'01'},
         { name: "二类", icon: "iconfont XXX", value: false ,technicalRatingValue:'02'},
         { name: "三类", icon: "iconfont XXX", value: false ,technicalRatingValue:'03'},
         { name: "四类", icon: "iconfont XXX", value: false ,technicalRatingValue:'04'},

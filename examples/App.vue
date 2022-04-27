@@ -5,6 +5,7 @@
       <!-- <router-link to="/about">About</router-link> -->
       <router-link to="/componentsView">componentsView</router-link> |
       <router-link to="/singleComponentView">singleComponentView</router-link>
+      <router-link to="/Legend">Legend</router-link>
     </div>
     <router-view />
   </div>

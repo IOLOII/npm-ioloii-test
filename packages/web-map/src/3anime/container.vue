@@ -53,11 +53,13 @@
     <section
       class="block-btn left point"
       @click.stop="sidebarCtrlClick('left', !animesCtrl.left)"
+      :class="{ active: animesCtrl.right}"
       v-if="$slots.left"
     ></section>
     <section
       class="block-btn right point"
       @click.stop="sidebarCtrlClick('right', !animesCtrl.right)"
+      :class="{ active: animesCtrl.right}"
       v-if="$slots.right"
     ></section>
   </div>

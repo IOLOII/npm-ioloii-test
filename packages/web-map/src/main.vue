@@ -71,6 +71,33 @@
     </div> -->
 
     <!-- 自定义层 -->
+    <!-- 图例 -->
+    <Teleport to=".webmap-wrapper">
+      <div
+        class="point"
+        style="
+          width: 34px;
+          height: 34px;
+          line-height: 34px;
+          font-size: 22px;
+          text-align: center;
+          top: 15px;
+          right: calc(59px);
+          position: absolute;
+          transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+          box-shadow: 0 1px 5px rgb(0 0 0 / 40%);
+          background: white;
+          background-position: 50% 50%;
+          background-repeat: no-repeat;
+          display: block;
+          border-radius: 3px;
+        "
+      >
+        <a class="amap-ui-control-layer-toggle">
+          <i class="iconfont icon-layer-switcher" style="font-size: 22px"></i>
+        </a>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -84,8 +111,7 @@
    */
   // import
   // 图标
-  import './font_3347926_3guahro8h8q.js'
-  // 事件
+    // 事件
   import eventBus from './eventBus'
   // 图层
   import AMapLoader from '@amap/amap-jsapi-loader'
@@ -99,10 +125,11 @@
   // import { metaConfig } from './metaConfig'
   import mixin from './mixin.js'
   import devTest from './devTest.js'
+  import legend from './legend.js'
 
   export default {
     name: 'WebMap',
-    mixins: [mixin, devTest],
+    mixins: [mixin, devTest, legend],
     components: {
       Supended,
       Anime,
@@ -153,6 +180,11 @@
       height: {
         type: String,
         default: '100%',
+        require: false
+      },
+      hasLegend: {
+        type: Boolean,
+        default: true,
         require: false
       }
     },
@@ -259,7 +291,7 @@
               map.addControl(
                 new BasicControl.Zoom({
                   //内置的dark主题
-                  theme: 'dark',
+                  theme: 'light',
 
                   //左下角
                   position: 'br'
@@ -278,6 +310,9 @@
               //   map.addControl(zoomCtrl)
               // })
             })
+            if (this.hasLegend) {
+              this.generateAmapLegend()
+            }
           })
           .catch(e => {
             this.alert(e)
@@ -298,6 +333,10 @@
       // 根据metaConfig中的桥梁,隧道,涵洞,路产,遍历每一项的children,取出children中每子级中的name属性，生成映射关系的对象
       // TODO: 提出 放在组件外生成
       generateAmapMakersManage() {
+        if (this.amapMakersManage && JSON.stringify(this.amapMakersManage) !== '{}') {
+          this.console("amapMakersManage is not empty")
+          return this.amapMakersManage
+        }
         // 桥梁,隧道,涵洞,路产
         let metaConfigMap = {}
         metaConfigMap.overlays = {} // 预留 非metaConfig 配置中使用的地图功能
@@ -367,7 +406,29 @@
   @import './css/main.scss';
 </style>
 <style lang="scss">
+  * {
+    &::-webkit-scrollbar-track-piece {
+      background: #d3dce6;
+      border-radius: 20px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #99a9bf;
+      border-radius: 20px;
+    }
+  }
+  .amap-ui-control-position-br,
+  .amap-ui-control-position-rb {
+    bottom: 15px !important;
+    right: 15px !important;
+  }
   .amap-ui-control-theme-control-cus {
+    top: 15px !important;
+    right: 15px !important;
     a,
     span {
       cursor: pointer;
@@ -378,12 +439,19 @@
     }
 
     .amap-ui-control-layer-expanded {
-      color: #0071cb;
+      color: #333;
       background: white;
     }
 
     .amap-ui-control-layer-toggle {
-      color: #0071cb;
+      color: #333;
+    }
+    .amap-ui-control-layer {
+      transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .amap-ui-control-layer .iconfont {
+      font-size: inherit;
+      margin-right: unset;
     }
   }
 </style>

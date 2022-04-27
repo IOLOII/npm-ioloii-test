@@ -1,0 +1,220 @@
+$primary-color: #286eff;
+$background-gray: #000000ba;
+$background-dark: #0a1209;
+div {
+}
+
+img {
+}
+i{
+  padding: 5px;
+}
+
+.icon {
+}
+
+.point {
+}
+
+.webmap-wrapper {
+}
+
+.webmap-wrapper-layer {
+}
+
+.webmap-wrapper-map-container {
+}
+
+.webmap-wrapper-suspended-container {
+}
+
+.webmap-wrapper-suspended-container-block {
+  margin: 0 20px;
+  background: $background-gray !important;
+  color: white;
+  border-radius: 5px;
+}
+
+.webmap-wrapper-suspended-container-top {
+}
+
+.webmap-wrapper-suspended-container-left {
+  a,
+  span {
+    color: white;
+  }
+  .el-collapse {
+    border: unset;
+  }
+  .el-collapse-item__header {
+    border-bottom: 1px solid #ebeef536 !important;
+  }
+  // tabs 顶部区域
+  .el-tabs__item {
+    padding: 0 20px;
+    height: 40px;
+    box-sizing: border-box;
+    line-height: 40px;
+    display: inline-block;
+    list-style: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #c6c6c6;
+    position: relative;
+  }
+  .el-tabs__item:hover {
+    color: #ffffff;
+    cursor: pointer;
+  }
+  .el-tabs__item.is-active {
+    color: #ffffff;
+  }
+
+  .el-input {
+    .el-input-group__append {
+      background: $primary-color;
+      color: white;
+      border-color: transparent;
+      padding-left: 10px;
+      &:active {
+        background: darken($primary-color, 3%);
+      }
+      .el-icon-search {
+        transform: scale(1.5);
+      }
+    }
+    input {
+      background-color: $background-dark;
+      font-weight: bolder;
+      font-size: 1.3em;
+      border-color: transparent;
+    }
+  }
+  .el-tabs__item {
+    padding: unset;
+    // background: red;
+    padding: 0 20px !important;
+  }
+}
+
+.webmap-wrapper-suspended-container-right {
+}
+
+.webmap-wrapper-suspended-container-bottom {
+}
+
+.webmap-wrapper-interaction-container {
+  z-index: 1100;
+  padding: 20px 0px;
+}
+
+.webmap-wrapper-suspended-container-top .webmap-wrapper-interaction-container {
+}
+
+.webmap-wrapper-suspended-container-left .webmap-wrapper-interaction-container {
+}
+
+.webmap-wrapper-suspended-container-right .webmap-wrapper-interaction-container {
+}
+
+.webmap-wrapper-suspended-container-bottom .webmap-wrapper-interaction-container {
+}
+
+.webmap-wrapper-anime-container {
+  z-index: 1200;
+}
+
+.webmap-wrapper-anime-container .block {
+  background-color: $background-gray !important;
+}
+
+.webmap-wrapper-anime-container .block.left {
+}
+
+.webmap-wrapper-anime-container .block.right {
+}
+
+.webmap-wrapper-anime-container .block-btn {
+  transition: background 0.3s;
+  transition-delay: 300;
+  &:hover{
+    background: lighten(rgb(104, 104, 104), 10%) !important;
+  }
+  &.active {
+    background: darken(white, 10%) !important;
+    backdrop-filter: blur(5px);
+    &:hover{
+      background: white !important;
+    }
+  }
+}
+
+.webmap-wrapper-anime-container .block-btn.left {
+  background: lighten($background-gray, 10%);
+  border-top-left-radius: 20px !important;
+  border-bottom-left-radius: 20px !important;
+}
+
+.webmap-wrapper-anime-container .block-btn.right {
+  background: lighten($background-gray, 10%);
+  border-top-left-radius: 20px !important;
+  border-bottom-left-radius: 20px !important;
+}
+
+.webmap-wrapper-modal-container {
+  z-index: 1300;
+}
+
+.webmap-wrapper-modal-container-default {
+}
+
+.webmap-wrapper-modal-container-default .content {
+}
+
+.webmap-wrapper-modal-container-default .title {
+}
+
+.webmap-wrapper-modal-container-default .tips {
+}
+
+.webmap-wrapper-modal-container-default .col {
+}
+
+.webmap-wrapper-modal-container-default .prop {
+}
+
+.webmap-wrapper-modal-lever1 {
+  z-index: 1310;
+}
+
+.webmap-wrapper-modal-lever2 {
+  z-index: 1320;
+}
+
+.webmap-wrapper-modal-lever3 {
+  z-index: 1330;
+}
+
+.webmap-wrapper-modal-lever4 {
+  z-index: 1340;
+}
+
+.webmap-wrapper-modal-lever5 {
+  z-index: 1350;
+}
+
+.webmap-wrapper-modal-lever6 {
+  z-index: 1360;
+}
+
+.webmap-wrapper-toast-container {
+  z-index: 1400;
+}
+
+// elementui fix
+.el-scrollbar__wrap {
+  overflow: auto;
+}
+.el-button.el-button--primary {
+  background: $primary-color;
+}

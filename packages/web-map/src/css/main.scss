@@ -1,20 +1,4 @@
-// 高度
-$mapLayerIndex: 0; // 地图层
-$suspendedLayerIndex: 1000; // 悬浮层
-$interactionLayerIndex: 1100; // 交互层
-$animeLayerIndex: 1200; // 动画层
-$modalLayerIndex: 1300; // 模态层
-$toastLayerIndex: 1400; // 系统提示
-// $rotate3d: rotate3d(1, 1, 1, 354deg);
-
-// 长宽
-$webMapWidth: var(--width);
-$webMapHeight: var(--height);
-
-$mapWidth: 100%;
-$mapHeight: 100%;
-$background: red;
-
+@import './var.scss';
 div {
   box-sizing: border-box;
   // transform: rotate3d(18, 12, 51, 354deg);
@@ -42,6 +26,7 @@ img {
 
 .webmap-wrapper {
   // 组件 容器
+  font-family: fantasy,Arial, Helvetica, sans-serif;
   position: relative;
   width: $webMapWidth;
   height: $webMapHeight;

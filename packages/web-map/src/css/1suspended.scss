@@ -1,11 +1,4 @@
-$background: transparent;
-// 上部和下部区域
-$areaWidth_tb: 100%;
-$areaHeight_tb: 60px;
-
-// 中部左右区域
-$areaWidth_lr: 300px !default;
-$areaHeight_lr: calc(100% - $areaHeight_tb * 2);
+@import './var.scss';
 .webmap-wrapper {
   &-suspended-container {
     // 悬浮层
@@ -19,13 +12,14 @@ $areaHeight_lr: calc(100% - $areaHeight_tb * 2);
     &-block {
       position: absolute;
       background: $background;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(3px);
       position: absolute;
       display: flex;
       align-items: center;
       justify-content: center;
       pointer-events: auto;
-      overflow: auto;
+      // overflow: auto;
+      @include overflow;
     }
     &-top {
       width: $areaWidth_tb;
