@@ -27,7 +27,7 @@
       ref="left"
       v-if="$slots.left"
       :style="{
-        '--width_l': sideConf.left,
+        '--width_l': sideConf.left
       }"
     >
       <div class="block-wrapper">
@@ -42,7 +42,7 @@
       ref="right"
       v-if="$slots.right"
       :style="{
-        '--width_r': sideConf.right,
+        '--width_r': sideConf.right
       }"
     >
       <div class="block-wrapper">
@@ -74,7 +74,7 @@
         left: false,
         right: false
       },
-      sideConf:{
+      sideConf: {
         left: '300px',
         right: '300px'
         // leftHeight
@@ -84,12 +84,12 @@
     }),
     mounted() {
       // direction: 'left' 'right' ,'top' ,'bottom','all'-水平两个,'alls'-四个 isShow:boolean
-      eventBus.$on('animeMove', ({ direction, isShow,sideConf = null }) => {
+      eventBus.$on('animeMove', ({ direction, isShow, sideConf = null }) => {
         sideConf = {
-            right: '250px'
+          right: '250px'
         }
-        if(sideConf){
-          Object.assign(this.sideConf,sideConf)
+        if (sideConf) {
+          Object.assign(this.sideConf, sideConf)
         }
         setTimeout(
           () => {
@@ -109,13 +109,16 @@
         )
         this.showSidebar(direction, isShow)
       })
+        this.showSidebar('all', false)
     },
     methods: {
       g_click(v) {
         eventBus.$emit('g_click', v)
       },
       sidebar(direction) {
-        console.log(direction)
+        if (process.env.NODE_ENV === 'development') {
+          console.log(direction)
+        }
       },
       // 两侧控制
       sidebarCtrlClick(direction, isShow) {
@@ -140,7 +143,18 @@
             break
           case 'all':
           default:
-            target = [this.$refs.left, this.$refs.right]
+            if (this.$refs.left && this.$refs.right) {
+              target = [this.$refs.left, this.$refs.right]
+            } else {
+              if (this.$refs.left) {
+                target = this.$refs.left
+                direction = 'left'
+              }
+              if (this.$refs.right){
+                target = this.$refs.right
+                direction = 'right'
+              }
+            }
             break
         }
         anime({
@@ -179,7 +193,7 @@
   }
 </script>
 
-<style lang="scss" scoped >
+<style lang="scss" scoped>
   @import '../css/main.scss';
   .animeMove-side {
     &.left {
