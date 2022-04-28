@@ -326,13 +326,13 @@
                     <span style="color: #0048BA;margin-right: 10px;">
                       路线编号
                     </span>
-                    <span>${pointInfo.properties.ROADCODE}</span>
+                    <span style="color: white;margin-right: 10px;"> ${pointInfo.properties.ROADCODE}</span>
                   </div>
                   <div >
                     <span style="color: #0048BA;margin-right: 10px;">
                       路线名称
                     </span>
-                    <span>${pointInfo.properties.ROADNAME}</span>
+                    <span style="color: white;margin-right: 10px;">${pointInfo.properties.ROADNAME}</span>
                   </div>
                 </div>
               `

@@ -258,7 +258,7 @@ export default {
                   <span style="color: #0048BA;margin-right: 10px;">
                     ${key}
                   </span>
-                  <span> :   ${ExtData.properties[key]}</span>
+                  <span  style="color: white;margin-right: 10px;"> :   ${ExtData.properties[key]}</span>
                 </div>
               `;
             });
@@ -440,7 +440,7 @@ export default {
                   <span style="color: #0048BA;margin-right: 10px;">
                     ${key}
                   </span>
-                  <span> :   ${ExtData.properties[key]}</span>
+                  <span  style="color: white;margin-right: 10px;"> :   ${ExtData.properties[key]}</span>
                 </div>
               `;
             });
