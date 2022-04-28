@@ -6,12 +6,15 @@
 
 <script>
   // import
-  import './font_3347926_3guahro8h8q.js'
+  import './公路标点图标.js'
   export default {
     name: 'Icon',
     props: {
-      type: String,
-      size: [Number, String]
+      type: {
+        type: String,
+        size: [Number, String],
+        default: 'iconfont直接点击复制代码 不用添加前缀'
+      }
     },
     computed: {
       iconHref() {
@@ -22,7 +25,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .icon {
     width: 1em;
     height: 1em;

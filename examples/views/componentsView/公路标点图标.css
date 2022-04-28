@@ -1,0 +1,78 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3366015 */
+  /* Color fonts */
+  src:
+       url('//at.alicdn.com/t/font_3366015_ojvryrc1k6.ttf?t=1651146165131') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-close:before {
+  content: "\e6a7";
+}
+
+.icon-lianjie:before {
+  content: "\fda5";
+}
+
+.icon-WIFI:before {
+  content: "\fda6";
+}
+
+.icon-yiyuan:before {
+  content: "\fdb6";
+}
+
+.icon-chongdianzhuang:before {
+  content: "\fdba";
+}
+
+.icon-jiayou:before {
+  content: "\fdbb";
+}
+
+.icon-chuzuche:before {
+  content: "\fdbc";
+}
+
+.icon-jiaoyi:before {
+  content: "\fdc0";
+}
+
+.icon-biaoji:before {
+  content: "\fdcf";
+}
+
+.icon-yinhangjigou:before {
+  content: "\fdd2";
+}
+
+.icon-daohang:before {
+  content: "\fddb";
+}
+
+.icon-qiche:before {
+  content: "\fe1b";
+}
+
+.icon-jiayouzhan:before {
+  content: "\fe72";
+}
+
+.icon-tingchechang:before {
+  content: "\fe73";
+}
+
+.icon-q:before {
+  content: "\e60b";
+}
+
+.icon-shuangxiang:before {
+  content: "\e661";
+}

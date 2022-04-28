@@ -68,10 +68,10 @@ export default {
 
       let config = {
         method: "post",
-        url: "https://yx.91jt.net/testroad/api/pc/pcHome/highwayProperty",
+        url: this.tempService + "/api/pc/pcHome/highwayProperty",
         headers: {
           token: this.tempToken,
-          "Content-Type": "application/json",
+          "Content-Type": "application/json; charset=utf-8",
         },
         data: data,
       };
@@ -79,20 +79,22 @@ export default {
       axios(config)
         .then((response) => {
           let arr = [
-            "tpCamera", // 监控设备
-            "tpDrainage", // 排水设施
-            "tpGuardrail", // 护栏
-            "tpLabel", // 交通标志
-            "tpLighting", // 照明设施
-            "tpMarking", // 标线
-            "tpParkingLot", // 停车区
-            "tpPetrolStation", // 加油站
-            "tpPlate", // 桥梁养护牌
-            "tpSavefacilities", // 防护措施
-            "tpSst", // 服务站
-            "tpStation", // 管理站
-            "tpSuper", // 治超站点
-            "tpTollStation", // 收费站
+            {prop:"tpLabel", name:'交通标志'},
+            {prop:"tpMarking", name:'标线'},
+            {prop:"tpGuardrail", name:'护栏'},
+            {prop:"tpSavefacilities", name:'防护设施'},
+            {prop:"tpLighting", name:'照明设施'},
+            {prop:"tpDrainage", name:'排水设施'},
+
+            {prop:"tpTollStation", name:'收费站'},
+            {prop:"tpSst", name:'服务站'},
+            {prop:"tpPetrolStation", name:'加油站'},
+            {prop:"tpParkingLot", name:'停车区'},
+
+            {prop:"tpSuper", name:'治超站点'},
+            {prop:"tpStation", name:'公路管理站'},
+            {prop:"tpPlate", name:'桥梁养护牌'},
+            {prop:"tpCamera", name:'监控设备'},
           ];
           let obj = {}; // 挂载数据对象
           // let markerCluster = []; // 存放转换后 生成的每一个marker
@@ -101,26 +103,23 @@ export default {
           Object.keys(amapMakersManage["路产"]).forEach((key) => {
             Object.assign(obj, amapMakersManage["路产"][key]);
           });
-          arr.forEach((item) => {
+          arr.forEach(({ prop,name}) => {
             try {
-              if (response.data[item]) {
-                response.data[item] = JSON.parse(
-                  decodeURIComponent(response.data[item])
+              if (response.data[prop]) {
+                response.data[prop] = JSON.parse(
+                  decodeURIComponent(response.data[prop])
                 );
-                obj[item] = response.data[item].features;
-                response.data[item].features.forEach((point, index) => {
-                  // {"type":"Feature","geometry":{"type":"Point","coordinates":[1,1]},"properties":{"name":"12312"},"id":"fid--5165cb05_1804a317c59_-7bd1"}
-                  // 高德转经纬度
-
+                obj[prop] = response.data[prop].features;
+                response.data[prop].features.forEach((point, index) => {
+                  point.metaConfigProp = {
+                    prop,
+                    name
+                  };
                   if (
                     point.geometry &&
                     point.geometry.coordinates[1] &&
                     point.geometry.coordinates[0]
                   ) {
-                    // this.console(
-                    //   point.geometry.coordinates[1],
-                    //   point.geometry.coordinates[0]
-                    // );
                     toTransItem.push([
                       point.geometry.coordinates[1],
                       point.geometry.coordinates[0],
@@ -129,49 +128,79 @@ export default {
                   }
                 });
               } else {
-                response.data[item] = {};
+                response.data[prop] = {};
               }
             } catch (error) {
               this.console("get road property error");
             }
           });
-
-          // 批量转换经纬度
-          $AMap.convertFrom(toTransItem, "gps", (status, result) => {
-            if (result.info === "ok") {
-              result.locations.forEach((item, index) => {
-                let point = toTransItemObj[index];
-                let marker = new $AMap.Marker({
-                  position: item,
-                  visible: false,
-                  map: map,
-                  // icon: new $AMap.Icon({
-                  //   size: new $AMap.Size(24, 24),
-                  //   image: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
-                  // }),
-                });
-                // marker.setMap(map); // 开启点聚合 则隐藏
-                marker.setExtData(point);
-                pointEvent.type.forEach((eType) => {
-                  marker.on(eType, pointEvent[eType]);
-                });
-                // markerCluster.push(marker);
-                point.marker = marker;
-                marker.lnglat = [item.lng, item.lat];
-              });
-
-              // TODO: 加载点聚合插件 如果点击全选 加载聚合，否则默认不聚合 仅加载点 可以通过maker控制 点聚合后无法控制
-              // map.plugin(["AMap.MarkerCluster"], () => {
-              //   let cluster = new $AMap.MarkerCluster(
-              //     map,
-              //     markerCluster,
-              //     {
-              //       gridSize: 80, // 聚合网格像素大小
-              //     }
-              //   );
-              //   this.console(cluster)
-              // });
+          let promiseArr = [];
+          // 生成一个按指定长度切片数组的方法
+          function chunk(arr, len) {
+            let chunks = [],
+              i = 0,
+              n = arr.length;
+            while (i < n) {
+              chunks.push(arr.slice(i, (i += len)));
             }
+            return chunks;
+          }
+          let toTransItemArr = chunk(toTransItem, 1500);
+          toTransItemArr.forEach((arr) => {
+            let promise = new Promise((resolve, reject) => {
+              $AMap.convertFrom(arr, "gps", (status, result) => {
+                if (result.info === "ok") {
+                  resolve(result.locations);
+                } else {
+                  reject(result.info);
+                }
+              });
+            });
+            promiseArr.push(promise);
+          });
+          let emptyObj = {
+            legend: [],
+          };
+          eventBus.$emit("getLegend", { emptyObj });
+          Promise.all(promiseArr).then((res) => {
+            let temparr = [];
+            res.map((item) => (temparr = temparr.concat(item)));
+            let locations = temparr;
+
+            locations.forEach((item, index) => {
+              let point = toTransItemObj[index];
+              let legend = emptyObj.legend.find((legendItem) => {
+                return legendItem.name === point.metaConfigProp.name;
+              });
+              let content = `<i class="iconfont ${legend.icon} map-iconfont"></i>`;
+              let marker = new $AMap.Marker({
+                position: item,
+                visible: false,
+                map: map,
+                content: content,
+                offset: new AMap.Pixel(-22, -34),
+              });
+              // marker.setMap(map); // 开启点聚合 则隐藏
+              marker.setExtData(point);
+              pointEvent.type.forEach((eType) => {
+                marker.on(eType, pointEvent[eType]);
+              });
+              // markerCluster.push(marker);
+              point.marker = marker;
+              marker.lnglat = [item.lng, item.lat];
+            });
+
+            // TODO: 加载点聚合插件 如果点击全选 加载聚合，否则默认不聚合 仅加载点 可以通过maker控制 点聚合后无法控制
+            // map.plugin(["AMap.MarkerCluster"], () => {
+            //   let cluster = new $AMap.MarkerCluster(
+            //     map,
+            //     markerCluster,
+            //     {
+            //       gridSize: 80, // 聚合网格像素大小
+            //     }
+            //   );
+            //   this.console(cluster)
+            // });
           });
 
           // k=服务设施2 服务设施1 管理设施
@@ -272,10 +301,9 @@ export default {
 
       let config = {
         method: "post",
-        url: "https://yx.91jt.net/testroad/api/pc/pcHome/queryHomePoint",
+        url: this.tempService + "/api/pc/pcHome/queryHomePoint",
         headers: {
-          token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA5NTU2MzYsInVzZXJuYW1lIjoiYWRtaW4ifQ.Tqw5LZAKeMKiXn5llaphc1YWPcY1z85hFI5Mx7G19t8",
+          token: this.tempToken,
           "Content-Type": "application/json",
         },
         data: data,
@@ -326,18 +354,30 @@ export default {
             });
             promiseArr.push(promise);
           });
+          let emptyObj = {
+            legend: [],
+          };
+          eventBus.$emit("getLegend", { emptyObj });
           Promise.all(promiseArr)
             .then((res) => {
               let temparr = [];
               res.map((item) => (temparr = temparr.concat(item)));
               let locations = temparr;
-
+              // if (process.env.NODE_ENV === "development") {
+              //   locations = [temparr[0]];
+              // }
               locations.forEach((item, index) => {
                 let point = toTransItemObj[index];
+                let legend = emptyObj.legend.find((legendItem) => {
+                  return legendItem.name === key;
+                });
+                let content = `<i class="iconfont ${legend.icon} map-iconfont"></i>`;
                 let marker = new $AMap.Marker({
                   position: item,
                   // visible: false,
                   map: map,
+                  content: content,
+                  offset: new AMap.Pixel(-22, -34),
                 });
                 marker.setExtData(point);
                 pointEvent &&
@@ -408,6 +448,48 @@ export default {
           });
         },
       };
+    },
+    /**
+     * @description 生成 amapMakersManage 地图标记管理器-高德元素
+     */
+    generateAmapMakersManage({ emptyObj, metaConfig }) {
+      if (
+        this.$amapMakersManage &&
+        JSON.stringify(this.$amapMakersManage) !== "{}"
+      ) {
+        this.console("amapMakersManage is not empty");
+        emptyObj.amapMakersManage = metaConfigMap;
+        return;
+      }
+      // 桥梁,隧道,涵洞,路产
+      let metaConfigMap = {};
+      metaConfigMap.overlays = {}; // 预留 非metaConfig 配置中使用的地图功能
+      Object.keys(metaConfig).forEach((key) => {
+        switch (key) {
+          case "路网":
+            break;
+          case "桥梁":
+          case "隧道":
+          case "涵洞":
+            metaConfigMap[key] = []; // 涵洞 等大类下的所有小类的组合查询分别只返回一个类型的数据
+            break;
+          case "路产":
+            metaConfigMap[key] = {}; // 路产大类下的每个小类分别是一种类型的数据
+            metaConfig[key].forEach((item) => {
+              metaConfigMap[key][item.name] = {};
+              item.children &&
+                item.children.forEach((child) => {
+                  if (child.prop) {
+                    metaConfigMap[key][item.name][child.prop] = [];
+                  } else {
+                    metaConfigMap[key][item.name][child.name] = [];
+                  }
+                });
+            });
+            break;
+        }
+      });
+      emptyObj.amapMakersManage = metaConfigMap;
     },
   },
 };

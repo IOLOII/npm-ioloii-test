@@ -74,15 +74,11 @@
     <!-- 图例 -->
     <Teleport to=".webmap-wrapper">
       <div
-        class="point"
+        class="point legend-plugin"
         style="
-          width: 34px;
-          height: 34px;
-          line-height: 34px;
-          font-size: 22px;
-          text-align: center;
           top: 15px;
-          right: calc(59px);
+          right: calc(34px + 25px);
+          text-align: center;
           position: absolute;
           transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
           box-shadow: 0 1px 5px rgb(0 0 0 / 40%);
@@ -91,11 +87,23 @@
           background-repeat: no-repeat;
           display: block;
           border-radius: 3px;
+          padding: 0;
         "
+        :style="{
+          padding: legendVisible ? '10px' : '0px'
+        }"
+        @mouseover="legendVisible = true"
+        @mouseleave="legendVisible = false"
       >
-        <a class="amap-ui-control-layer-toggle">
-          <i class="iconfont icon-layer-switcher" style="font-size: 22px"></i>
+        <a
+          v-show="!legendVisible"
+          class="amap-ui-control-layer-toggle"
+          style="width: 34px; height: 34px; line-height: 34px; font-size: 22px"
+        >
+          <!-- <i class="iconfont icon-layer-switcher" style="font-size: 22px"></i> -->
+          <Icon type="icon-q" style="font-size: 22px" class="icon-layer-switcher"></Icon>
         </a>
+        <Legend v-show="legendVisible" :legend="legend" />
       </div>
     </Teleport>
   </div>
@@ -111,7 +119,7 @@
    */
   // import
   // 图标
-    // 事件
+  // 事件
   import eventBus from './eventBus'
   // 图层
   import AMapLoader from '@amap/amap-jsapi-loader'
@@ -120,6 +128,10 @@
   import Modal from './4modal/container.vue'
   import Teleport from '../components/teleport.vue'
   import HeadPickGroup from '../components/headPickGroup.vue'
+
+  import Legend from '../components/legend'
+  import anime from 'animejs'
+  import Icon from '../components/icon'
 
   // 配置
   // import { metaConfig } from './metaConfig'
@@ -135,7 +147,9 @@
       Anime,
       Modal,
       Teleport,
-      HeadPickGroup
+      HeadPickGroup,
+      Legend,
+      Icon
     },
     props: {
       version: {
@@ -169,8 +183,7 @@
       tempToken: {
         type: String,
         required: false,
-        default:
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA2ODYwNjUsInVzZXJuYW1lIjoiYWRtaW4ifQ.6ZR5BxnPmOlL376LwkTiwEVZLI5GT88ODqLENPSP9UA'
+        default: ''
       },
       width: {
         type: String,
@@ -286,6 +299,30 @@
               })
 
               map.addControl(layerCtrl)
+              document
+                .querySelector('.amap-ui-control-layer')
+                .addEventListener('mouseover', () => {
+                  anime({
+                    targets: '.legend-plugin',
+                    duration: 300,
+                    easing: 'spring(1, 80, 10, 0)',
+                    loop: false,
+                    direction: 'normal',
+                    translateX: '-78px'
+                  })
+                })
+              document
+                .querySelector('.amap-ui-control-layer')
+                .addEventListener('mouseleave', () => {
+                  anime({
+                    targets: '.legend-plugin',
+                    duration: 300,
+                    easing: 'spring(1, 80, 10, 0)',
+                    loop: false,
+                    direction: 'normal',
+                    translateX: '0px'
+                  })
+                })
 
               //缩放控件
               map.addControl(
@@ -331,10 +368,18 @@
         })
       },
       // 根据metaConfig中的桥梁,隧道,涵洞,路产,遍历每一项的children,取出children中每子级中的name属性，生成映射关系的对象
-      // TODO: 提出 放在组件外生成
+      // TODO:// SOLVED:提出 放在组件外生成
       generateAmapMakersManage() {
+        let emptyObj = {
+          amapMakersManage: {}
+        }
+        this.$emit('handleEvent', {
+          eventName: 'generateAmapMakersManage',
+          eventObj: { emptyObj, metaConfig: this.metaConfig }
+        })
+        return emptyObj.amapMakersManage
         if (this.amapMakersManage && JSON.stringify(this.amapMakersManage) !== '{}') {
-          this.console("amapMakersManage is not empty")
+          this.console('amapMakersManage is not empty')
           return this.amapMakersManage
         }
         // 桥梁,隧道,涵洞,路产

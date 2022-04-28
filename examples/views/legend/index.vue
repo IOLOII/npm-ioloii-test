@@ -1,22 +1,12 @@
 <template>
-  <div style="margin: 0 auto; width: 300px">
-    <div
-      v-for="(item, index) in Object.keys(legend)"
-      :data-item="{ [item]: legend[item] }"
-    >
-      <div v-if="`${legend[item] instanceof Array === true}`">
-        <Legend :legendItem="legend[item]" :title="item" />
-      </div>
-      <!-- <div v-else v-for="(item2, index2) in Object.keys(legend[item2])">
-      <Legend :legendItem="{ [item2]: legend[item][item2] }" />
-    </div> -->
-    </div>
+  <div style="display: flex; flex-wrap: wrap; margin: 0 auto; width: 300px">
+    <Legend :legend="legend" />
   </div>
 </template>
 
 <script>
   // import
-  import Legend from '~@/web-map/components/legend.vue'
+  import Legend from '~@/web-map/components/legend'
   export default {
     name: 'LegendPage',
     components: {
@@ -25,29 +15,23 @@
     data() {
       return {
         legend: [
-          [
-            '桥梁',
-            [
-              { icon: 'iconfont 桥梁评定等级', name: '桥梁评定等级' },
-              { icon: 'iconfont XXX', name: '桥梁分类（长度）' }
-            ]
-          ],
-          [
-            '路产',
-            [
-              [
-                '服务设施1',
-                [
-                  { icon: 'iconfont XXX', name: '交通标志' },
-                  { icon: 'iconfont XXX', name: '标线' },
-                  { icon: 'iconfont XXX', name: '护栏' },
-                  { icon: 'iconfont XXX', name: '防护设施' },
-                  { icon: 'iconfont XXX', name: '照明设施' },
-                  { icon: 'iconfont XXX', name: '排水设施' }
-                ]
-              ]
-            ]
-          ]
+          { name: '桥梁', icon: 'icon-lbs' },
+          { name: '隧道', icon: 'icon-falling' },
+          { name: '涵洞', icon: 'icon-shuangxiang' },
+          { name: '交通标志', icon: 'icon-falling' },
+          { name: '标线', icon: 'icon-falling' },
+          { name: '护栏', icon: 'icon-falling' },
+          { name: '防护设施', icon: 'icon-falling' },
+          { name: '照明设施', icon: 'icon-falling' },
+          { name: '排水设施', icon: 'icon-falling' },
+          { name: '收费站', icon: 'icon-falling' },
+          { name: '服务站', icon: 'icon-falling' },
+          { name: '加油站', icon: 'icon-falling' },
+          { name: '停车区', icon: 'icon-falling' },
+          { name: '治超站点', icon: 'icon-falling' },
+          { name: '公路管理站', icon: 'icon-falling' },
+          { name: '桥梁养护牌', icon: 'icon-falling' },
+          { name: '监控设备', icon: 'icon-falling' }
         ]
       }
     }

@@ -31,9 +31,10 @@
   // import
   import WebMap from '~@/web-map'
   import Teleport from '~@/teleport'
+  // import  '~@/web-map/components/公路标点图标.js'
+  import './公路标点图标.css'
 
-
-  import eventBus from "./eventBus";
+  import eventBus from './eventBus'
   import mixin from './mixin.js'
   import SupebdLeft from './component/supendedLeft.vue'
   import { metaConfig } from '~@/web-map/src/metaConfig'
@@ -48,14 +49,17 @@
     },
     data: () => ({
       teleportStaticHTML: '',
-      $WebMap:{}
+      $WebMap: {}
     }),
     computed: {
       metaConfig() {
         return metaConfig
       },
       tempToken() {
-        return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTA5NDI4NTMsInVzZXJuYW1lIjoiYWRtaW4ifQ.EzIsPK_ewYWtqbsjWm0v72hcD0QmbnXyD52ds4V8_Y0'
+        return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTEyMzE0MTgsInVzZXJuYW1lIjoiYWRtaW4ifQ.1NX6dOCvk-xZ5NOAtSMDmU1sU9Htu8DZ1RfMUM7lrlI'
+      },
+      tempService() {
+        return 'https://yx.91jt.net/testroad'
       }
     },
     methods: {
@@ -81,7 +85,6 @@
           map,
           pointEvent: this.bindRoadRropertyPointEvent($AMap)
         })
-
       },
       /**
        * @description 点击复选框事件回调
@@ -274,6 +277,9 @@
             let { emptyObj, key } = eventObj
             eventBus.$emit(eventName, { emptyObj, key })
             break
+          case 'generateAmapMakersManage':
+            this.generateAmapMakersManage(eventObj)
+            break
           case 'layerLineDetail':
             let { pointInfo } = eventObj
             this.$WebMap.triggerEvent('openModal', {
@@ -364,6 +370,5 @@
   }
 </style>
 <style lang="scss">
-@import './themPatch.scss'
-
+  @import './themPatch.scss';
 </style>

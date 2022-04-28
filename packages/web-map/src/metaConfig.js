@@ -51,7 +51,7 @@ let metaConfig = {
   桥梁: [
     {
       name: "桥梁评定等级",
-      icon: "iconfont 桥梁评定等级",
+      icon: "icon-lianjie",
       headLine: true,
       headLineCheckBox: true,
       value: false,
@@ -86,7 +86,7 @@ let metaConfig = {
   隧道: [
     {
       name: "隧道评定等级",
-      icon: "iconfont XXX",
+      icon: "icon-WIFI",
       headLine: true,
       headLineCheckBox: true,
       value: false,
@@ -122,7 +122,7 @@ let metaConfig = {
   涵洞: [
     {
       name: "涵洞位置",
-      icon: "iconfont XXX",
+      icon: "icon-chongdianzhuang",
       headLine: true,
       headLineCheckBox: true,
       value: false,
@@ -196,32 +196,32 @@ let metaConfig = {
         {
           prop: "tpLabel",
           name: "交通标志",
-          icon: "iconfont XXX",
+          icon: "icon-chuzuche",
           value: false,
         },
-        { prop: "tpMarking", name: "标线", icon: "iconfont XXX", value: false },
+        { prop: "tpMarking", name: "标线", icon: "icon-jiaoyi", value: false },
         {
           prop: "tpGuardrail",
           name: "护栏",
-          icon: "iconfont XXX",
+          icon: "icon-biaoji",
           value: false,
         },
         {
           prop: "tpSavefacilities",
           name: "防护设施",
-          icon: "iconfont XXX",
+          icon: "icon-yinhangjigou",
           value: false,
         },
         {
           prop: "tpLighting",
           name: "照明设施",
-          icon: "iconfont XXX",
+          icon: "icon-daohang",
           value: false,
         },
         {
           prop: "tpDrainage",
           name: "排水设施",
-          icon: "iconfont XXX",
+          icon: "icon-qiche",
           value: false,
         },
       ],
@@ -238,20 +238,20 @@ let metaConfig = {
         {
           prop: "tpTollStation",
           name: "收费站",
-          icon: "iconfont XXX",
+          icon: "icon-jiayouzhan",
           value: false,
         },
-        { prop: "tpSst", name: "服务站", icon: "iconfont XXX", value: false },
+        { prop: "tpSst", name: "服务站", icon: "icon-tingchechang", value: false },
         {
           prop: "tpPetrolStation",
           name: "加油站",
-          icon: "iconfont XXX",
+          icon: "icon-jiayou",
           value: false,
         },
         {
           prop: "tpParkingLot",
           name: "停车区",
-          icon: "iconfont XXX",
+          icon: "icon-qiche",
           value: false,
         },
       ],
@@ -268,89 +268,31 @@ let metaConfig = {
         {
           prop: "tpSuper",
           name: "治超站点",
-          icon: "iconfont XXX",
+          icon: "icon-lianjie",
           value: false,
         },
         {
           prop: "tpStation",
           name: "公路管理站",
-          icon: "iconfont XXX",
+          icon: "icon-chongdianzhuang",
           value: false,
         },
         {
           prop: "tpPlate",
           name: "桥梁养护牌",
-          icon: "iconfont XXX",
+          icon: "icon-yinhangjigou",
           value: false,
         },
         {
           prop: "tpCamera",
           name: "监控设备",
-          icon: "iconfont XXX",
+          icon: "icon-tingchechang",
           value: false,
         },
       ],
     },
   ],
 };
-
-// console.log(Object.keys(metaConfig));
-// console.log(metaConfig["路产"]);
-// console.log(metaConfig["路产"] === metaConfig["路产"])
-// console.log(metaConfig["路网"]["国"])
-
-// 根据map metaConfig中的桥梁,隧道,涵洞,路产 key,获取每一项，并遍历每一项的children,取出children中每子级中的name属性，生成映射关系的对象
-function generateAmapMakersManage() {
-  // 桥梁,隧道,涵洞,路产
-  let metaConfigMap = {};
-  Object.keys(metaConfig).forEach((key) => {
-    if (key === "路网") {
-      return;
-    } else {
-      metaConfigMap[key] = {};
-      metaConfig[key].forEach((item) => {
-        metaConfigMap[key][item.name] = {};
-        item.children &&
-          item.children.forEach((child) => {
-            if (child.prop) {
-              metaConfigMap[key][item.name][child.prop] = [];
-            } else {
-              metaConfigMap[key][item.name][child.name] = [];
-            }
-          });
-      });
-    }
-  });
-  // console.log(metaConfigMap)
-  return metaConfigMap;
-
-  // { '桥梁':
-  //  { '桥梁评定等级': { '一类': [], '二类': [], '三类': [], '四类': [], '五类': [] },
-  //    '桥梁分类（长度）': { '特大桥': [], '大桥': [], '中桥': [], '小桥': [] } },
-  // '隧道':
-  //  { '隧道评定等级': { '一类': [], '二类': [], '三类': [], '四类': [], '五类': [] },
-  //    '隧道分类（长度）': { '特大隧道': [], '大隧道': [], '中隧道': [], '小隧道': [] } },
-  // '涵洞':
-  //  { '涵洞位置': { '主线涵洞': [], '匝道涵洞': [] },
-  //    '行政等级': { '县道': [], '乡道': [], '村道': [], '专用公路': [] } },
-  // '路产':
-  //  { '服务设施1':
-  //     { tpLabel: [],
-  //       tpMarking: [],
-  //       tpGuardrail: [],
-  //       tpSavefacilities: [],
-  //       tpLighting: [],
-  //       tpDrainage: [] },
-  //    '服务设施2':
-  //     { tpTollStation: [],
-  //       tpSst: [],
-  //       tpPetrolStation: [],
-  //       tpParkingLot: [] },
-  //     '管理设施': { tpSuper: [], tpStation: [], tpPlate: [], tpCamera: [] }
-  //   }
-  // }
-}
-// generateAmapMakersManage()
 
 export { metaConfig };
 
