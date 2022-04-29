@@ -1,4 +1,4 @@
-import axios from "axios";
+// import axios from "axios";
 import eventBus from "./eventBus";
 export default {
   methods: {
@@ -64,6 +64,7 @@ export default {
       }
 
       const delta = 0.03467559814453125;
+      const axios = require("axios");
       axios({
         method: "get",
         url: this.geoServerUrl,
@@ -195,6 +196,7 @@ export default {
      * @param {Boolean} distoryLayer 路网是否销毁
      */
     clearLayerChildren(layerName, roadNetStatus, distoryLayer = false) {
+      debugger
       let _this = this;
       if (layerName instanceof Array) {
         layerName.forEach((layername) => {

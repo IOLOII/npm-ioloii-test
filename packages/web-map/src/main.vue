@@ -432,6 +432,15 @@
             let { zoom, time = 500 } = eventObj
             this.map.setZoom(zoom || this.mapOptions.zoom, false, time)
             break
+          case 'setZoomAndCenter':
+            let { center: center2, zoom: zoom2, time: time2 = 500 } = eventObj
+            this.map.setZoomAndCenter(
+              zoom2 || this.mapOptions.zoom,
+              center2 || this.mapOptions.center,
+              false,
+              time2
+            )
+            break
           default:
             // rubOffLine
             if (this[eventName]) {

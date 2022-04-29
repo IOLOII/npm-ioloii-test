@@ -8,6 +8,8 @@
       @initMapEvevt="initMapEvevt"
       @handleEvent="handleEvent"
       ref="WebMap"
+      v-loading="loading"
+      element-loading-text="加载中"
     >
       <template #supendedLeft>
         <SupebdLeft ref="SupebdLeft" />
@@ -22,7 +24,7 @@
     </WebMap>
 
     <Teleport to=".webmap-wrapper-anime-container .block.right" v-if="teleportStaticHTML">
-      <div style="" class="asdklsmodal" v-html="teleportStaticHTML">></div>
+      <div v-html="teleportStaticHTML"></div>
     </Teleport>
   </div>
 </template>
@@ -49,7 +51,7 @@
     },
     data: () => ({
       teleportStaticHTML: '',
-      $WebMap: {}
+      loading: false
     }),
     computed: {
       metaConfig() {
@@ -159,7 +161,7 @@
           case '涵洞':
             // case '涵洞位置':
             // case '行政等级':
-            console.log(type, eventObj, value, componentObj, item, _this)
+            // console.log(type, eventObj, value, componentObj, item, _this)
             // 生成查询条件
             let { prop } = componentObj
             // 获取同父下其他类目
@@ -282,61 +284,133 @@
             break
           case 'layerLineDetail':
             let { pointInfo } = eventObj
-            this.$WebMap.triggerEvent('openModal', {
-              type: 'default',
-              html: `
-                <div>
-                  <div>
-                    <span style="color: #b4b1b1;margin-right: 10px;">
-                      路线编号
-                    </span>
-                    <span>${pointInfo.properties.ROADCODE}</span>
-                  </div>
-                  <div >
-                    <span style="color: #b4b1b1;margin-right: 10px;">
-                      路线名称
-                    </span>
-                    <span>${pointInfo.properties.ROADNAME}</span>
-                  </div>
-                </div>
-              `,
-              callback: {
-                success: res => {
-                  // 关闭弹窗 回显默认layer
-                  this.$WebMap.triggerEvent('rubOffLine')
-                  // 可传递事件
-                  this.$WebMap.triggerEvent('setCenter')
-                  this.$WebMap.triggerEvent('setZoom')
-                },
-                fail: err => {
-                  this.console(err)
-                }
+            console.log(pointInfo)
+
+            this.loading = true
+            const axios = require('axios')
+            let config = {
+              method: 'get',
+              url: `https://yx.91jt.net/testroad/tp/tpRoad/queryByRoadNo?roadNo=${pointInfo.properties.ROADCODE}`,
+              headers: {
+                token:
+                  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTEzMDI1MTAsInVzZXJuYW1lIjoiYWRtaW4ifQ.XSEZ2evHi7ee3o3BKfiYy4OD_dxGwwQineT50_9rlzo'
               }
-            })
+            }
 
-            this.$WebMap.triggerEvent('animeMove', {
-              direction: 'right',
-              isShow: true
-            })
+            axios(config)
+              .then(response => {
+                // console.log(JSON.stringify(response.data));
+                let data = response.data
+                console.log(response.data)
+                this.$WebMap.triggerEvent('animeMove', {
+                  direction: 'right',
+                  isShow: true
+                })
 
-            this.$nextTick(() => {
-              this.teleportStaticHTML = `
-                <div>
-                  <div>
-                    <span style="color: #0048BA;margin-right: 10px;">
-                      路线编号
-                    </span>
-                    <span style="color: white;margin-right: 10px;"> ${pointInfo.properties.ROADCODE}</span>
+                this.$nextTick(() => {
+                  this.teleportStaticHTML = `
+                <div class="lineInfo">
+                  <img
+                    src="${data.img||'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da'}"
+                  />
+                  <div class="group">
+                    <span class="title">基础信息</span>
+                    <div>
+                      <span class="key">路线名称</span>
+                      <span class="value"> ${data.name || '暂无'}</span>
+                    </div>
+                    <div>
+                      <span class="key">路线编号</span>
+                      <span class="value"> ${data.no || '暂无'}</span>
+                    </div>
+                    <div>
+                      <span class="key">行政等级</span>
+                      <span class="value">${{"G":"国道","S":"省道","X":"县道","Y":"乡道","C":"存道","Z":"专用公路"}[data.administrativeGrade] || '暂无'}</span>
+                    </div>
+                    <div>
+                      <span class="key">起点桩号</span>
+                      <span class="value">${data.startStake || '暂无'}</span>
+                    </div>
+                    <div>
+                      <span class="key">终点桩号</span>
+                      <span class="value">${data.endStake || '暂无'}</span>
+                    </div>
+                    <div>
+                      <span class="key">所属行政区域</span>
+                      <span class="value">${data.area||'暂无'}</span>
+                    </div>
+                    <div>
+                      <span class="key">技术等级</span>
+                      <span class="value">暂无</span>
+                    </div>
                   </div>
-                  <div >
-                    <span style="color: #0048BA;margin-right: 10px;">
-                      路线名称
-                    </span>
-                    <span style="color: white;margin-right: 10px;">${pointInfo.properties.ROADNAME}</span>
+                  <div class="group">
+                    <span class="title">相关人员</span>
+                    <div>
+                      <span class="key">路长</span>
+                      <span class="value">暂无</span>
+                    </div>
+                    <div>
+                      <span class="key">巡查人员</span>
+                      <span class="value">暂无</span>
+                    </div>
+                    <div>
+                      <span class="key">养护人员</span>
+                      <span class="value">暂无</span>
+                    </div>
+                    <div>
+                      <span class="key">养护单位</span>
+                      <span class="value">暂无</span>
+                    </div>
                   </div>
                 </div>
               `
-            })
+                })
+              })
+              .catch(error => {
+                console.log(error)
+              })
+              .finally(() => {
+                this.loading = false
+              })
+
+            return
+            // this.$WebMap.triggerEvent('openModal', {
+            //   type: 'default',
+            //   html: `
+            //     <div>
+            //       <div>
+            //         <span style="color: #b4b1b1;margin-right: 10px;">
+            //           路线编号
+            //         </span>
+            //         <span>${pointInfo.properties.ROADCODE}</span>
+            //       </div>
+            //       <div >
+            //         <span style="color: #b4b1b1;margin-right: 10px;">
+            //           路线名称
+            //         </span>
+            //         <span>${pointInfo.properties.ROADNAME}</span>
+            //       </div>
+            //     </div>
+            //   `,
+            //   callback: {
+            //     success: res => {
+            //       // 关闭弹窗 回显默认layer
+            //       this.$WebMap.triggerEvent('rubOffLine')
+            //       // 可传递事件
+            //       this.$WebMap.triggerEvent('setCenter')
+            //       this.$WebMap.triggerEvent('setZoom')
+            //     },
+            //     fail: err => {
+            //       this.console(err)
+            //     }
+            //   }
+            // })
+
+            break
+          case 'loading':
+            let { loading } = eventObj
+            this.$loading = loading
             break
           default:
             this.console(`事件未捕获： HandleEvent_${eventName}`)
@@ -355,20 +429,51 @@
     background: #fff;
     border: 1px;
     box-sizing: border-box;
-    box-shadow: 0 0 7px 2px #ccc;
+    // box-shadow: 0 0 7px 2px #ccc;
     margin: 0 auto;
-  }
-</style>
-
-<style lang="scss">
-  // ### for
-  .teleport {
-    text-align: left;
-    &.asdklsmodal {
-      // background: red;
-    }
   }
 </style>
 <style lang="scss">
   @import './themPatch.scss';
+
+  // ### for teleport
+  .teleport {
+    text-align: left;
+    // 路线信息
+    .lineInfo {
+      img {
+        border-top-left-radius: 20px;
+      }
+      .group {
+        padding-bottom: 10px;
+        background: #ffffff3d;
+        border-radius: 10px;
+        margin: 5px 0;
+        backdrop-filter: blur(1px);
+        padding: 5px;
+        > div:nth-child(2) {
+          margin-top: 5px;
+        }
+        .title {
+          margin-right: 10px;
+          border-left: 5px $primary-color solid;
+          padding-left: 10px;
+          border-radius: 4px;
+          color: white;
+          font-weight: 800;
+        }
+        .key {
+          color: #b4b1b1;
+          margin-right: 10px;
+          &::after {
+            content: '：';
+          }
+        }
+        .value {
+          color: white;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
 </style>

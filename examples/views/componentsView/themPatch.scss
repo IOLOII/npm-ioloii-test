@@ -5,13 +5,16 @@ div {
 }
 
 img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 5px;
 }
-i{
+i {
   padding: 5px;
 }
 .icon {
 }
-.map-iconfont{
+.map-iconfont {
   font-size: 2em !important;
 }
 
@@ -77,7 +80,7 @@ i{
       background: $primary-color;
       color: white;
       border-color: transparent;
-      padding-left: 10px;
+      padding-left: 0px;
       &:active {
         background: darken($primary-color, 3%);
       }
@@ -139,13 +142,13 @@ i{
 .webmap-wrapper-anime-container .block-btn {
   transition: background 0.3s;
   transition-delay: 300;
-  &:hover{
+  &:hover {
     background: lighten(rgb(104, 104, 104), 10%) !important;
   }
   &.active {
-    background: darken(white, 10%) !important;
+    background: #e6e6e696 !important;
     backdrop-filter: blur(5px);
-    &:hover{
+    &:hover {
       background: white !important;
     }
   }

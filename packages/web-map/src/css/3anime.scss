@@ -1,4 +1,4 @@
-@import './var.scss';
+@import "./var.scss";
 .webmap-wrapper {
   &-anime-container {
     // 动画层
@@ -14,15 +14,16 @@
     justify-content: space-between;
     margin: 0 auto;
     .block {
+      $padding: 15px;
       margin: auto 0;
-      height: calc($areaHeight_lr - 60px);
+      height: calc($areaHeight_lr - $padding * 2);
       // width: 26vw;
       // height: 71vh;
       backdrop-filter: blur(1rem);
       background-color: #97979745;
       pointer-events: auto;
       overflow: auto;
-      padding: 30px; // 预留滚动条和按钮的位置
+      padding: $padding; // 预留滚动条和按钮的位置
       &.left {
         transform: translateX(-100%); // TODO: 首次点击动画
         width: $sideWidth_l;

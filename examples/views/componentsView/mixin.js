@@ -4,11 +4,18 @@ export default {
     amapMakersManage: null,
     $AMap: null,
     map: null,
+    $WebMap: {},
   }),
   created() {
-    eventBus.$on("getMetaConfig", ({ emptyObj }) => {
-      emptyObj.metaConfig = this.metaConfig;
+    eventBus.$on("getProp", ({ emptyObj }) => {
+      let { keys } = emptyObj;
+      keys.forEach((key) => {
+        emptyObj[key] = this[key] || this.$WebMap[key];
+      });
     });
+    // eventBus.$on("getMetaConfig", ({ emptyObj }) => {
+    //   emptyObj.metaConfig = this.metaConfig;
+    // });
     eventBus.$on(
       "pickHandle",
       ({ type, eventObj, value, componentObj, item, key }) => {
@@ -22,6 +29,10 @@ export default {
         });
       }
     );
+    // 跨组件调用到webmap
+    eventBus.$on("toWebMap", ({ eventName, eventObj = {} }) => {
+      this.$WebMap.triggerEvent(eventName, eventObj);
+    });
   },
   methods: {
     alert(v) {
@@ -79,22 +90,22 @@ export default {
       axios(config)
         .then((response) => {
           let arr = [
-            {prop:"tpLabel", name:'交通标志'},
-            {prop:"tpMarking", name:'标线'},
-            {prop:"tpGuardrail", name:'护栏'},
-            {prop:"tpSavefacilities", name:'防护设施'},
-            {prop:"tpLighting", name:'照明设施'},
-            {prop:"tpDrainage", name:'排水设施'},
+            { prop: "tpLabel", name: "交通标志" },
+            { prop: "tpMarking", name: "标线" },
+            { prop: "tpGuardrail", name: "护栏" },
+            { prop: "tpSavefacilities", name: "防护设施" },
+            { prop: "tpLighting", name: "照明设施" },
+            { prop: "tpDrainage", name: "排水设施" },
 
-            {prop:"tpTollStation", name:'收费站'},
-            {prop:"tpSst", name:'服务站'},
-            {prop:"tpPetrolStation", name:'加油站'},
-            {prop:"tpParkingLot", name:'停车区'},
+            { prop: "tpTollStation", name: "收费站" },
+            { prop: "tpSst", name: "服务站" },
+            { prop: "tpPetrolStation", name: "加油站" },
+            { prop: "tpParkingLot", name: "停车区" },
 
-            {prop:"tpSuper", name:'治超站点'},
-            {prop:"tpStation", name:'公路管理站'},
-            {prop:"tpPlate", name:'桥梁养护牌'},
-            {prop:"tpCamera", name:'监控设备'},
+            { prop: "tpSuper", name: "治超站点" },
+            { prop: "tpStation", name: "公路管理站" },
+            { prop: "tpPlate", name: "桥梁养护牌" },
+            { prop: "tpCamera", name: "监控设备" },
           ];
           let obj = {}; // 挂载数据对象
           // let markerCluster = []; // 存放转换后 生成的每一个marker
@@ -103,7 +114,7 @@ export default {
           Object.keys(amapMakersManage["路产"]).forEach((key) => {
             Object.assign(obj, amapMakersManage["路产"][key]);
           });
-          arr.forEach(({ prop,name}) => {
+          arr.forEach(({ prop, name }) => {
             try {
               if (response.data[prop]) {
                 response.data[prop] = JSON.parse(
@@ -113,7 +124,7 @@ export default {
                 response.data[prop].features.forEach((point, index) => {
                   point.metaConfigProp = {
                     prop,
-                    name
+                    name,
                   };
                   if (
                     point.geometry &&
@@ -226,8 +237,10 @@ export default {
           let map = e.target.getMap();
           let ExtData = target.getExtData();
           console.log(ExtData);
-          map.setCenter(target.lnglat);
-          map.setZoom(17, false, 500);
+          this.$WebMap.triggerEvent("setZoomAndCenter", {
+            center: target.lnglat,
+            zoom: 17,
+          });
           let infoWindow = new $AMap.InfoWindow({
             anchor: "top-left",
             autoMove: true,
@@ -251,17 +264,30 @@ export default {
             },
           });
           this.$nextTick(() => {
-            this.teleportStaticHTML = `<div>`;
-            Object.keys(ExtData.properties).forEach((key) => {
-              this.teleportStaticHTML += `
-                <div>
-                  <span style="color: #0048BA;margin-right: 10px;">
-                    ${key}
-                  </span>
-                  <span  style="color: white;margin-right: 10px;"> :   ${ExtData.properties[key]}</span>
-                </div>
-              `;
-            });
+            this.teleportStaticHTML = `<div class="lineInfo">`;
+            this.teleportStaticHTML += `
+              <img
+                src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
+              />
+              <div class="group">
+                    <span class="title">点位信息</span>
+            `;
+            this.teleportStaticHTML += `
+              <div>
+                <span class="key">名称</span>
+                <span class="value"> ${ExtData.properties["name"]}</span>
+              </div>
+            `;
+            // Object.keys(ExtData.properties).forEach((key) => {
+            //   this.teleportStaticHTML += `
+            //     <div>
+            //       <span class="key">${key}</span>
+            //       <span class="value"> ${ExtData.properties[key]}</span>
+            //     </div>
+
+            //   `;
+            // });
+            this.teleportStaticHTML += `</div>`;
             this.teleportStaticHTML += `</div>`;
           });
         },
@@ -407,9 +433,12 @@ export default {
           let target = e.target;
           let map = e.target.getMap();
           let ExtData = target.getExtData();
-          console.log(ExtData);
-          map.setCenter(target.lnglat);
-          map.setZoom(17, false, 500);
+          // console.log(ExtData);
+          // console.log(target);
+          this.$WebMap.triggerEvent("setZoomAndCenter", {
+            center: target.lnglat,
+            zoom: 17,
+          });
           let infoWindow = new $AMap.InfoWindow({
             anchor: "top-left",
             autoMove: true,
@@ -433,17 +462,30 @@ export default {
             },
           });
           this.$nextTick(() => {
-            this.teleportStaticHTML = `<div>`;
-            Object.keys(ExtData.properties).forEach((key) => {
-              this.teleportStaticHTML += `
-                <div>
-                  <span style="color: #0048BA;margin-right: 10px;">
-                    ${key}
-                  </span>
-                  <span  style="color: white;margin-right: 10px;"> :   ${ExtData.properties[key]}</span>
-                </div>
-              `;
-            });
+            this.teleportStaticHTML = `<div class="lineInfo">`;
+            this.teleportStaticHTML += `
+              <img
+                src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
+              />
+              <div class="group">
+                    <span class="title">点位信息</span>
+            `;
+            // Object.keys(ExtData.properties).forEach((key) => {
+            //   this.teleportStaticHTML += `
+            //     <div>
+            //       <span class="key">${key}</span>
+            //       <span class="value"> ${ExtData.properties[key]}</span>
+            //     </div>
+
+            //   `;
+            // });
+            this.teleportStaticHTML += `
+              <div>
+                <span class="key">${ExtData.properties["tableType"]}名称</span>
+                <span class="value"> ${ExtData.properties["name"]}</span>
+              </div>
+            `;
+            this.teleportStaticHTML += `</div>`;
             this.teleportStaticHTML += `</div>`;
           });
         },

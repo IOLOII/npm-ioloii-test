@@ -4,16 +4,21 @@
     v-for groups metaConfig[key]
     v-for metaConfig[key][children] -->
     <div v-for="key in Object.keys(metaConfig)" :key="key" style="padding-bottom: 10px">
-      <span style="font-size: 20px; font-weight: 700; ">{{ key }}</span>
-      <div v-for="(componentObj, index) in metaConfig[key]" :key="index" style="padding: 5px">
+      <span style="font-size: 20px; font-weight: 700">{{ key }}</span>
+      <div
+        v-for="(componentObj, index) in metaConfig[key]"
+        :key="index"
+        style="padding: 5px"
+      >
         <!-- <div v-if="metaConfig[key].length !== 1"> -->
         <el-checkbox
           v-model="componentObj.value"
           @change="headLineValueChange({ componentObj, key })"
           v-if="componentObj.headLineCheckBox"
           style="padding: 5px"
+          :data-key="key"
         >
-          <span style="font-size: 17px; font-weight: 600;">{{ componentObj.name }}</span>
+          <span style="font-size: 17px; font-weight: 600">{{ componentObj.name }}</span>
         </el-checkbox>
         <!-- </div> -->
         <el-row style="padding-left: 1.2em">
@@ -37,6 +42,13 @@
                 <span :data-item="JSON.stringify(item)">{{ item.name }}</span>
               </el-checkbox>
             </el-tooltip>
+            <!-- <template v-if="key === '路网'">
+              <span
+                :disabled="!item.value"
+                @click.stop="clearDrawedLine({ componentObj, item, key })"
+                >清除</span
+              >
+            </template> -->
           </el-col>
         </el-row>
       </div>
@@ -51,16 +63,19 @@
     name: 'TreePick',
     data: () => ({
       metaConfig: {}
+      // geoLayersManage: {}
     }),
     created() {
       let emptyObj = {
-        metaConfig: {}
+        metaConfig: {},
+        keys: ['metaConfig']
       }
-      eventBus.$emit('getMetaConfig', { emptyObj })
+      eventBus.$emit('getProp', { emptyObj })
+      this.metaConfig = emptyObj.metaConfig
+
       eventBus.$on('getActivatedLayerName', ({ emptyObj, key }) => {
         emptyObj.activedLayerName = this.getActivatedLayerName(key)
       })
-      this.metaConfig = emptyObj.metaConfig
     },
     methods: {
       console(v, type = 'log') {
@@ -104,7 +119,19 @@
           })
         } else {
           let isAllTrue = true
+          // if (Object.keys(this.geoLayersManage).length === 0) {
+          //   let emptyObj = {
+          //     geoLayersManage: {},
+          //     keys: ['geoLayersManage']
+          //   }
+          //   eventBus.$emit('getProp', { emptyObj })
+          //   this.geoLayersManage = emptyObj.geoLayersManage
+          // }
           componentObj.children.forEach(item => {
+            // if (
+            //   !item.value &&
+            //   this.geoLayersManage[item.layerName].$children.length === 0
+            // ) {
             if (!item.value) {
               isAllTrue = false
             }
@@ -178,6 +205,16 @@
           activedLayerName = null
         }
         return activedLayerName
+      },
+      clearDrawedLine({ componentObj, item, key }) {
+        //       // 关闭弹窗 回显默认layer
+        // this.$parent.$WebMap.triggerEvent('rubOffLine')
+        eventBus.$emit('toWebMap', { eventName: 'rubOffLine', eventObj: {} })
+
+        //       this.rubOffLine();
+        //       // 可传递事件
+        //       this.map.setCenter(this.mapOptions.center);
+        //       this.map.setZoom(this.mapOptions.zoom, false, 500);
       }
     }
   }
