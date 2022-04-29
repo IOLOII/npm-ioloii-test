@@ -46,8 +46,8 @@
     mixins: [mixin],
     components: {
       WebMap,
+      Teleport,
       SupebdLeft,
-      Teleport
     },
     data: () => ({
       teleportStaticHTML: '',
@@ -62,6 +62,7 @@
       },
       tempService() {
         return 'https://yx.91jt.net/testroad'
+        return ''
       }
     },
     methods: {
@@ -290,7 +291,7 @@
             const axios = require('axios')
             let config = {
               method: 'get',
-              url: `https://yx.91jt.net/testroad/tp/tpRoad/queryByRoadNo?roadNo=${pointInfo.properties.ROADCODE}`,
+              url: `${this.tempService}/tp/tpRoad/queryByRoadNo?roadNo=${pointInfo.properties.ROADCODE}`,
               headers: {
                 token:
                   'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTEzMDI1MTAsInVzZXJuYW1lIjoiYWRtaW4ifQ.XSEZ2evHi7ee3o3BKfiYy4OD_dxGwwQineT50_9rlzo'

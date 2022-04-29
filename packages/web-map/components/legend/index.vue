@@ -8,7 +8,7 @@
       "
       class="legend-wrapper"
     >
-      <LegendItem :name="name" :icon="icon" v-for="({ name, icon }, index) in legend" />
+      <LegendItem :name="name" :icon="icon" v-for="({ name, icon }, index) in legend" :key="index"/>
 
     </div>
   </div>

@@ -196,7 +196,6 @@ export default {
      * @param {Boolean} distoryLayer 路网是否销毁
      */
     clearLayerChildren(layerName, roadNetStatus, distoryLayer = false) {
-      debugger
       let _this = this;
       if (layerName instanceof Array) {
         layerName.forEach((layername) => {
