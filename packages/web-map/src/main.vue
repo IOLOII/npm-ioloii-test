@@ -242,7 +242,7 @@
     mounted() {},
     methods: {
       alert(v) {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
           this.console(v)
           return
         }
@@ -253,7 +253,7 @@
         }
       },
       console(v, type = 'error') {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
           console[type](v)
         }
       },

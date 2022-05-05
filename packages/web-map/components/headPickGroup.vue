@@ -152,7 +152,7 @@
     // },
     computed: {
       trigger() {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
           return 'click'
         } else {
           return 'hover'
@@ -197,7 +197,7 @@
     // },
     methods: {
       console(v, type = 'log') {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
           console[type](v)
         }
       },

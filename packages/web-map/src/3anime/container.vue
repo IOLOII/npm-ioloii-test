@@ -118,7 +118,7 @@
         eventBus.$emit('g_click', v)
       },
       sidebar(direction) {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
           console.log(direction)
         }
       },

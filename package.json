@@ -20,7 +20,7 @@
     "package.json"
   ],
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --mode test",
     "build": "vue-cli-service build",
     "lib": "cross-env NODE_ENV=npmproduction vue-cli-service build --target lib --name dado --dest lib packages/index.js"
   },

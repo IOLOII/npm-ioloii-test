@@ -11,6 +11,7 @@
       v-loading="loading"
       element-loading-text="加载中"
     >
+      <!-- 支持top left bottom -->
       <template #supendedLeft>
         <SupebdLeft ref="SupebdLeft" />
       </template>
@@ -18,13 +19,19 @@
       <!-- 动画层 -->
       <!-- <template #animeLeft> 12321</template>
        -->
+      <!-- 支持left right -->
       <template #animeRight>
         <span style="display: none"></span>
       </template>
     </WebMap>
 
-    <Teleport to=".webmap-wrapper-anime-container .block.right" v-if="teleportStaticHTML">
-      <div v-html="teleportStaticHTML"></div>
+    <Teleport to=".webmap-wrapper-anime-container .block.right" >
+      <div v-html="teleportStaticHTML" v-if="teleportStaticHTML"></div>
+      <div v-else="teleportStaticHTML">
+        <div style="text-align:center">
+          当前暂无内容
+        </div>
+      </div>
     </Teleport>
   </div>
 </template>
@@ -47,7 +54,7 @@
     components: {
       WebMap,
       Teleport,
-      SupebdLeft,
+      SupebdLeft
     },
     data: () => ({
       teleportStaticHTML: '',
@@ -58,11 +65,18 @@
         return metaConfig
       },
       tempToken() {
-        return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTEyMzE0MTgsInVzZXJuYW1lIjoiYWRtaW4ifQ.1NX6dOCvk-xZ5NOAtSMDmU1sU9Htu8DZ1RfMUM7lrlI'
+        if (process.env.NODE_ENV === 'test') {
+          return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTE4MjkyNTAsInVzZXJuYW1lIjoiYWRtaW4ifQ.ciGApD6_ZttLH6ixy9uB-v3KFC50BPbUpsWK0qaJMB8'
+        } else {
+          return this.$cookie.get('token')
+        }
       },
       tempService() {
-        return 'https://yx.91jt.net/testroad'
-        return ''
+        if (process.env.NODE_ENV === 'test') {
+          return 'https://yx.91jt.net/testroad'
+        } else {
+          return ''
+        }
       }
     },
     methods: {
@@ -261,7 +275,7 @@
           // .. 其他
         })
         // ... 其他事件
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
           this.map.on('mousewheel', ({ target, lnglat, pixel, type }) => {
             console.log(this.map.getZoom())
           })
@@ -312,7 +326,10 @@
                   this.teleportStaticHTML = `
                 <div class="lineInfo">
                   <img
-                    src="${data.img||'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da'}"
+                    src="${
+                      data.img ||
+                      'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da'
+                    }"
                   />
                   <div class="group">
                     <span class="title">基础信息</span>
@@ -326,7 +343,16 @@
                     </div>
                     <div>
                       <span class="key">行政等级</span>
-                      <span class="value">${{"G":"国道","S":"省道","X":"县道","Y":"乡道","C":"存道","Z":"专用公路"}[data.administrativeGrade] || '暂无'}</span>
+                      <span class="value">${
+                        {
+                          G: '国道',
+                          S: '省道',
+                          X: '县道',
+                          Y: '乡道',
+                          C: '存道',
+                          Z: '专用公路'
+                        }[data.administrativeGrade] || '暂无'
+                      }</span>
                     </div>
                     <div>
                       <span class="key">起点桩号</span>
@@ -338,7 +364,7 @@
                     </div>
                     <div>
                       <span class="key">所属行政区域</span>
-                      <span class="value">${data.area||'暂无'}</span>
+                      <span class="value">${data.area || '暂无'}</span>
                     </div>
                     <div>
                       <span class="key">技术等级</span>

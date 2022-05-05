@@ -13,8 +13,8 @@
         size="medium"
       ></el-button>
     </el-input>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="图层图层图层" name="second">
+    <el-tabs v-model="activeName" @tabClick="handleClick">
+      <el-tab-pane label="图层" name="second">
         <TreePick ref="TreePick" />
       </el-tab-pane>
       <el-tab-pane label="搜索" name="third">
@@ -125,7 +125,9 @@
       search() {
         console.log(this.input3)
       },
-      handleClick() {},
+      handleClick(tab, event) {
+        console.log(tab, event)
+      },
       handleChange() {}
     }
   }

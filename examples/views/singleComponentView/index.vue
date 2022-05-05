@@ -22,6 +22,7 @@
               placement="right"
               :enterable="false"
               v-for="(item, index) in componentObj.children"
+              :key="index"
             >
               <el-col :span="12" :offset="0">
                 <el-dropdown-item icon="el-icon-plus">
