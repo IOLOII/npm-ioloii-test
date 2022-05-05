@@ -206,7 +206,8 @@
         map: null,
         $AMap: null,
         // geo图层管理对象
-        geoLayersManage: {}, // 路网这块暂时不抛出
+        geoLayersManage: {},
+        // 高德marker管理
         amapMakersManage: {}
       }
     },

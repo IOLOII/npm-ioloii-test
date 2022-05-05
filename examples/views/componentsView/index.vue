@@ -40,13 +40,14 @@
   // import
   import WebMap from '~@/web-map'
   import Teleport from '~@/teleport'
+
   // import  '~@/web-map/components/公路标点图标.js'
   import './公路标点图标.css'
 
   import eventBus from './eventBus'
   import mixin from './mixin.js'
   import SupebdLeft from './component/supendedLeft.vue'
-  import { metaConfig } from '~@/web-map/src/metaConfig'
+  import { metaConfig } from './metaConfig'
 
   export default {
     name: 'componentsView',
