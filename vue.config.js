@@ -56,4 +56,15 @@ module.exports = {
         return options;
       });
   },
+  devServer: {
+    proxy: {
+      '/testroad': {
+        target: 'https://yx.91jt.net/',
+        changeOrigin: true,
+        pathRewrite: {
+          "^/testroad": "/testroad",
+        },
+      }
+    }
+  }
 };

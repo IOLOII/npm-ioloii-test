@@ -217,7 +217,7 @@
           {},
           {
             center: this.$amapCenter,
-            zoom: this.$amapZoom || 9.5,
+            zoom: this.$amapZoom || 10.85,
             // rotation:this.$amapRotation||0,
             rotateEnable: false,
             layers: [

@@ -67,14 +67,15 @@
       },
       tempToken() {
         if (process.env.NODE_ENV === 'test') {
-          return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTE4MjkyNTAsInVzZXJuYW1lIjoiYWRtaW4ifQ.ciGApD6_ZttLH6ixy9uB-v3KFC50BPbUpsWK0qaJMB8'
+          return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTE4MzIxMjYsInVzZXJuYW1lIjoiYWRtaW4ifQ.zJmoZIl5LxEVCriaiAT9SwZV7AGZeG823AutyNWYYQs'
         } else {
           return this.$cookie.get('token')
         }
       },
       tempService() {
         if (process.env.NODE_ENV === 'test') {
-          return 'https://yx.91jt.net/testroad'
+          // return 'https://yx.91jt.net/testroad'
+          return '/testroad'
         } else {
           return ''
         }
