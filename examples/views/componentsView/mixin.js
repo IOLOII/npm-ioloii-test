@@ -36,7 +36,10 @@ export default {
   },
   methods: {
     alert(v) {
-      if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
+      if (
+        process.env.NODE_ENV === "development" ||
+        process.env.NODE_ENV === "test"
+      ) {
         this.console(v);
         return;
       }
@@ -47,7 +50,10 @@ export default {
       }
     },
     console(v, type = "error") {
-      if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
+      if (
+        process.env.NODE_ENV === "development" ||
+        process.env.NODE_ENV === "test"
+      ) {
         console[type](v);
       }
     },
@@ -126,6 +132,7 @@ export default {
                     prop,
                     name,
                   };
+                  point.types = name;
                   if (
                     point.geometry &&
                     point.geometry.coordinates[1] &&
@@ -198,6 +205,9 @@ export default {
               });
               // markerCluster.push(marker);
               point.marker = marker;
+              if (index === 0) {
+                console.log("pointmarker", point);
+              }
               marker.lnglat = [item.lng, item.lat];
             });
 
@@ -394,6 +404,7 @@ export default {
               // }
               locations.forEach((item, index) => {
                 let point = toTransItemObj[index];
+                point.types = key;
                 let legend = emptyObj.legend.find((legendItem) => {
                   return legendItem.name === key;
                 });
@@ -411,6 +422,9 @@ export default {
                     marker.on(eType, pointEvent[eType]);
                   });
                 point.marker = marker;
+                if (index === 0) {
+                  console.log("pointmarker", point);
+                }
                 marker.lnglat = [item.lng, item.lat];
               });
 
