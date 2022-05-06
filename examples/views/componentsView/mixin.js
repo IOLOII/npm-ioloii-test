@@ -126,7 +126,7 @@ export default {
                 response.data[prop] = JSON.parse(
                   decodeURIComponent(response.data[prop])
                 );
-                console.log(response.data[prop])
+                console.log(response.data[prop]);
                 obj[prop] = response.data[prop].features;
                 response.data[prop].features.forEach((point, index) => {
                   point.metaConfigProp = {
@@ -256,7 +256,7 @@ export default {
           let infoWindow = new $AMap.InfoWindow({
             anchor: "top-left",
             autoMove: true,
-            content: ExtData.properties.name,
+            content: ExtData.types + "： " + ExtData.properties.name,
           });
           infoWindow.open(map, target.lnglat);
           infoWindow.on("close", () => {
@@ -272,7 +272,7 @@ export default {
           });
 
           const axios = require("axios");
-          console.log(ExtData)
+          console.log(ExtData);
           // this.loading = false
           // return
           let config = {
@@ -296,13 +296,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 照片
+                    // img 照片 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -384,13 +384,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 照片
+                    // img 照片 ×
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -510,13 +510,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 照片
+                    // img 照片 ×
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -642,13 +642,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // 暂无
+                    // img 照片 ×
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -758,13 +758,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // 暂无
+                    // img 照片 ×
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -861,13 +861,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // 暂无
+                    // img 照片 ×
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -956,7 +956,6 @@ export default {
             case "收费站":
               config = Object.assign(config, {
                 url: this.tempService + "/tp/tpTollStation/queryById",
-                // this.tempService + "/tp/tpPetrolStation/queryById",
               });
               axios(config)
                 .then((response) => {
@@ -964,13 +963,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 图片
+                    // img 照片 ×
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1066,13 +1065,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 照片
+                    // img 照片 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1184,13 +1183,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 照片
+                    // img 照片 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1274,13 +1273,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 照片
+                    // img 照片 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1370,13 +1369,15 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // thumbnail 缩略图
+                    // thumbnail 缩略图 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${
+                        data.thumbnail ? "<imgsrc=" + data.thumbnail + "/>" : ""
+                      }
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1490,13 +1491,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 缩略图
+                    // img 缩略图 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1594,13 +1595,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // 暂无
+                    // img 照片 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1708,13 +1709,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
-                    // img 缩略图
+                    // img 缩略图 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -1809,43 +1810,6 @@ export default {
                 });
               break;
           }
-
-          // TODO: 插入其他元素或页面的交互事件
-          // NOTE: 页面其他事件，点渲染，单独维护
-          this.$WebMap.triggerEvent("animeMove", {
-            direction: "right",
-            isShow: true,
-            sideConf: {
-              right: "300px",
-            },
-          });
-          this.$nextTick(() => {
-            this.teleportStaticHTML = `<div class="lineInfo">`;
-            this.teleportStaticHTML += `
-              <img
-                src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-              />
-              <div class="group">
-                    <span class="title">点位信息</span>
-            `;
-            this.teleportStaticHTML += `
-              <div>
-                <span class="key">名称</span>
-                <span class="value"> ${ExtData.properties["name"]}</span>
-              </div>
-            `;
-            // Object.keys(ExtData.properties).forEach((key) => {
-            //   this.teleportStaticHTML += `
-            //     <div>
-            //       <span class="key">${key}</span>
-            //       <span class="value"> ${ExtData.properties[key]}</span>
-            //     </div>
-
-            //   `;
-            // });
-            this.teleportStaticHTML += `</div>`;
-            this.teleportStaticHTML += `</div>`;
-          });
         },
       };
     },
@@ -2044,13 +2008,19 @@ export default {
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
                     // thumbnail 缩略图
-                    // positivePhoto 桥梁正面照
+                    // positivePhoto 桥梁正面照 √
                     this.teleportStaticHTML += `
-                      <img
-                        src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.xmsouhu.com%2Fd%2Ffile%2Ftupian%2Fbizhi%2F2020-06-01%2F941ca540f4833b39f34ca7af18860200.jpg&refer=http%3A%2F%2Fwww.xmsouhu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653122631&t=44faeba24c47aa661db1a6d71bfd80da"
-                      />
+                      ${
+                        data.positivePhoto || data.thumbnail
+                          ? "<imgsrc=" +
+                            (data.positivePhoto || data.thumbnail) +
+                            "/>"
+                          : ""
+                      }
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -2221,9 +2191,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
+                    // img 图片 √
                     this.teleportStaticHTML += `
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
@@ -2377,9 +2351,13 @@ export default {
                   console.log(data);
                   this.$nextTick(() => {
                     this.teleportStaticHTML = `<div class="lineInfo">`;
+                    // img 图片 √
                     this.teleportStaticHTML += `
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
                       <div class="group">
-                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
                     `;
                     this.teleportStaticHTML += `
                       <div>
