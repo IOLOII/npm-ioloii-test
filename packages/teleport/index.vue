@@ -9,7 +9,7 @@
       }
     },
     mounted() {
-      this.$el.className += ' teleport'
+      // this.$el.className += ' teleport'
       document.querySelector(this.to).appendChild(this.$el)
     },
     destroyed() {

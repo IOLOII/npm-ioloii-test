@@ -25,11 +25,11 @@
       </template>
     </WebMap>
 
-    <Teleport to=".webmap-wrapper-anime-container .block.right" >
-      <div v-html="teleportStaticHTML" v-if="teleportStaticHTML"></div>
-      <div v-else="teleportStaticHTML">
-        <div style="text-align:center">
-          当前暂无内容
+    <Teleport to=".webmap-wrapper-anime-container .block.right">
+      <div class="teleport">
+        <div v-html="teleportStaticHTML" v-if="teleportStaticHTML"></div>
+        <div v-else="teleportStaticHTML">
+          <div style="text-align: center">当前暂无内容</div>
         </div>
       </div>
     </Teleport>
@@ -67,7 +67,7 @@
       },
       tempToken() {
         if (process.env.NODE_ENV === 'test') {
-          return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTE4MzIxMjYsInVzZXJuYW1lIjoiYWRtaW4ifQ.zJmoZIl5LxEVCriaiAT9SwZV7AGZeG823AutyNWYYQs'
+          return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTE4OTA4MTcsInVzZXJuYW1lIjoiYWRtaW4ifQ.sF7TLGktIw308Hr9Vetq601csXP1Eu1FG8EojiSG6tc'
         } else {
           return this.$cookie.get('token')
         }
@@ -299,7 +299,7 @@
           case 'generateAmapMakersManage':
             this.generateAmapMakersManage(eventObj)
             break
-          case 'layerLineDetail':
+          case 'layerLineDetail': // 路线点击线路后事件
             let { pointInfo } = eventObj
             console.log(pointInfo)
 
@@ -309,8 +309,7 @@
               method: 'get',
               url: `${this.tempService}/tp/tpRoad/queryByRoadNo?roadNo=${pointInfo.properties.ROADCODE}`,
               headers: {
-                token:
-                  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTEzMDI1MTAsInVzZXJuYW1lIjoiYWRtaW4ifQ.XSEZ2evHi7ee3o3BKfiYy4OD_dxGwwQineT50_9rlzo'
+                token: this.tempToken
               }
             }
 
@@ -439,7 +438,7 @@
             break
           case 'loading':
             let { loading } = eventObj
-            this.$loading = loading
+            this.loading = loading
             break
           default:
             this.console(`事件未捕获： HandleEvent_${eventName}`)
@@ -480,6 +479,7 @@
         margin: 5px 0;
         backdrop-filter: blur(1px);
         padding: 5px;
+        text-align: left;
         > div:nth-child(2) {
           margin-top: 5px;
         }
