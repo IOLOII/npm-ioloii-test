@@ -328,17 +328,31 @@
                 .catch(err => {})
                 .finally(() => {})
             } else {
-              config = Object.assign(
-                {},
-                {
-                  url: this.tempService + '/api/pc/pcHome/highwayProperty',
-                  data: data
-                }
-              )
-              axios(config)
-                .then(response => {})
-                .catch(err => {})
-                .finally(() => {})
+              // 不可行 需要其他字段查询
+              // this.options.search = []
+              // let emptyObj = {
+              //   amapMakersManage: {},
+              //   keys: ['amapMakersManage']
+              // }
+              // eventBus.$emit('getProp', { emptyObj })
+              // let amapMakersManage = emptyObj.amapMakersManage
+              // console.log(amapMakersManage)
+              // let temparr = {}
+              // Object.keys(amapMakersManage['路产']).forEach(key => {
+              //   amapMakersManage['路产'][key]
+              //   Object.assign(
+              //     temparr,
+              //     JSON.parse(JSON.stringify(amapMakersManage['路产'][key]))
+              //   )
+              // })
+              // this.options.search = temparr[this.form1.type].map(item => {
+              //   return {
+              //     label: item.properties.name || item.properties.id + '暂无名称',
+              //     value: item.properties.id,
+              //     target: item
+              //   }
+              // })
+              // amapMakersManage["路产"][key] find
             }
             break
           case 2:
