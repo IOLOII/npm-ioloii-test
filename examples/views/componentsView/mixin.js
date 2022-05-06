@@ -33,6 +33,9 @@ export default {
     eventBus.$on("toWebMap", ({ eventName, eventObj = {} }) => {
       this.$WebMap.triggerEvent(eventName, eventObj);
     });
+    eventBus.$on("draw", ({ eventName, eventObj = {} }) => {
+      this.draw({ eventName, eventObj });
+    });
   },
   methods: {
     alert(v) {
@@ -250,7 +253,7 @@ export default {
           let ExtData = target.getExtData();
           console.log(ExtData);
           this.$WebMap.triggerEvent("setZoomAndCenter", {
-            center: target.lnglat,
+            center: target.lnglat || target.getPosition(),
             zoom: 17,
           });
           let infoWindow = new $AMap.InfoWindow({
@@ -258,7 +261,7 @@ export default {
             autoMove: true,
             content: ExtData.types + "： " + ExtData.properties.name,
           });
-          infoWindow.open(map, target.lnglat);
+          infoWindow.open(map, target.lnglat || target.getPosition());
           infoWindow.on("close", () => {
             // if (process.env.NODE_ENV === "production") {
             //   map.setCenter(this.$WebMap.mapOptions.center);
@@ -1815,6 +1818,11 @@ export default {
     },
     /**
      * @description 加载metaConfig中类别数据 桥梁bridge 隧道Tunnel 涵洞culvert
+     * @param {Object} param
+     * @param {Object} param.amapMakersManage 地图标记管理器
+     * @param {Object} param.$AMap 地图构造函数
+     * @param {Object} param.map 地图实例
+     * @param {Object} param.pointEvent 注册交互事件
      */
     get_Culvert_Bridge_Tunnel({
       amapMakersManage,
@@ -1955,13 +1963,14 @@ export default {
         type: ["click"], // default click
         click: (e) => {
           this.loading = true;
+          debugger;
           let target = e.target;
           let map = e.target.getMap();
           let ExtData = target.getExtData();
           // console.log(ExtData);
           // console.log(target);
           this.$WebMap.triggerEvent("setZoomAndCenter", {
-            center: target.lnglat,
+            center: target.lnglat || target.getPosition(),
             zoom: 17,
           });
           let infoWindow = new $AMap.InfoWindow({
@@ -1969,7 +1978,7 @@ export default {
             autoMove: true,
             content: ExtData.types + "： " + ExtData.properties.name,
           });
-          infoWindow.open(map, target.lnglat);
+          infoWindow.open(map, target.lnglat || target.getPosition());
           infoWindow.on("close", () => {
             // if (process.env.NODE_ENV === "production") {
             //   map.setCenter(this.$WebMap.mapOptions.center);
@@ -2527,6 +2536,51 @@ export default {
         }
       });
       emptyObj.amapMakersManage = metaConfigMap;
+    },
+    draw({ eventName, eventObj }) {
+      let $AMap = this.$AMap;
+      let map = this.map;
+      switch (eventName) {
+        case "leftSearchOnePoint":
+          debugger;
+          let point = eventObj.point;
+          $AMap.convertFrom(
+            [
+              point.target.geometry.coordinates[1],
+              point.target.geometry.coordinates[0],
+            ],
+            "gps",
+            (status, result) => {
+              if (result.info === "ok") {
+                console.log(result);
+                let marker = new $AMap.Marker({
+                  position: result.locations[0],
+                  // visible: false,
+                  map: map,
+                  // content: content,
+                  // offset: new AMap.Pixel(-22, -34),
+                });
+                marker.setExtData(point.target);
+                point.marker = marker;
+                marker.on(
+                  "click",
+                  this.bind_Culvert_Bridge_Tunnel($AMap)["click"]
+                );
+
+                this.$WebMap.triggerEvent("setZoomAndCenter", {
+                  center: result.locations[0],
+                  zoom: 17,
+                });
+              } else {
+              }
+            }
+          );
+
+          break;
+
+        default:
+          break;
+      }
     },
   },
 };

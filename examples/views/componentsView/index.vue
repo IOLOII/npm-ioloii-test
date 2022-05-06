@@ -57,6 +57,12 @@
       Teleport,
       SupebdLeft
     },
+    provide() {
+      return {
+        tempToken: this.tempToken,
+        tempService: this.tempService
+      }
+    },
     data: () => ({
       teleportStaticHTML: '',
       loading: false
