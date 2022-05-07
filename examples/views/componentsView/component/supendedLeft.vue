@@ -315,12 +315,18 @@
                     console.log(item)
                     item.features.forEach((point, index) => {
                       point.types = this.form1.type
-                      this.options.search.push({
-                        label: point.properties.name,
-                        value: point.properties.id.toString(),
-                        // value: point.properties.name,
-                        target: point
-                      })
+                      if (
+                        point.geometry &&
+                        point.geometry.coordinates[1] &&
+                        point.geometry.coordinates[0]
+                      ) {
+                        this.options.search.push({
+                          label: point.properties.name,
+                          value: point.properties.id.toString(),
+                          // value: point.properties.name,
+                          target: point
+                        })
+                      }
                     })
                   })
                   console.log(this.options.search)
