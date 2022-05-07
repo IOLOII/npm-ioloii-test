@@ -176,20 +176,20 @@
 
           // 路产
           // /api/pc/pcHome/highwayProperty
-          { label: '交通标志', value: 'tpLabel' },
-          { label: '标线', value: 'tpMarking' },
-          { label: '护栏', value: 'tpGuardrail' },
-          { label: '防护设施', value: 'tpSavefacilities' },
-          { label: '照明设施', value: 'tpLighting' },
-          { label: '排水设施', value: 'tpDrainage' },
-          { label: '收费站', value: 'tpTollStation' },
-          { label: '服务站', value: 'tpSst' },
-          { label: '加油站', value: 'tpPetrolStation' },
-          { label: '停车区', value: 'tpParkingLot' },
-          { label: '治超站点', value: 'tpSuper' },
-          { label: '公路管理站', value: 'tpStation' },
-          { label: '桥梁养护牌', value: 'tpPlate' },
-          { label: '监控设备', value: 'tpCamera' }
+          // { label: '交通标志', value: 'tpLabel' },
+          // { label: '标线', value: 'tpMarking' },
+          // { label: '护栏', value: 'tpGuardrail' },
+          // { label: '防护设施', value: 'tpSavefacilities' },
+          // { label: '照明设施', value: 'tpLighting' },
+          // { label: '排水设施', value: 'tpDrainage' },
+          // { label: '收费站', value: 'tpTollStation' },
+          // { label: '服务站', value: 'tpSst' },
+          // { label: '加油站', value: 'tpPetrolStation' },
+          // { label: '停车区', value: 'tpParkingLot' },
+          // { label: '治超站点', value: 'tpSuper' },
+          // { label: '公路管理站', value: 'tpStation' },
+          // { label: '桥梁养护牌', value: 'tpPlate' },
+          // { label: '监控设备', value: 'tpCamera' }
         ],
         lineType: [
           { label: '国道', value: 'G' },
