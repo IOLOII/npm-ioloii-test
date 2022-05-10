@@ -2495,6 +2495,599 @@ export default {
         },
       };
     },
+
+    /**
+     * @description 加载metaConfig中类别数据 初始化养护数据
+     * @param {Object} param
+     * @param {Object} param.amapMakersManage 地图标记管理器
+     * @param {Object} param.$AMap 地图构造函数
+     * @param {Object} param.map 地图实例
+     * @param {Object} param.pointEvent 注册交互事件
+     */
+    get_MAINTENANCE_INCIDENT({ amapMakersManage, $AMap, map, pointEvent }) {
+      const axios = require("axios");
+      let config = {};
+      console.log(amapMakersManage);
+      Object.keys(amapMakersManage["类型事件"]).forEach((key) => {
+        // key = 日常养护
+        Object.keys(amapMakersManage["类型事件"][key]).forEach((itemkey) => {
+          // itemkey = 路面
+          config = {
+            method: "get",
+            url: this.tempService + "/lzz/mt/mtEvent/list?",
+            headers: {
+              token: this.tempToken,
+              "Content-Type": "application/json; charset=utf-8",
+            },
+          };
+          axios(
+            Object.assign(config, {
+              params: {
+                current: 0,
+                size: 1,
+                bigType: key,
+                eventType: itemkey,
+              },
+            })
+          )
+            .then((response) => {
+              let obj = {}; // 挂载数据对象
+              // let markerCluster = []; // 存放转换后 生成的每一个marker
+              let toTransItem = []; // 存放有效点的经纬度数据
+              let toTransItemObj = []; // 存放有效点的引用对象
+              Object.keys(amapMakersManage["类型事件"]).forEach((key) => {
+                Object.assign(obj, amapMakersManage["类型事件"][key]);
+              });
+              debugger;
+              // console.log(JSON.stringify(response.data));
+              response.data.records.forEach(() => {});
+              console.log(response.data.records);
+              console.log(itemkey);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
+      });
+      return;
+      // lzz/mt/mtEvent/list
+    },
+    bind_MAINTENANCE_INCIDENT($AMap) {
+      return {
+        type: ["click"], // default click
+        click: (e) => {
+          this.loading = true;
+          let target = e.target;
+          let map = e.target.getMap();
+          let ExtData = target.getExtData();
+          // console.log(ExtData);
+          // console.log(target);
+          this.$WebMap.triggerEvent("setZoomAndCenter", {
+            center: target.lnglat || target.getPosition(),
+            zoom: 17,
+          });
+          let infoWindow = new $AMap.InfoWindow({
+            anchor: "top-left",
+            autoMove: true,
+            content: ExtData.types + "： " + ExtData.properties.name,
+          });
+          infoWindow.open(map, target.lnglat || target.getPosition());
+          infoWindow.on("close", () => {
+            // if (process.env.NODE_ENV === "production") {
+            //   map.setCenter(this.$WebMap.mapOptions.center);
+            // }
+            // map.setZoom(this.$WebMap.mapOptions.zoom, false, 500);
+            // this.$WebMap.triggerEvent("setZoomAndCenter", {
+            //   center: this.$WebMap.mapOptions.center,
+            //   zoom: this.$WebMap.mapOptions.center,
+            // });
+            this.$WebMap.triggerEvent("setZoom");
+          });
+
+          // 增加请求获取数据
+          const axios = require("axios");
+          let config = {
+            method: "get",
+            headers: {
+              token: this.tempToken,
+            },
+            params: {
+              id: ExtData.properties.id,
+            },
+          };
+          console.log(ExtData);
+          switch (ExtData.types) {
+            case "桥梁":
+              // case '桥梁评定等级':
+              // case '桥梁分类（长度）':
+              config = Object.assign(config, {
+                url: this.tempService + "/tp/tpBridge/queryById",
+              });
+              axios(config)
+                .then((response) => {
+                  let data = response.data;
+                  console.log(data);
+                  this.$nextTick(() => {
+                    this.teleportStaticHTML = `<div class="lineInfo">`;
+                    // thumbnail 缩略图
+                    // positivePhoto 桥梁正面照 √
+                    this.teleportStaticHTML += `
+                      ${
+                        data.positivePhoto || data.thumbnail
+                          ? "<imgsrc=" +
+                            (data.positivePhoto || data.thumbnail) +
+                            "/>"
+                          : ""
+                      }
+                      <div class="group">
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">路线编号</span>
+                        <span class="value">${data.roadNo || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">行政等级</span>
+                        <span class="value">${
+                          {
+                            G: "国道",
+                            S: "省道",
+                            X: "县道",
+                            Y: "乡道",
+                            C: "村道",
+                            Z: "专用公路",
+                          }[data.regionGrade] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">桥梁代码</span>
+                        <span class="value">${
+                          data.bridgeNumber || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">中心桩号</span>
+                        <span class="value">${data.bridgeStake || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">按跨径分类</span>
+                        <span class="value">${
+                          {
+                            "01": "特大桥",
+                            "02": "大桥",
+                            "03": "中桥",
+                            "04": "小桥",
+                          }[data.spanType] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">使用年限分类</span>
+                        <span class="value">${
+                          { "01": "永久性", "02": "半永久性", "03": "临时性" }[
+                            data.classifiedLife
+                          ] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">技术状况等级评定</span>
+                        <span class="value">${
+                          {
+                            "01": "一类",
+                            "02": "二类",
+                            "03": "三类",
+                            "04": "四类",
+                            "05": "五类",
+                          }[data.technicalRating] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    if (data.direction) {
+                      this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">--行车方向</span>
+                        <span class="value">${
+                          {
+                            "01": "双向",
+                            "02": "上行",
+                            "03": "下行",
+                          }[data.direction] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    }
+                    if (data.crossType) {
+                      this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">--跨地物类型</span>
+                        <span class="value">${data.crossType || "暂无"}</span>
+                      </div>
+                    `;
+                    }
+                    if (data.featuresType) {
+                      this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">--功能类型</span>
+                        <span class="value">${
+                          data.featuresType || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    }
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">管养单位</span>
+                        <span class="value">${data.custodyUnit || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">所属行政区域</span>
+                        <span class="value">${data.area.name || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">所属机构</span>
+                        <span class="value">${data.office.name || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `</div>`;
+                    this.teleportStaticHTML += `</div>`;
+                  });
+                })
+                .catch((error) => {
+                  this.$nextTick(() => {
+                    this.teleportStaticHTML = `<div class="lineInfo">`;
+                    this.teleportStaticHTML += `
+                      <div class="group">
+                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key"></span>
+                        <span class="value">暂无信息</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `</div>`;
+                    this.teleportStaticHTML += `</div>`;
+                  });
+                })
+                .finally(() => {
+                  this.loading = false;
+                  // TODO: 插入其他元素或页面的交互事件
+                  // NOTE: 页面其他事件，点渲染，单独维护
+                  this.$WebMap.triggerEvent("animeMove", {
+                    direction: "right",
+                    isShow: true,
+                    sideConf: {
+                      right: "300px",
+                    },
+                  });
+                });
+
+              break;
+            case "隧道":
+              // case '隧道评定等级':
+              // case '隧道分类（长度）':
+              config = Object.assign(config, {
+                url: this.tempService + "/tp/tpTunnel/queryById",
+              });
+              axios(config)
+                .then((response) => {
+                  let data = response.data;
+                  console.log(data);
+                  this.$nextTick(() => {
+                    this.teleportStaticHTML = `<div class="lineInfo">`;
+                    // img 图片 √
+                    this.teleportStaticHTML += `
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
+                      <div class="group">
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">路线编号</span>
+                        <span class="value">${data.roadNo || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">行政等级</span>
+                        <span class="value">${
+                          {
+                            G: "国道",
+                            S: "省道",
+                            X: "县道",
+                            Y: "乡道",
+                            C: "村道",
+                            Z: "专用公路",
+                          }[data.regionGrade] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">隧道代码</span>
+                        <span class="value">${data.no || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">中心桩号</span>
+                        <span class="value">${data.bridgeStake || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">行车方向</span>
+                        <span class="value">${
+                          {
+                            "01": "双向",
+                            "02": "上行",
+                            "03": "下行",
+                          }[data.direction] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">按隧道长度分类</span>
+                        <span class="value">${
+                          {
+                            "01": "特大隧道",
+                            "02": "大隧道",
+                            "03": "中隧道",
+                            "04": "小隧道",
+                          }[data.tunnelTypeCode] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">技术状况等级评定</span>
+                        <span class="value">技术状况等级评定</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">隧道养护等级</span>
+                        <span class="value">${
+                          {
+                            "01": "一级",
+                            "02": "二级",
+                            "03": "三级",
+                            "04": "四级",
+                            "05": "五级",
+                          }[data.tunnelLevel] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">隧道长度</span>
+                        <span class="value">${
+                          data.tunnelLength
+                            ? data.tunnelLength + " (m)"
+                            : "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">管养单位</span>
+                        <span class="value">${data.custodyUnit || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">所属行政区域</span>
+                        <span class="value">${data.area.name || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">所属机构</span>
+                        <span class="value">${data.office.name || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `</div>`;
+                    this.teleportStaticHTML += `</div>`;
+                  });
+                })
+                .catch((error) => {
+                  this.$nextTick(() => {
+                    this.teleportStaticHTML = `<div class="lineInfo">`;
+                    this.teleportStaticHTML += `
+                      <div class="group">
+                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key"></span>
+                        <span class="value">暂无信息</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `</div>`;
+                    this.teleportStaticHTML += `</div>`;
+                  });
+                })
+                .finally(() => {
+                  this.loading = false;
+                  // TODO: 插入其他元素或页面的交互事件
+                  // NOTE: 页面其他事件，点渲染，单独维护
+                  this.$WebMap.triggerEvent("animeMove", {
+                    direction: "right",
+                    isShow: true,
+                    sideConf: {
+                      right: "300px",
+                    },
+                  });
+                });
+              break;
+            case "涵洞":
+              // case '涵洞位置':
+              // case '行政等级':
+              config = Object.assign(config, {
+                url: this.tempService + "/tp/tpCulvert/queryById",
+              });
+              axios(config)
+                .then((response) => {
+                  let data = response.data;
+                  console.log(data);
+                  this.$nextTick(() => {
+                    this.teleportStaticHTML = `<div class="lineInfo">`;
+                    // img 图片 √
+                    this.teleportStaticHTML += `
+                      ${data.img ? "<imgsrc=" + data.img + "/>" : ""}
+                      <div class="group">
+                            <span class="title">${ExtData.types} ${
+                      ExtData.properties.name
+                    }</span>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">路线编号</span>
+                        <span class="value">${data.roadNo || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">行政等级</span>
+                        <span class="value">${
+                          {
+                            G: "国道",
+                            S: "省道",
+                            X: "县道",
+                            Y: "乡道",
+                            C: "村道",
+                            Z: "专用公路",
+                          }[data.regionGrade] || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">中心桩号</span>
+                        <span class="value">${data.bridgeStake || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">功能类型</span>
+                        <span class="value">${
+                          data.typeOfFunction || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">涵洞位置</span>
+                        <span class="value">${
+                          data.culvertLocation || "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">--涵洞全长</span>
+                        <span class="value">${
+                          data.culvertOverallLength
+                            ? data.culvertOverallLength + " (m)"
+                            : "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">--净高</span>
+                        <span class="value">${
+                          data.clearHeight ? data.clearHeight + " (m)" : "暂无"
+                        }</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">管养单位</span>
+                        <span class="value">${data.custodyUnit || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">所属行政区域</span>
+                        <span class="value">${data.area.name || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key">所属机构</span>
+                        <span class="value">${data.office.name || "暂无"}</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `</div>`;
+                    this.teleportStaticHTML += `</div>`;
+                  });
+                })
+                .catch((error) => {
+                  this.$nextTick(() => {
+                    this.teleportStaticHTML = `<div class="lineInfo">`;
+                    this.teleportStaticHTML += `
+                      <div class="group">
+                            <span class="title">${ExtData.types} ${ExtData.properties.name}</span>
+                    `;
+                    this.teleportStaticHTML += `
+                      <div>
+                        <span class="key"></span>
+                        <span class="value">暂无信息</span>
+                      </div>
+                    `;
+                    this.teleportStaticHTML += `</div>`;
+                    this.teleportStaticHTML += `</div>`;
+                  });
+                })
+                .finally(() => {
+                  this.loading = false;
+                  // TODO: 插入其他元素或页面的交互事件
+                  // NOTE: 页面其他事件，点渲染，单独维护
+                  this.$WebMap.triggerEvent("animeMove", {
+                    direction: "right",
+                    isShow: true,
+                    sideConf: {
+                      right: "300px",
+                    },
+                  });
+                });
+              break;
+          }
+
+          // Object.keys(ExtData.properties).forEach((key) => {
+          //   this.teleportStaticHTML += `
+          //     <div>
+          //       <span class="key">${key}</span>
+          //       <span class="value"> ${ExtData.properties[key]}</span>
+          //     </div>
+
+          //   `;
+          // });
+        },
+      };
+    },
     /**
      * @description 生成 amapMakersManage 地图标记管理器-高德元素
      */
@@ -2519,19 +3112,18 @@ export default {
           case "涵洞":
             metaConfigMap[key] = []; // 涵洞 等大类下的所有小类的组合查询分别只返回一个类型的数据
             break;
-          case "路产":
+          case "类型事件":
             metaConfigMap[key] = {}; // 路产大类下的每个小类分别是一种类型的数据
             metaConfig[key].forEach((item) => {
               metaConfigMap[key][item.name] = {};
               item.children &&
                 item.children.forEach((child) => {
-                  if (child.prop) {
-                    metaConfigMap[key][item.name][child.prop] = [];
-                  } else {
-                    metaConfigMap[key][item.name][child.name] = [];
-                  }
+                  metaConfigMap[key][item.name][child.name] = [];
                 });
             });
+            break;
+          default:
+            this.console("metaConfigMap key is not defined handle case");
             break;
         }
       });
@@ -2542,7 +3134,6 @@ export default {
       let map = this.map;
       switch (eventName) {
         case "leftSearchOnePoint":
-          debugger;
           let point = eventObj.point;
           $AMap.convertFrom(
             [

@@ -20,6 +20,10 @@
         >
           <span style="font-size: 17px; font-weight: 600">{{ componentObj.name }}</span>
         </el-checkbox>
+        <div style="padding: 5px" v-else-if="componentObj.headLine">
+          <span style="font-size: 17px; font-weight: 600">{{ componentObj.name }}</span>
+        </div>
+
         <!-- </div> -->
         <el-row style="padding-left: 1.2em">
           <el-col
@@ -79,7 +83,7 @@
     },
     methods: {
       console(v, type = 'log') {
-        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
           console[type](v)
         }
       },
