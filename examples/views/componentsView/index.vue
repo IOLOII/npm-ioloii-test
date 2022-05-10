@@ -10,6 +10,7 @@
       ref="WebMap"
       v-loading="loading"
       element-loading-text="加载中"
+      :hasLegend="true"
     >
       <!-- 支持top left bottom -->
       <template #supendedLeft>
