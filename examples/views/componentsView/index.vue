@@ -2,8 +2,8 @@
   <div class="component-warpper">
     <WebMap
       :metaConfig="metaConfig"
-      geoServerUrl="http://14.18.52.99:8000/geoserver/neimenggu/wms"
-      geoQueryProp="ROADNAME"
+      geoServerUrl="http://14.18.52.99:8000/geoserver/luan/wms"
+      geoQueryProp="LXBM"
       @initializedHandle="initializedHandle"
       @initMapEvevt="initMapEvevt"
       @handleEvent="handleEvent"
@@ -73,7 +73,7 @@
       },
       tempToken() {
         if (process.env.NODE_ENV === 'test') {
-          return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTE4OTA4MTcsInVzZXJuYW1lIjoiYWRtaW4ifQ.sF7TLGktIw308Hr9Vetq601csXP1Eu1FG8EojiSG6tc'
+          return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTIyMzg3NTksInVzZXJuYW1lIjoiYWRtaW4ifQ.eELd7A8oKNiywHSLrIgqu9cXRUDXukEp3ioBNtUMfnU'
         } else {
           return this.$cookie.get('token')
         }
@@ -313,7 +313,7 @@
             const axios = require('axios')
             let config = {
               method: 'get',
-              url: `${this.tempService}/tp/tpRoad/queryByRoadNo?roadNo=${pointInfo.properties.ROADCODE}`,
+              url: `${this.tempService}/tp/tpRoad/queryByRoadNo?roadNo=${pointInfo.properties.LXBM}`,
               headers: {
                 token: this.tempToken
               }
