@@ -42,4 +42,7 @@
       }
     }
   }
+  .component-warpper{
+    height: 80vh !important;
+  }
 </style>
