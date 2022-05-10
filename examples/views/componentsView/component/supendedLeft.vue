@@ -11,6 +11,7 @@
         icon="el-icon-search"
         @click="search"
         size="medium"
+        class="cus-button"
       ></el-button>
     </el-input>
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -422,6 +423,11 @@
       height: calc(100% - 55px);
       overflow-y: auto;
       @include overflow;
+    }
+  }
+  .cus-button ::v-deep{
+    i{
+      padding: 5px;
     }
   }
 </style>
