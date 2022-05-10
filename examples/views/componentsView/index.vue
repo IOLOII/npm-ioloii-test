@@ -458,8 +458,8 @@
 <style lang="scss" scoped>
   // @import './cover.scss';
   .component-warpper {
-    width: 90%;
-    height: 80vh;
+    width: 100%;
+    height: 100%;
     background: #fff;
     border: 1px;
     box-sizing: border-box;
