@@ -72,7 +72,7 @@
 
     <!-- 自定义层 -->
     <!-- 图例 -->
-    <Teleport to=".webmap-wrapper">
+    <Teleport to=".webmap-wrapper" v-if="hasLegend">
       <div
         class="point legend-plugin"
         style="
@@ -197,7 +197,7 @@
       },
       hasLegend: {
         type: Boolean,
-        default: true,
+        default: false,
         require: false
       }
     },
@@ -243,7 +243,7 @@
     mounted() {},
     methods: {
       alert(v) {
-        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
           this.console(v)
           return
         }
@@ -254,7 +254,7 @@
         }
       },
       console(v, type = 'error') {
-        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === 'test') {
+        if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
           console[type](v)
         }
       },
@@ -300,30 +300,32 @@
               })
 
               map.addControl(layerCtrl)
-              document
-                .querySelector('.amap-ui-control-layer')
-                .addEventListener('mouseover', () => {
-                  anime({
-                    targets: '.legend-plugin',
-                    duration: 300,
-                    easing: 'spring(1, 80, 10, 0)',
-                    loop: false,
-                    direction: 'normal',
-                    translateX: '-78px'
+              setTimeout(() => {
+                document
+                  .querySelector('.amap-ui-control-layer')
+                  .addEventListener('mouseover', () => {
+                    anime({
+                      targets: '.legend-plugin',
+                      duration: 300,
+                      easing: 'spring(1, 80, 10, 0)',
+                      loop: false,
+                      direction: 'normal',
+                      translateX: '-78px'
+                    })
                   })
-                })
-              document
-                .querySelector('.amap-ui-control-layer')
-                .addEventListener('mouseleave', () => {
-                  anime({
-                    targets: '.legend-plugin',
-                    duration: 300,
-                    easing: 'spring(1, 80, 10, 0)',
-                    loop: false,
-                    direction: 'normal',
-                    translateX: '0px'
+                document
+                  .querySelector('.amap-ui-control-layer')
+                  .addEventListener('mouseleave', () => {
+                    anime({
+                      targets: '.legend-plugin',
+                      duration: 300,
+                      easing: 'spring(1, 80, 10, 0)',
+                      loop: false,
+                      direction: 'normal',
+                      translateX: '0px'
+                    })
                   })
-                })
+              }, 200)
 
               //缩放控件
               map.addControl(
