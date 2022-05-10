@@ -24,7 +24,7 @@
     "build": "vue-cli-service build",
     "lib": "cross-env NODE_ENV=npmproduction vue-cli-service build --target lib --name dado --dest lib packages/index.js",
     "cpcomponent":"rm -rf ../../Dado/rms-pcui/src/components/web-map/ && cp -r ./packages/web-map/ ../../Dado/rms-pcui/src/components",
-    "cpview":"rm -rf ../../Dado/rms-pcui/src/views/modules/sys/dashboard/analysis/mapContainer/* && cp -r ./examples/views/componentsView/* ../../Dado/rms-pcui/src/views/modules/sys/dashboard/analysis/mapContainer/",
+    "cpview":"rm -rf ../../Dado/rms-pcui/src/views/modules/sys/dashboard/maintainanceAnalysis/mapContainer/* && cp -r ./examples/views/componentsView/* ../../Dado/rms-pcui/src/views/modules/sys/dashboard/maintainanceAnalysis/mapContainer/",
     "pub":"npm run cpcomponent && npm run cpview"
   },
   "dependencies": {
