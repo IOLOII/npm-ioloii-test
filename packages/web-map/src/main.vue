@@ -1,5 +1,9 @@
 <template>
-  <div class="webmap-wrapper" :style="{ '--width': width, '--height': height }">
+  <div
+    class="webmap-wrapper"
+    :style="{ '--width': width, '--height': height }"
+    :id="webmapid"
+  >
     <div style="position: absolute; top: -100px"></div>
     <div
       v-if="true"
@@ -72,7 +76,7 @@
 
     <!-- 自定义层 -->
     <!-- 图例 -->
-    <Teleport to=".webmap-wrapper" v-if="hasLegend">
+    <Teleport :to="`${webmapid} .webmap-wrapper`" v-if="hasLegend">
       <div
         class="point legend-plugin"
         style="
@@ -208,7 +212,8 @@
         // geo图层管理对象
         geoLayersManage: {},
         // 高德marker管理
-        amapMakersManage: {}
+        amapMakersManage: {},
+        webmapid: ''
       }
     },
     computed: {
@@ -233,6 +238,9 @@
       }
     },
     created() {
+      // 生成一个id标识符
+      this.webmapid = this.generateId()
+      console.log('webmapid', this.webmapid)
       if (!this.$amapKey) {
         this.alert('尚未配置mapkey!')
       } else {
@@ -242,6 +250,9 @@
     },
     mounted() {},
     methods: {
+      generateId() {
+        return 'webmap-' + Math.random().toString(36).substr(2)
+      },
       alert(v) {
         if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
           this.console(v)
