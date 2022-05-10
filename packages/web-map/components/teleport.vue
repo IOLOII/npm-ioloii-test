@@ -12,7 +12,9 @@
       document.querySelector(this.to).appendChild(this.$el)
     },
     destroyed() {
-      document.querySelector(this.to).removeChild(this.$el)
+      try {
+        document.querySelector(this.to).removeChild(this.$el)
+      } catch (error) {}
     },
     render() {
       return this.$scopedSlots.default()
