@@ -103,19 +103,26 @@
        * @param {Object} param.map 地图实例
        */
       loadMapData({ amapMakersManage, $AMap, map }) {
-        // 路产
-        // this.getRoadProperty({
-        //   amapMakersManage,
-        //   $AMap,
-        //   map,
-        //   pointEvent: this.bindRoadRropertyPointEvent($AMap)
-        // })
         // 智慧养护-事件类型
         this.get_MAINTENANCE_INCIDENT({
           amapMakersManage,
           $AMap,
           map,
           pointEvent: this.bind_MAINTENANCE_INCIDENT($AMap)
+        })
+        // 智慧养护-相关人员
+        this.get_MAINTENANCE_PERSON({
+          amapMakersManage,
+          $AMap,
+          map,
+          pointEvent: this.bind_MAINTENANCE_PERSON($AMap)
+        })
+        // 智慧养护-机构
+        this.get_MAINTENANCE_ORGANIZATION({
+          amapMakersManage,
+          $AMap,
+          map,
+          pointEvent: this.bind_MAINTENANCE_ORGANIZATION($AMap)
         })
       },
       /**
@@ -138,231 +145,80 @@
       }) {
         // key 大类 路网 桥梁 隧道 涵洞 路产
         if (!_this) _this = this.$WebMap
-        if (!_this) console.error('WebMap is empty, maybe dom timeout, please refresh')
+        if (!_this) {
+          console.error('WebMap is empty, maybe dom timeout, please refresh web')
+          alert('WebMap is empty, maybe dom timeout, please refresh web')
+          return
+        }
         let params = {}
         let sendReq = false
-        // TODO: 调整这里case 规则
         switch (key) {
-          case '路网':
-            // 展现或隐藏 layer
-            // this.console(eventObj.layerName, 'log')
-            switch (type) {
-              case 'item':
-                let reverses = []
-                let layerNames = Object.keys(_this.geoLayersManage)
-                // 找出layerNames中不包含eventObj.layerName的值
-                layerNames.forEach(layerName => {
-                  if (layerName !== eventObj.layerName) {
-                    reverses.push(layerName)
-                  }
-                })
-                if (value) {
-                  _this.geoLayersManage[eventObj.layerName].show()
-                  if (!componentObj.childrenMultiple) {
-                    reverses.forEach(ln => {
-                      _this.clearLayerChildren(ln, 'hide')
-                    })
-                  }
-                } else {
-                  // 隐藏的时候 当前线路关闭后 显示当前的 其他情况隐藏当前
-                  // _this.geoLayersManage[eventObj.layerName].hide();
-                  _this.clearLayerChildren(eventObj.layerName, 'hide')
-                }
-                break
-              // 路网暂不考虑显示多个layer,已互斥
-              case 'all':
-                // console.log(type, eventObj, value, componentObj, item)
-                componentObj.children.forEach(({ layerName }) => {
-                  // console.log(_this.geoLayersManage[layerName])
-                  if (value) {
-                    _this.geoLayersManage[layerName].show()
-                  } else {
-                    _this.clearLayerChildren(layerName, 'hide')
-                  }
-                })
-                break
-            }
-
-            break
-          case '桥梁':
-          // case '桥梁评定等级':
-          // case '桥梁分类（长度）':
-          case '隧道':
-          // case '隧道评定等级':
-          // case '隧道分类（长度）':
-          case '涵洞':
-            // case '涵洞位置':
-            // case '行政等级':
-            // console.log(type, eventObj, value, componentObj, item, _this)
-            // 生成查询条件
-            let { prop } = componentObj
-            // 获取同父下其他类目
-            this.metaConfig[key].forEach(component => {
-              params[component.prop] = []
-              component.children.forEach(child => {
-                if (child.value) {
-                  params[component.prop].push(child[component.prop + 'Value'])
-                  sendReq = true
-                }
-              })
-            })
-            if (this.amapMakersManage[key]) {
-              this.amapMakersManage[key].forEach(item => {
-                try {
-                  item.marker.remove()
-                } catch (e) {
-                  this.console(item)
-                }
-              })
-            }
-            if (sendReq) {
-              this.amapMakersManage[key] = []
-              this.get_Culvert_Bridge_Tunnel({
-                amapMakersManage: this.amapMakersManage,
-                $AMap: this.$AMap,
-                map: this.map,
-                params,
-                key,
-                pointEvent: this.bind_Culvert_Bridge_Tunnel(this.$AMap)
-              })
-            }
-
-            break
-          case '路产':
-            // case '服务设施1':
-            // case '服务设施2':
-            // case '管理设施':
-            switch (type) {
-              case 'item':
-                if (value) {
-                  _this.amapMakersManage['路产'][componentObj.name][item.prop].forEach(
-                    point => {
-                      point.marker && point.marker.show()
-                    }
-                  )
-                } else {
-                  _this.amapMakersManage['路产'][componentObj.name][item.prop].forEach(
-                    point => {
-                      point.marker && point.marker.hide()
-                    }
-                  )
-                }
-                break
-              case 'all':
-                if (value) {
-                  Object.keys(_this.amapMakersManage['路产'][componentObj.name]).forEach(
-                    prop => {
-                      _this.amapMakersManage['路产'][componentObj.name][prop].forEach(
-                        point => {
-                          point.marker && point.marker.show()
-                        }
-                      )
-                    }
-                  )
-                } else {
-                  Object.keys(_this.amapMakersManage['路产'][componentObj.name]).forEach(
-                    prop => {
-                      _this.amapMakersManage['路产'][componentObj.name][prop].forEach(
-                        point => {
-                          point.marker && point.marker.hide()
-                        }
-                      )
-                    }
-                  )
-                }
-
-                break
-            }
-            break
           // NOTE: 使用metaConfig的是需要先读取metaConfig的item value数据 进行请求，如果直接使用amapMakersManage对象的，是因为数据已经首次加载完毕，所以不需要再次请求
           case '类型事件':
             switch (type) {
               case 'item':
-                if (value) {
-                  _this.amapMakersManage[key][componentObj.name][item.name].forEach(
-                    point => {
-                      point.marker && point.marker.show()
-                    }
-                  )
-                } else {
-                  _this.amapMakersManage[key][componentObj.name][item.name].forEach(
-                    point => {
-                      point.marker && point.marker.hide()
-                    }
-                  )
-                }
-                return
-                switch (componentObj.name) {
-                  case '日常保洁':
-                    this.metaConfig[key][componentObj.name]
-                    if (value) {
-                      // this.amapMakersManage[key][componentObj.name] = []
-                      this.get_MAINTENANCE_INCIDENT({
-                        amapMakersManage: this.amapMakersManage,
-                        $AMap: this.$AMap,
-                        map: this.map,
-                        params: {
-                          size: 1,
-                          bigType: componentObj.name,
-                          eventType: item.name
-                        },
-                        key,
-                        pointEvent: this.bind_MAINTENANCE_INCIDENT(this.$AMap)
-                      })
-                    } else {
-                    }
-                    break
-                }
+                _this.amapMakersManage[key][componentObj.name][item.name].forEach(
+                  point => {
+                    point.marker && point.marker[value ? 'show' : 'hide']()
+                  }
+                )
                 break
-              case 'all': // 无全选
+              case 'all':
+                Object.keys(_this.amapMakersManage[key][componentObj.name]).forEach(
+                  prop => {
+                    _this.amapMakersManage[key][componentObj.name][prop].forEach(
+                      point => {
+                        point.marker && point.marker[value ? 'show' : 'hide']()
+                      }
+                    )
+                  }
+                )
                 break
             }
-            return
-            switch (componentObj.name) {
-              case '日常保洁':
-                this.metaConfig[key][componentObj.name]
-
-                this.metaConfig[key].forEach(component => {
-                  // params[component.prop] = []
-                  component.children.forEach(child => {
-                    if (child.value) {
-                      params[component.prop] = componentObj.name
-                      params[item.prop] = item[item.prop]
-                      sendReq = true
-                    }
-                  })
-                })
-                if (this.amapMakersManage[key]) {
-                  this.amapMakersManage[key].forEach(item => {
-                    try {
-                      item.marker.remove()
-                    } catch (e) {
-                      this.console(item)
-                    }
-                  })
-                }
-                if (sendReq) {
-                  this.amapMakersManage[key] = []
-                  console.log('params', params)
-                  // this.get_Culvert_Bridge_Tunnel({
-                  //   amapMakersManage: this.amapMakersManage,
-                  //   $AMap: this.$AMap,
-                  //   map: this.map,
-                  //   params,
-                  //   key,
-                  //   pointEvent: this.bind_Culvert_Bridge_Tunnel(this.$AMap)
-                  // })
-                } else {
-                  console.log('params', params)
-                }
+            break
+          case '人员':
+            switch (type) {
+              case 'item':
+                _this.amapMakersManage[key][componentObj.name][item.name].forEach(
+                  point => {
+                    point.marker && point.marker[value ? 'show' : 'hide']()
+                  }
+                )
                 break
-
-              default:
-                _this.console(`类型事件 缺乏枚举状态`)
-                _this.console(componentObj.name)
+              case 'all':
+                Object.keys(_this.amapMakersManage[key][componentObj.name]).forEach(
+                  prop => {
+                    _this.amapMakersManage[key][componentObj.name][prop].forEach(
+                      point => {
+                        point.marker && point.marker[value ? 'show' : 'hide']()
+                      }
+                    )
+                  }
+                )
                 break
             }
-
+            break
+          case '机构':
+            switch (type) {
+              case 'item':
+                _this.amapMakersManage[key][componentObj.name][item.name].forEach(
+                  point => {
+                    point.marker && point.marker[value ? 'show' : 'hide']()
+                  }
+                )
+                break
+              case 'all':
+                Object.keys(_this.amapMakersManage[key][componentObj.name]).forEach(
+                  prop => {
+                    _this.amapMakersManage[key][componentObj.name][prop].forEach(
+                      point => {
+                        point.marker && point.marker[value ? 'show' : 'hide']()
+                      }
+                    )
+                  }
+                )
+                break
+            }
             break
           default:
             _this.console(`缺乏枚举状态: ${key}`)
