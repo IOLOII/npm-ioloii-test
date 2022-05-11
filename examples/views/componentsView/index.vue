@@ -30,7 +30,7 @@
       <div class="teleport">
         <div v-html="teleportStaticHTML" v-if="teleportStaticHTML"></div>
         <div v-else="teleportStaticHTML">
-          <div style="text-align: center">当前暂无内容</div>
+          <div style="text-align: center; color: white">当前暂无内容</div>
         </div>
       </div>
     </Teleport>
